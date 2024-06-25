@@ -19,8 +19,20 @@
       "type": "image/png",
       "sizes": "512x512",
       "purpose": "maskable"
+    },
+    {
+      "src": "maskable-icon.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any"
     }
   ],
+  "dir": "ltr",
+  "categories": ["business", "government", "health", "kids", "social"],
+  "orientation": "any",
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  },
   "id": "pwatemplate",
   "display_override": [
     "fullscreen",
