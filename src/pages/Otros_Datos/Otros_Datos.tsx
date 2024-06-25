@@ -31,8 +31,8 @@ function Otros_Datos() {
     return prueba;
   });
   console.log("data", data);
-  const siguiente = () => navegar("/DATOS_DE_LA_ENTREVISTA");
-  const anterior = () => navegar("/seguridad-estrategia");
+  const siguiente = () => navegar("/datos");
+  const anterior = () => navegar("/estrategia/alimentos");
   return (
     <>
       <Meta title="Controles" />

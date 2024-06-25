@@ -278,8 +278,7 @@ export class dat_motivonoatencion extends AbstractEntity {
 }
 
 // Datos Miembros del Hogae
-export class dat_miembrohogar extends AbstractEntity {
-  colorPiel: any;
+export class dat_miembrohogar extends AbstractEntity {  
   constructor(
     public idmiembrohogar: number,
     public pnombre: string,
@@ -295,6 +294,7 @@ export class dat_miembrohogar extends AbstractEntity {
     public idparentesco: any,
     public idorientacionsex: number,
     public idnivelescolar: number,
+    public idnivelescolargrado: number,
     public idgradovencido: number,
     public registroconsum: boolean,
     public idpamunicipionac: number,
@@ -538,6 +538,7 @@ export class dat_nvinculacionmiembro extends AbstractEntity {
     public idmotivodecision: number,
     public idremuneraciones: number,
     public idcodigohogar?: number,
+    public idmiembrohogar?: number,
     public idmiembroocupacion?: number,
     public idgeneral?: string
   ) {
@@ -551,6 +552,7 @@ export class dat_estadonoacceso extends AbstractEntity {
   constructor(
     public idcausanoacceso: number,
     public idcausa: number,
+    public idrespuesta?: number,
     public idpolprogsoc?: number,
     public idgeneral?: string
   ) {
@@ -679,7 +681,7 @@ export class FamiliaCubana extends Dexie {
       dat_motivonoatencion:
         "++idmotivonoatencion, idmotivo, idcodigohogar, idmiembrohogar, idgeneral",
       dat_miembrohogar:
-        "++idmiembrohogar, pnombre, snombre, papellido, sapellido, cidentidad, edad, idcolorpiel, dirscan, fotocarne, idsexo, idparentesco, idorientacionsex, idnivelescolar, idgradovencido, registroconsum, idpamunicipionac, datosmoviles, estaembarazada, lactando, madremenor19, redesapoyo, certificado, idcodigohogar, idgeneral",
+        "++idmiembrohogar, pnombre, snombre, papellido, sapellido, cidentidad, edad, idcolorpiel, dirscan, fotocarne, idsexo, idparentesco, idorientacionsex, idnivelescolar, idnivelescolargrado, idgradovencido, registroconsum, idpamunicipionac, datosmoviles, estaembarazada, lactando, madremenor19, redesapoyo, certificado, idcodigohogar, idgeneral",
       dat_miembrogradoautonomia:
         "++idmiembrogradoautonomia, idautonomia, idcodigohogar, idmiembrohogar, idgeneral",
       dat_tiposayuda:
@@ -703,7 +705,7 @@ export class FamiliaCubana extends Dexie {
         dat_situacnnaj:
         "++idsituacnnaj, idsituacioneduc, idcodigohogar, idmiembrohogar,idcuidadoprimerainf,idcuidadohogar,idsne,idetp, idgeneral",
       dat_nnaocupacion:
-        "++idnnaocupacion, idtipoactividad, idcanthoras, idhorario, autorizadomtss, idsituacnnaj, idgeneral",      
+        "++idnnaocupacion,idmiembrohogar, idtipoactividad, idcanthoras, idhorario, autorizadomtss, idsituacnnaj, idgeneral",      
       dat_miebrobeneficioprogalim:
         "++idmiebrobeneficioprogalim, idbeneficioprog, idcodigohogar, idmiembrohogar, idgeneral",
       dat_miembrosituacionsocial:
@@ -712,7 +714,8 @@ export class FamiliaCubana extends Dexie {
         "++idhogarestrategia, idestrategia, dias, idcodigohogar, idgeneral",
       dat_miembropogramas:
         "++idmiembroprograma, idprograma, idcodigohogar, idmiembrohogar, idgeneral",
-      dat_nvinculacionmiembro: "++idnvinculacion",
+      dat_nvinculacionmiembro: 
+      "++idnvinculacionmiembro,tipo,idcausa,idmotivocuida,idmotivodecision,idremuneraciones,idcodigohogar,idmiembrohogar,idmiembroocupacion,idgeneral",
       nom_tipoconcepto:
         "++idtipoconcepto, denominacion, descripcion, fhasta, idtipo",
       dat_atributo: "++idatributo, denomicacion, tipo, idtipoconcepto",
@@ -724,6 +727,8 @@ export class FamiliaCubana extends Dexie {
         "++idrelacion, fechafin, idestructura, idconceptorelacionado, idconceptopadre, idconceptopadrerel, idtipoconcepto",
       dat_manejosdesechos:
         "++idmanejodesechos, idtipomanejos, idcodigohogar, idgeneral",
+        dat_estadonoacceso:
+        " ++idcausanoacceso,idcausa,idrespuesta,idpolprogsoc,idgeneral",
     });
   }
 }

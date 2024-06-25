@@ -27,8 +27,8 @@ function LocalesVivienda() {
   const [id, setid] = useState<any>(null);
   const navegar = useNavigate();
 
-  const siguiente = () => navegar("/servicios-vivienda");
-  const anterior = () => navegar("/afectaciones");
+  const siguiente = () => navegar("/servicios-equipamientos/servicios");
+  const anterior = () => navegar("/servicios-equipamientos/afectaciones");
   return (
     <>
       <Meta title="Controles" />

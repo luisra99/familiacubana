@@ -4,7 +4,10 @@ import Meta from "@/_pwa-framework/components/Meta";
 import useModalState from "@/_pwa-framework/hooks/form/use-form-manager";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { obtenerMiembrosSelect } from "@/app/user-interfaces/forms/models/controllers.miembrohogar";
+import {
+  obtenerMiembros,
+  obtenerMiembrosSelect,
+} from "@/app/user-interfaces/forms/models/controllers.miembrohogar";
 import {
   crear,
   modificar,
@@ -21,10 +24,52 @@ import NotificationProvider from "@/_pwa-framework/sections/Notifications/provid
 function Autonomía_y_Necesidades_Especiales() {
   const { modalActions } = useModalState();
   const [id, setid] = useState<any>(null);
+  const idhogar = getHogar() ?? 0;
+  const [idmiembrohogar, setIdMiembroHogar] = useState<any>(0);
+  const [miembros, setMiembros] = useState<any>([]);
   const [respuestaMotivos, setConfiguracionRespuestaMotivos] = useState({});
   const navegar = useNavigate();
 
-  const miembros = obtenerMiembrosSelect();
+  async function unionNomenclador(arr: any) {
+    console.log("array", arr);
+    const join = await Promise.all(
+      arr.map(async (obj: any) => {
+        const ocupacion = await datico.nom_concepto.get(
+          parseInt(obj?.idatendido[0])
+        );
+
+        return {
+          ...obj,
+          ocupacion: ocupacion?.denominacion,
+        };
+      })
+    );
+
+    return join;
+  }
+
+  async function obtenerDatos(idmiembro: any) {
+    console.log("miembroid", idmiembro);
+    const data = await datico.dat_miembroencuesta
+      .where({ idmiembrohogar: idmiembro })
+      .toArray();
+    const result = await unionNomenclador(data);
+    console.log("ObtenerDatos", result);
+    return result;
+  }
+
+  async function onChangeMiembro(id: any) {
+    const datos = await obtenerDatos(id);
+    console.log("first", datos);
+    if (datos) {
+      //setOcupaciones(datos);
+    }
+  }
+
+  useLiveQuery(async () => {
+    const data = await obtenerMiembros();
+    setMiembros(data);
+  });
 
   const motivosNoAtencionMedica = useLiveQuery(async () => {
     const prueba = await (datico as any)["nom_concepto"]
@@ -70,6 +115,8 @@ function Autonomía_y_Necesidades_Especiales() {
             name: "problemasalud",
             gridValues: { xs: 12, lg: 12, md: 6, sm: 12, xl: 6 },
             options: respuestasTipoUsoServiciosDeSalud,
+            onChange: (value, ref) =>
+              ref.setFieldValue("problemasalud", [], true),
           },
           {
             type: "select",
@@ -77,6 +124,11 @@ function Autonomía_y_Necesidades_Especiales() {
             label: "Miembro del hogar",
             gridValues: { xs: 6, lg: 6, md: 6, sm: 6, xl: 12 },
             options: miembros,
+            onChange: (e: any, ref) => {
+              setIdMiembroHogar(`${e.target.value}`);
+              ref.setFieldValue("atendido", [], true);
+              onChangeMiembro(`${e.target.value}`);
+            },
             disabled: (values) =>
               values.problemasalud == "" ||
               values.problemasalud == "9833" ||
@@ -88,6 +140,9 @@ function Autonomía_y_Necesidades_Especiales() {
             label: "¿Fue atendido?",
             name: "atendido",
             url: "9831",
+            // onChange: (e, refs) => {
+            //   onChangeMiembro(idmiembrohogar);
+            // },
             disabled: (values) =>
               values.problemasalud == "" ||
               values.problemasalud == "9833" ||
@@ -189,13 +244,15 @@ function Autonomía_y_Necesidades_Especiales() {
             });
           else
             crear("dat_miembroencuesta", {
-              values,
+              ...values,
+              idmiembrohogar: values.idmiembrohogar[0],
               idcodigohogar: getHogar(),
             }).then(() =>
               notificar({
                 type: "success",
                 title: "Adicionar",
-                content: "Información guardada correctamente",
+                content:
+                  "Se han adicionado los datos de servicio de salud a la persona satisfactoriamente",
               })
             );
           {
@@ -207,7 +264,8 @@ function Autonomía_y_Necesidades_Especiales() {
                   notificar({
                     type: "success",
                     title: "Adicionar",
-                    content: "Información guardada correctamente",
+                    content:
+                      "Se han adicionado los datos de servicio de salud a la persona satisfactoriamente",
                   })
                 )
               );

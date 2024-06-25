@@ -14,6 +14,7 @@ import {
   obtenerDatosPorLlave,
 } from "@/app/user-interfaces/forms/models/controllers";
 import { obtenerMiembrosSelect } from "@/app/user-interfaces/forms/models/controllers.miembrohogar";
+import NotificationProvider from "@/_pwa-framework/sections/Notifications/provider";
 
 //import {  } from "@/app/user-interfaces/controls/controls.config.eviel";
 
@@ -22,6 +23,7 @@ function ACCESO_A_PROGRAMAS_DE_PROTECCION_SOCIAL_Y_CUIDADOS() {
   const [id, setid] = useState<any>(null);
   const [configuracionBeneficios, setConfiguracionBeneficios] = useState({});
   const [configuracionEstado, setConfiguracionEstado] = useState({});
+  const notificar = NotificationProvider();
 
   const beneficios = useLiveQuery(async () => {
     const prueba = await (datico as any)["nom_concepto"]
@@ -199,7 +201,14 @@ function ACCESO_A_PROGRAMAS_DE_PROTECCION_SOCIAL_Y_CUIDADOS() {
                 values,
                 idpolprogsoc,
                 idcausa: values,
-              });
+              }).then(() =>
+                notificar({
+                  type: "success",
+                  title: "Adicionar",
+                  content:
+                    "Se han adicionadolos datos de acceso a programas de proteccion social y cuidados a la persona satisfactoriamente",
+                })
+              );
             }
           }}
           getByIdFunction={(id) =>

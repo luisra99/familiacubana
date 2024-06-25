@@ -3,6 +3,7 @@ import {
   ICommonProps,
   ICustomIcons,
   IInputProps,
+  IOnChangeFunction,
   IOptionsProps,
   IRadios,
   ITimeControls,
@@ -119,6 +120,7 @@ export type IRadio = {
   validations?: IRadioValidations;
   url?: string;
   defaultValue?: string;
+  onChangeCallback?: IOnChangeFunction
 } & ICommonProps;
 
 export type ICheck = {

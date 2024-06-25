@@ -323,7 +323,7 @@ function Ingresos() {
     } else {
       return (
         <Typography mx={2} my={2}>
-          <b>No hay miembros seleccionados...</b>
+          <b>No hay miembros para el hogar seleccionado...</b>
         </Typography>
       );
     }

@@ -26,7 +26,43 @@ export default function Header({ onOpenNav }: any) {
     <>
       {!lgUp && (
         <IconButton onClick={onOpenNav} sx={{ mr: 1 }}>
-          <svg></svg>
+          <svg
+            aria-hidden="true"
+            role="img"
+            className="component-iconify MuiBox-root css-1t9pz9x iconify iconify--eva"
+            width="1em"
+            height="1em"
+            viewBox="0 0 24 24"
+          >
+            <circle cx="4" cy="12" r="1" fill="currentColor"></circle>
+            <rect
+              width="14"
+              height="2"
+              x="7"
+              y="11"
+              fill="currentColor"
+              rx=".94"
+              ry=".94"
+            ></rect>
+            <rect
+              width="18"
+              height="2"
+              x="3"
+              y="16"
+              fill="currentColor"
+              rx=".94"
+              ry=".94"
+            ></rect>
+            <rect
+              width="18"
+              height="2"
+              x="3"
+              y="6"
+              fill="currentColor"
+              rx=".94"
+              ry=".94"
+            ></rect>
+          </svg>
         </IconButton>
       )}
 

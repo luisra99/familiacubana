@@ -3,7 +3,7 @@ import { applyFilter, emptyRows, getComparator } from "../utils";
 
 import Card from "@mui/material/Card";
 import Container from "@mui/material/Container";
-import { FC, useEffect } from "react";
+import { FC } from "react";
 import Scrollbar from "../scrollbar";
 import Stack from "@mui/material/Stack";
 import type { SvgIconProps } from "@mui/material/SvgIcon";
@@ -34,7 +34,7 @@ export function TableView({
   defaultValues,
   name: formName,
   setFieldValue,
-  useCheckBox
+  useCheckBox,
 }: {
   headers: {
     name: string;
@@ -64,13 +64,15 @@ export function TableView({
 
   const [order, setOrder] = useState("asc");
 
-  const [selected, setSelected] = useState<any[]>(defaultValues ?? []);
+  const [selected, setSelected] = useState<any[]>(
+    Array.isArray(defaultValues) ? defaultValues : []
+  );
 
   const [orderBy, setOrderBy] = useState("name");
 
   const [filterName, setFilterName] = useState("");
 
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const handleSort = (event: any, id: any) => {
     const isAsc = orderBy === id && order === "asc";

@@ -42,7 +42,7 @@ function Configuracion() {
         </Grid>
       </Grid>
 
-      <Grid container spacing={2} my={2} mx={2}>
+      {/* <Grid container spacing={2} my={2} mx={2}>
         <Grid item xs={2}>
           <Typography variant="h6">Documentos</Typography>
         </Grid>
@@ -67,7 +67,7 @@ function Configuracion() {
             Configurar
           </Button>
         </Grid>
-      </Grid>
+      </Grid> */}
     </>
   );
 }

@@ -18,12 +18,14 @@ export const BasicRadioFields = ({
   validations,
   formValue,
   initialValue,
+  onChangeCallback,
 }: any) => {
   const [dataSource] = useFormDataSource();
   const [items, setItems] = useState(dataSource?.[name] ?? radios);
   const { setFieldValue, values } = useFormikContext();
 
   const handleChange = useCallback((event: any) => {
+    onChangeCallback?.(event);
     setFieldValue(name, event.target.value, !!validations);
   }, []);
 

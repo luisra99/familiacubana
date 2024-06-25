@@ -13,11 +13,13 @@ export const PresentaDiscapacidad: IGenericControls = {
   type: "select",
   label: "¿Presenta alguna discapacidad?",
   name: "idmiembrodiscapacidad",
-  gridValues: { xs: 3 },
+  gridValues: { xs: 12 },
   options: [
-    { idconcepto: "opt1", denominacion: "Sí" },
-    { idconcepto: "opt2", denominacion: "No" },
+    { idconcepto: "1", denominacion: "Sí" },
+    { idconcepto: "2", denominacion: "No" },
   ],
+   disabled: (values) => values.idmiembro == "", 
+   
 };
 
 export const Discapacidad: IGenericControls = {
@@ -26,6 +28,8 @@ export const Discapacidad: IGenericControls = {
   name: "iddiscapacidad",
   url: "9376",
   multiple: "check",
+  gridValues: { xs: 12 },
+  disabled: (values) => values.idmiembro == "" || values.idmiembrodiscapacidad != "1" ,
 };
 
 //Nomenclador incorrecto
@@ -677,6 +681,7 @@ export const Aditamientos: IGenericControls = {
   label: "Aditamientos",
   name: "idaditamento",
   url: "9383",
+  gridValues: { xs: 12, sm: 6, lg: 6, md: 6, xl: 6 },
 };
 
 export const Disponibilad: IGenericControls = {
@@ -684,6 +689,7 @@ export const Disponibilad: IGenericControls = {
   label: "Disponibilad",
   name: "disponeadit",
   url: "9395",
+  gridValues: { xs: 12 , sm: 6, lg: 6, md: 6, xl: 6 },
 };
 
 export const Actividad: IGenericControls = {
@@ -712,7 +718,7 @@ export const horarios: IGenericControls = {
 };
 export const autorizacion: IGenericControls = {
   type: "select",
-  label: "AutorizaciÃ³n del MTSS",
+  label: "Autorización del MTSS",
   name: "autorizadomtss",
   gridValues: { xs: 12, sm: 6, lg: 6, md: 6, xl: 6 },
   options: [

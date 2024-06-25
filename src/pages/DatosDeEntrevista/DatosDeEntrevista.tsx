@@ -41,7 +41,7 @@ function DatosDeEntrevista() {
           obtenerDatosPorLlave("dat_caracterizacion", "idcaracterizacion", id)
         }
         prevButton={{ text: "Anterior", action: anterior }}
-        nextButton={{ text: "Finalizar caracterización", action: siguiente }}
+        nextButton={{ text: "Finalizar caracterización", action: () => navegar("/datos-hogar") }}
       />
     </>
   );

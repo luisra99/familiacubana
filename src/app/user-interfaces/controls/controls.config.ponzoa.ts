@@ -785,15 +785,13 @@ export const enfermedadesCronicas: IGenericControls = {
   type: "radio",
   label: "¿Padece enfermedades crónicas?",
   name: "idmiembroenfcronica",
-  //defaultValue:'1',
-
- 
+  defaultValue: "2",
   radios: [
-    {idconcepto: "1", denominacion:"Si"},
-    {idconcepto: "2", denominacion:"No"},
+    { idconcepto: "1", denominacion: "Si" },
+    { idconcepto: "2", denominacion: "No" },
   ],
-  disabled: (values) => values.idmiembrohogar == "",
- 
+  disabled: (values) => values.idmiembro == 0,
+
   direction: "row",
   labelPlacement: "end",
   gridValues: { md: 12, lg: 12, sm: 12, xl: 12, xs: 12 },
@@ -801,45 +799,31 @@ export const enfermedadesCronicas: IGenericControls = {
 
 // dat_miembrobeneficio / dat_miembroenfconicas //
 
-//Falta Nomenclador
 export const patalogia: IGenericControls = {
   type: "select",
   name: "idtipoenfermedad",
   label: "Patalogía",
- url:"9793",
-  // options: [
-  //   { idconcepto: "opt1", denominacion: "Trastorno del ciclo de urea" },
-  //   { idconcepto: "opt2", denominacion: "Aminoacidopatias" },
-  //   { idconcepto: "opt3", denominacion: "Fibrosis quística" },
-  //   { idconcepto: "opt4", denominacion: "Enfermedad de orina arece" },
-  //   { idconcepto: "opt5", denominacion: "Galactosemia" },
-  //   { idconcepto: "opt6", denominacion: "Déficit de lactosa" },
-  //   { idconcepto: "opt7", denominacion: "Glucogénosis" },
-  //   { idconcepto: "opt8", denominacion: "Déficit de biotinidasa" },
-  //   { idconcepto: "opt9", denominacion: "Hipotiroidismo congénito" },
-  // ],
+  url: "9793",
   gridValues: { md: 4, lg: 4, sm: 4, xl: 4, xs: 4 },
 };
 
 export const accedeMedicamentos: IGenericControls = {
   type: "select",
-  name: "idtipoviaacceso",
+  name: "accede",
   label: "Accede a medicamentos",
   options: [
-    { idconcepto: "opt1", denominacion: "Si" },
-    { idconcepto: "opt2", denominacion: "No" },
+    { idconcepto: "1", denominacion: "Si" },
+    { idconcepto: "2", denominacion: "No" },
   ],
   gridValues: { md: 4, lg: 4, sm: 4, xl: 4, xs: 4 },
 };
-
 export const viaDeAcceso: IGenericControls = {
   type: "select",
-  name: "  idcodigohogar",
+  name: "idtipoviaacceso",
   label: "Vía de acceso",
   url: "9416",
   multiple: "check",
   gridValues: { md: 4, lg: 4, sm: 4, xl: 4, xs: 4 },
- 
 };
 
 //Formulario12

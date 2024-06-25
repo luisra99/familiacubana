@@ -20,8 +20,8 @@ function Seguridad_Alimentaria() {
   const [configuracionAlimentos, setConfiguracionAlimentos] = useState({});
   const [configuracionEstrategias, setConfiguracionEstrategias] = useState({});
   const navegar = useNavigate();
-  const siguiente = () => navegar("/Otros_Datos");
-  const anterior = () => navegar("/gastos");
+  const siguiente = () => navegar("/otros");
+  const anterior = () => navegar("/estrategia/gastos");
   const data = useLiveQuery(async () => {
     const prueba = await (datico as any)["nom_concepto"]
       .where("idpadre")

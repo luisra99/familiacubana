@@ -30,7 +30,17 @@ function Miembros() {
   const idhogar = getHogar() ?? 0;
   // hooks
   const [id, setid] = useState<any>(null);
-  const [escolaridad, setEscolaridad] = useState<any>(null);
+  const [escolaridad, setEscolaridad] = useState<any>([]);
+  const [_nivelescolarninguno, setNivelEscolarNinguno] = useState<any>([]);
+  const [_nivelescolarprimaria, setNivelEscolarPrimaria] = useState<any>([]);
+  const [_nivelescolarsecundaria, setNivelEscolarSecundaria] = useState<any>([]);
+  const [_nivelescolarobrero, setNivelEscolarObrero] = useState<any>([]);
+  const [_nivelescolarpreuniversitario, setNivelEscolarPreuniversitario] = useState<any>([]);
+  const [_nivelescolarpedagogia, setNivelEscolarPedagogia] = useState<any>([]);
+  const [_nivelescolartecnicomedio, setNivelEscolarTecnicomedio] = useState<any>([]);
+  const [_nivelescolartecnicosuperior, setNivelEscolarTecnicosuperior] = useState<any>([]);
+  const [_nivelescolaruniversitario, setNivelEscolarUniversitario] = useState<any>([]);
+
   const [miembros, setMiembros] = useState<any>([]);
   const [titleForm, setTitleForm] = useState<any>("");
   // form
@@ -90,71 +100,147 @@ function Miembros() {
     label: "¿Cuál es el nivel de estudio más alto que terminó?",
     name: "idnivelescolar",
     radios: escolaridad?.escolaridad,
-    gridValues: { xl: 6, lg: 6, md: 6, sm: 12, xs: 12 },
+    gridValues: { xl: 5, lg: 5, md: 5, sm: 12, xs: 12 },
+    onChangeCallback: (e) => {
+      const { value } = e.target;
+      // console.log(value);
+    },
+  };
+  const nivelescolarninguno: IGenericControls = {
+    type: "radio",
+    label: "¿Cuál es el grado de estudio más alto que terminó?",
+    name: "idnivelescolargrado",
+    radios: _nivelescolarninguno,
+    gridValues: { xl: 5, lg: 5, md: 5, sm: 12, xs: 12 },
+    disabled: (values) => values.idnivelescolar !== "9696",
+  };
+  const nivelescolarprimaria: IGenericControls = {
+    type: "radio",
+    label: "¿Cuál es el grado de estudio más alto que terminó?",
+    name: "idnivelescolargrado",
+    radios: _nivelescolarprimaria,
+    gridValues: { xl: 5, lg: 5, md: 5, sm: 12, xs: 12 },
+    disabled: (values) => values.idnivelescolar !== "9697",
+  };
+  const nivelescolarsecundaria: IGenericControls = {
+    type: "radio",
+    label: "¿Cuál es el grado de estudio más alto que terminó?",
+    name: "idnivelescolargrado",
+    radios: _nivelescolarsecundaria,
+    gridValues: { xl: 5, lg: 5, md: 5, sm: 12, xs: 12 },
+    disabled: (values) => values.idnivelescolar !== "9698",
+  };
+  const nivelescolarobrero: IGenericControls = {
+    type: "radio",
+    label: "¿Cuál es el grado de estudio más alto que terminó?",
+    name: "idnivelescolargrado",
+    radios: _nivelescolarobrero,
+    gridValues: { xl: 5, lg: 5, md: 5, sm: 12, xs: 12 },
+    disabled: (values) => values.idnivelescolar !== "9699",
+  };
+  const nivelescolarpreuniversitario: IGenericControls = {
+    type: "radio",
+    label: "¿Cuál es el grado de estudio más alto que terminó?",
+    name: "idnivelescolargrado",
+    radios: _nivelescolarpreuniversitario,
+    gridValues: { xl: 5, lg: 5, md: 5, sm: 12, xs: 12 },
+    disabled: (values) => values.idnivelescolar !== "9700",
+  };
+  const nivelescolarpedagogia: IGenericControls = {
+    type: "radio",
+    label: "¿Cuál es el grado de estudio más alto que terminó?",
+    name: "idnivelescolargrado",
+    radios: _nivelescolarpedagogia,
+    gridValues: { xl: 5, lg: 5, md: 5, sm: 12, xs: 12 },
+    disabled: (values) => values.idnivelescolar !== "9701",
+  };
+  const nivelescolartecnicomedio: IGenericControls = {
+    type: "radio",
+    label: "¿Cuál es el grado de estudio más alto que terminó?",
+    name: "idnivelescolargrado",
+    radios: _nivelescolartecnicomedio,
+    gridValues: { xl: 5, lg: 5, md: 5, sm: 12, xs: 12 },
+    disabled: (values) => values.idnivelescolar !== "9702",
+  };
+  const nivelescolartecnicosuperior: IGenericControls = {
+    type: "radio",
+    label: "¿Cuál es el grado de estudio más alto que terminó?",
+    name: "idnivelescolargrado",
+    radios: _nivelescolartecnicosuperior,
+    gridValues: { xl: 5, lg: 5, md: 5, sm: 12, xs: 12 },
+    disabled: (values) => values.idnivelescolar !== "9704",
+  };
+  const nivelescolaruniversitario: IGenericControls = {
+    type: "radio",
+    label: "¿Cuál es el grado de estudio más alto que terminó?",
+    name: "idnivelescolargrado",
+    radios: _nivelescolaruniversitario,
+    gridValues: { xl: 5, lg: 5, md: 5, sm: 12, xs: 12 },
+    disabled: (values) => values.idnivelescolar !== "9705",
   };
   const primaria: IGenericControls = {
     type: "radio",
     label: "Grado",
     name: "idgradovencido",
     radios: escolaridad?.primaria,
-    disabled: (values) => values.idnivelescolar !== "9697",
-    gridValues: { xl: 6, lg: 6, md: 6, sm: 12, xs: 12 },
+    disabled: (values) => values.idnivelescolargrado !== "9697",
+    gridValues: { xl: 2, lg: 2, md: 2, sm: 12, xs: 12 },
   };
   const secundaria: IGenericControls = {
     type: "radio",
     label: "Grado",
     name: "idgradovencido",
     radios: escolaridad?.secundaria,
-    disabled: (values) => values.idnivelescolar !== "9698",
-    gridValues: { xl: 6, lg: 6, md: 6, sm: 12, xs: 12 },
+    disabled: (values) => values.idnivelescolargrado !== "9698",
+    gridValues: { xl: 2, lg: 2, md: 2, sm: 12, xs: 12 },
   };
   const obrero: IGenericControls = {
     type: "radio",
     label: "Grado",
     name: "idgradovencido",
     radios: escolaridad?.obrero,
-    disabled: (values) => values.idnivelescolar !== "9699",
-    gridValues: { xl: 6, lg: 6, md: 6, sm: 12, xs: 12 },
+    disabled: (values) => values.idnivelescolargrado !== "9699",
+    gridValues: { xl: 2, lg: 2, md: 2, sm: 12, xs: 12 },
   };
   const preuniversitario: IGenericControls = {
     type: "radio",
     label: "Grado",
     name: "idgradovencido",
     radios: escolaridad?.preuniversitario,
-    disabled: (values) => values.idnivelescolar !== "9700",
-    gridValues: { xl: 6, lg: 6, md: 6, sm: 12, xs: 12 },
+    disabled: (values) => values.idnivelescolargrado !== "9700",
+    gridValues: { xl: 2, lg: 2, md: 2, sm: 12, xs: 12 },
   };
   const pedagogia: IGenericControls = {
     type: "radio",
     label: "Grado",
     name: "idgradovencido",
     radios: escolaridad?.pedagogia,
-    disabled: (values) => values.idnivelescolar !== "9701",
-    gridValues: { xl: 6, lg: 6, md: 6, sm: 12, xs: 12 },
+    disabled: (values) => values.idnivelescolargrado !== "9701",
+    gridValues: { xl: 2, lg: 2, md: 2, sm: 12, xs: 12 },
   };
   const tecnicomedio: IGenericControls = {
     type: "radio",
     label: "Grado",
     name: "idgradovencido",
     radios: escolaridad?.tecnicomedio,
-    disabled: (values) => values.idnivelescolar !== "9702",
-    gridValues: { xl: 6, lg: 6, md: 6, sm: 12, xs: 12 },
+    disabled: (values) => values.idnivelescolargrado !== "9702",
+    gridValues: { xl: 2, lg: 2, md: 2, sm: 12, xs: 12 },
   };
   const tecnicosuperior: IGenericControls = {
     type: "radio",
     label: "Grado",
     name: "idgradovencido",
     radios: escolaridad?.tecnicosuperior,
-    disabled: (values) => values.idnivelescolar !== "9704",
-    gridValues: { xl: 6, lg: 6, md: 6, sm: 12, xs: 12 },
+    disabled: (values) => values.idnivelescolargrado !== "9704",
+    gridValues: { xl: 2, lg: 2, md: 2, sm: 12, xs: 12 },
   };
   const universitario: IGenericControls = {
     type: "radio",
     label: "Grado",
     name: "idgradovencido",
     radios: escolaridad?.universitario,
-    disabled: (values) => values.idnivelescolar !== "9705",
-    gridValues: { xl: 6, lg: 6, md: 6, sm: 12, xs: 12 },
+    disabled: (values) => values.idnivelescolargrado !== "9705",
+    gridValues: { xl: 2, lg: 2, md: 2, sm: 12, xs: 12 },
   };
   const idparentesco: IGenericControls = {
     type: "select",
@@ -276,6 +362,15 @@ function Miembros() {
       gridValues: { xs: 12, lg: 12, md: 12, sm: 12, xl: 12 },
     },
     idnivelescolar,
+    nivelescolarninguno,
+    nivelescolarprimaria,
+    nivelescolarsecundaria,
+    nivelescolarobrero,
+    nivelescolarpreuniversitario,
+    nivelescolarpedagogia,
+    nivelescolartecnicomedio,
+    nivelescolartecnicosuperior,
+    nivelescolaruniversitario,
     primaria,
     secundaria,
     obrero,
@@ -372,6 +467,48 @@ function Miembros() {
     data["tecnicosuperior"] = await nomenclador("9704");
     data["universitario"] = await nomenclador("9705");
     setEscolaridad(data);
+    // console.log(data);
+    const nivelescolarninguno = data.escolaridad.filter((obj: any) => {
+      return obj.idconcepto == 9697;
+    });
+    const nivelescolarprimaria = data.escolaridad.filter((obj: any) => {
+      return obj.idconcepto == 9698 || obj.idconcepto == 9699;
+    });
+    const nivelescolarsecundaria = data.escolaridad.filter((obj: any) => {
+      return (
+        obj.idconcepto == 9699 ||
+        obj.idconcepto == 9700 ||
+        obj.idconcepto == 9701 ||
+        obj.idconcepto == 9702
+      );
+    });
+    const nivelescolarobrero = data.escolaridad.filter((obj: any) => {
+      return obj.idconcepto == 9702 || obj.idconcepto == 9704;
+    });
+    const nivelescolarpreuniversitario = data.escolaridad.filter((obj: any) => {
+      return obj.idconcepto == 9705;
+    });
+    const nivelescolarpedagogia = data.escolaridad.filter((obj: any) => {
+      return obj.idconcepto == 9705;
+    });
+    const nivelescolartecnicomedio = data.escolaridad.filter((obj: any) => {
+      return obj.idconcepto == 9705;
+    });
+    const nivelescolartecnicosuperior = data.escolaridad.filter((obj: any) => {
+      return obj.idconcepto == 9705;
+    });
+    const nivelescolaruniversitario = data.escolaridad.filter((obj: any) => {
+      return obj.idconcepto == 9705;
+    });
+    setNivelEscolarNinguno(nivelescolarninguno);
+    setNivelEscolarPrimaria(nivelescolarprimaria);
+    setNivelEscolarSecundaria(nivelescolarsecundaria);
+    setNivelEscolarObrero(nivelescolarobrero);
+    setNivelEscolarPreuniversitario(nivelescolarpreuniversitario);
+    setNivelEscolarPedagogia(nivelescolarpedagogia);
+    setNivelEscolarTecnicomedio(nivelescolartecnicomedio);
+    setNivelEscolarTecnicosuperior(nivelescolartecnicosuperior);
+    setNivelEscolarUniversitario(nivelescolaruniversitario);
     // miembros
     const miembros = await db.dat_miembrohogar
       .where({ idcodigohogar: idhogar })
@@ -383,7 +520,7 @@ function Miembros() {
         })
       );
     const unionMiembros = await unionNomenclador(miembros);
-    console.log(unionMiembros);
+    // console.log(unionMiembros);
     setMiembros(unionMiembros);
   });
 
@@ -505,7 +642,7 @@ function Miembros() {
               }
             );
           } else {
-            console.log(values);
+            // console.log(values);
             const _values = {
               ...values,
               idcodigohogar: idhogar,

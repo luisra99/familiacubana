@@ -58,9 +58,7 @@ export default function Hero() {
             color="text.secondary"
             sx={{ alignSelf: "center", width: { sm: "100%", md: "80%" } }}
           >
-            Descubre, infórmate y registrate en los distintos cursos que los
-            JovenClub de computación te brindan, ahora de una manera mas fácil y
-            desde la comodidad de tu hogar.
+            Descripción del uso de la aplicación.
           </Typography>
         </Stack>
       </Container>

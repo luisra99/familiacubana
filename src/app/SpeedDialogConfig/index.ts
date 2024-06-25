@@ -6,27 +6,33 @@ export const actions: ISpeedDialActions = [
   {
     icon: HelpCenter,
     name: "Ayuda",
-    action: () => console.log("Función del dial"),
+    action: () => {
+      window.open("/documentos/Manual de Usuario de prueba del Sistema de Caracterizacion de la Familia Cubana.pdf");
+    },
   },
   {
     icon: RemoveRedEye,
     name: "Observaciones",
-    action: () => console.log("Función del dial"),
+    action: () => console.log("Observaciones"),
   },
   {
     icon: FilePresent,
     name: `ICS_H`,
-    action: () => console.log("Función del dial"),
+    action: () => {
+      window.open("/documentos/Bases_D2_ICS_H.pdf");
+    },
   },
   {
     icon: FilePresent,
     name: "Guia",
-    action: () => console.log("Función del dial"),
+    action: () => {
+      window.open("/documentos/Bases_D3_Guia_ICS_H.pdf");
+    },
   },
   {
     icon: FilePresent,
     name: "Estado de la caracterización",
-    action: () => console.log("Función del dial"),
+    action: () => console.log("Estado de la caracterización"),
     modal: "estadoEntrevista",
   },
 ];

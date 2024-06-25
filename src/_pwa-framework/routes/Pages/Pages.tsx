@@ -96,14 +96,6 @@ function Pages() {
           path="landing"
           element={
             <AnonymousGuard>
-              <Box
-                display={"flex"}
-                width={"100%"}
-                height={"100%"}
-                className="backdrop-box"
-              >
-                <span style={{ margin: "auto" }} className={"loader"} />
-              </Box>
               <LandingPage />
             </AnonymousGuard>
           }

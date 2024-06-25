@@ -1,34 +1,14 @@
 /** Controlado de la vista hogar */
-import Dexie from "dexie";
 import { datico as db } from "./model";
 import { useLiveQuery } from "dexie-react-hooks";
 import { getHogar } from "@/app/hogarController/hogar.controller";
 
 export function obtenerMiembrosHogar(metadata: boolean = false) {
   const idhogar = getHogar();
-  return useLiveQuery(() => {
-    // return db.dat_miembrohogar.toArray();
+  return useLiveQuery(() => {    
     const data = db.dat_miembrohogar
       .where({ idcodigohogar: idhogar ?? 0 })
-      .toArray(async (arr) => {
-        if (metadata) {
-          const colorPielPromise = arr.map((obj: any) =>
-            obj.idcolorpiel.length
-              ? db.nom_concepto.get(parseInt(obj.idcolorpiel[0]))
-              : { denominacion: "" }
-          );
-          return Dexie.Promise.all([Dexie.Promise.all(colorPielPromise)]).then(
-            function (promises) {
-              arr.forEach(
-                (_obj, i) => (_obj.colorPiel = promises[0][i]?.denominacion)
-              );
-              return arr;
-            }
-          );
-        } else {
-          return arr;
-        }
-      });
+      .toArray();
     return data;
   });
 }

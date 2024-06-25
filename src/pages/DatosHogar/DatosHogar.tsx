@@ -265,6 +265,7 @@ function DatosHogar() {
                     action: (values) => {
                       const dat_hogar = {
                         idunidaddealojamiento: values.idunidaddealojamiento,
+                        idestado: 1,
                       };
                       crear("dat_hogar", dat_hogar).then(() =>
                         notificar({

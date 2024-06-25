@@ -25,8 +25,8 @@ function ServiciosVivienda() {
   const [id, setid] = useState<any>(null);
   const navegar = useNavigate();
 
-  const siguiente = () => navegar("/mobiliario");
-  const anterior = () => navegar("/locales");
+  const siguiente = () => navegar("/servicios-equipamientos/mobiliario");
+  const anterior = () => navegar("/servicios-equipamientos/locales");
   return (
     <>
       <Meta title="Controles" />

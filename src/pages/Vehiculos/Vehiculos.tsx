@@ -28,8 +28,8 @@ function Vehiculos() {
   });
   const navegar = useNavigate();
 
-  const siguiente = () => navegar("/gastos");
-  const anterior = () => navegar("/mobiliario");
+  const siguiente = () => navegar("/estrategia/gastos");
+  const anterior = () => navegar("/servicios-equipamientos/mobiliario");
   return (
     <>
       <Meta title="Controles" />

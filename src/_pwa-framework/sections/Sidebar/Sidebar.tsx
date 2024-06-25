@@ -157,7 +157,7 @@ export default function Nav({ openNav, onCloseNav }: any) {
         onDoubleClick={themeActions.toggle}
       />
       {renderAccount}
-      {selectedHome}
+      {/* {selectedHome} */}
       {drawerMenu()}
       <Box sx={{ flexGrow: 1 }} />
       {renderUpgrade}
