@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  familia_cubana:
+    image: "$CI_REGISTRY_IMAGE:$ENVIROMENT"
+    deploy:
+      replicas: $REPLICAS
+    ports:
+      - "8080"
+    volumes:
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    networks:
+      netapp:
+        aliases:
+          - "$MS_SLUG"
+networks:
+  netapp:
+    external: true
+volumes:
+  imagen_data:
+    external: true

@@ -1,0 +1,29 @@
+import Container from "@mui/material/Container";
+import Divider from "@mui/material/Divider";
+import Typography from "@mui/material/Typography";
+
+import {
+  CenteredFlexBox,
+  FullSizeCenteredFlexBox,
+} from "@/_pwa-framework/components/styled";
+
+function NotFound() {
+  return (
+    <Container sx={{ height: "100%" }}>
+      <FullSizeCenteredFlexBox flexDirection="column">
+        <CenteredFlexBox flexDirection="column">
+          <Typography sx={{ mt: 2 }} variant="h4" color="error">
+            404 Not Found
+          </Typography>
+          <Divider variant="middle" />
+          <Typography
+            variant="h4"
+            sx={{ color: (theme) => theme.palette.info.main }}
+          ></Typography>
+        </CenteredFlexBox>
+      </FullSizeCenteredFlexBox>
+    </Container>
+  );
+}
+
+export default NotFound;
