@@ -12,14 +12,14 @@ function Situacion_Social() {
     <>
       <Meta title="Controles" />
       <Button onClick={() => modalActions.open("test")}>
-        Situacion Social
+        Situación Social
       </Button>{" "}
       <Button onClick={() => setid(1)}>Test editar</Button>
       <Button onClick={() => setid(null)}>Limpiar ID</Button>
       <GenericForm
         name="test"
         controls={FormularioIUSituacion}
-        title="Situacion Social"
+        title="Situación Social"
         description=" "
         endpointPath="persona"
         showSpecificDescription={false}

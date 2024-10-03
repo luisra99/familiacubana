@@ -1,11 +1,9 @@
-import { useCallback, useMemo } from "react";
+import { Actions, Notification } from "./types";
 import { atom, useRecoilState } from "recoil";
+import { useCallback, useMemo } from "react";
 
 import type { SnackbarKey } from "notistack";
-
 import { notifications as notificationsDefaults } from "../../config";
-
-import { Actions, Notification } from "./types";
 
 const notificationsState = atom<Notification[]>({
   key: "notificationsState",
@@ -18,7 +16,7 @@ function useNotifications(): [Notification[], Actions] {
   const push = useCallback(
     (notification: Partial<Notification>) => {
       // TODO (Suren): use uuid
-      const id = Math.random().toString();
+
       setNotifications((notifications): Notification[] => [
         // TODO (Suren): use immer
         ...notifications,
@@ -29,12 +27,11 @@ function useNotifications(): [Notification[], Actions] {
           options: {
             ...notificationsDefaults.options,
             ...notification.options,
-            key: id,
           },
         },
       ]);
 
-      return id;
+      return notification?.options?.key ?? "";
     },
     [setNotifications]
   );

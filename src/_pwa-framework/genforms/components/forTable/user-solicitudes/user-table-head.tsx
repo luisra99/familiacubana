@@ -32,7 +32,6 @@ export default function UserTableHead({
             onChange={onSelectAllClick}
           />
         </TableCell>
-
         {headLabel.map((headCell: any) => (
           <TableCell
             key={headCell.id}

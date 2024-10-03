@@ -18,7 +18,6 @@ export default function validarCarnetIdentidad(cadena: string) {
     case 6:
       break;
   }
-  console.log(Date.now(), cadena);
   // Verificar si la cadena cumple con el formato general
   if (cadena.length > 6 && !regexGeneral.test(cadena)) {
     return false;
@@ -28,7 +27,6 @@ export default function validarCarnetIdentidad(cadena: string) {
   const año = parseInt(cadena.substring(0, 2), 10);
   const subs_mes = cadena.substring(2, 4);
   const mes = parseInt(subs_mes, 10);
-  console.log(Date.now(), mes);
   const dia = parseInt(cadena.substring(4, 6), 10);
 
   // Verificar si el día es válido para el mes dado

@@ -1,29 +1,26 @@
-import { getControl } from "../../functions/render.controls";
 import { IGenericControls } from "../../types/controls/controls.types";
+import { getControl } from "../../functions/render.controls";
 
 export const GForm = ({
   controlArray,
-  errors,
-  initialFormData,
-  values,
   dataSource,
+  editMode,
+  initialValue,
 }: {
   controlArray: IGenericControls[];
-  errors: any;
-  initialFormData: any;
   dataSource: any;
-  values: any;
+  editMode: boolean;
+  initialValue: any;
 }) =>
-  controlArray.map((control: IGenericControls) => {
+  controlArray.map((control: IGenericControls, index: number) => {
     const Component = getControl(control.type);
     return (
       <Component
         {...control}
-        key={control.name}
-        initialValue={initialFormData[control.name]}
-        formValue={values[control.name]}
-        error={errors[control.name]}
+        key={`${control.name}-${index}`}
         options={control.options ?? dataSource[control.name]}
+        editMode={editMode}
+        initialValue={initialValue[control.name]}
       />
     );
   });

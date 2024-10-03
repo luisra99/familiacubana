@@ -5,13 +5,13 @@ import {
   ListItemText,
 } from "@mui/material";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
+import { atom, useRecoilState } from "recoil";
 
 import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Drawer from "@mui/material/Drawer";
-import Logo from "@/_pwa-framework/components/logo/logo";
 import { NAV } from "@/_pwa-framework/layouts/dashboard/config-layout";
 import { RouterLink } from "@/_pwa-framework/routes/components";
 import { Routes } from "@/_pwa-framework/routes/types";
@@ -20,7 +20,6 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { alpha } from "@mui/material/styles";
 import { handleDownload } from "@/app/user-interfaces/forms/models/export";
-import { mode } from "@/_pwa-framework/config";
 import routes from "@/_pwa-framework/routes";
 import { usePathname } from "@/_pwa-framework/routes/hooks";
 import { useResponsive } from "@/_pwa-framework/hooks/use-responsive";
@@ -37,19 +36,28 @@ export default function Nav({ openNav, onCloseNav }: any) {
   const handleClick = (param?: string) => {
     param && setOpen((prevState: any) => ({ [param]: !prevState[param] }));
   };
-  const [home, setHome] = useState<any>();
-  const upLg = useResponsive("up", "lg");
-  useEffect(
-    () =>
-      addEventListener("storage", (event) => {
-        const address = localStorage.getItem("hogarActualDireccion");
-        const code = localStorage.getItem("hogarActual");
-        const boss = localStorage.getItem("hogarActualJefe");
 
-        setHome({ address, code, boss });
-      }),
-    []
+  const upLg = useResponsive("up", "lg");
+
+  const [hogarActualDireccion, setHogarActualDireccion] = useRecoilState(
+    atomHogarActualDireccion
   );
+  const [hogarActualJefe, setHogarActualJefe] =
+    useRecoilState(atomHogarActualJefe);
+
+  useEffect(() => {
+    const direccion = localStorage.getItem("hogarActualDireccion");
+    // const jefe =  localStorage.getItem("hogarActualJefe")
+    const jefe = localStorage
+      .getItem("hogarActualJefe")
+      ?.toLowerCase()
+      .includes("object")
+      ? ""
+      : localStorage.getItem("hogarActualJefe");
+    setHogarActualJefe(jefe ?? "");
+    setHogarActualDireccion(direccion ?? "");
+  });
+
   useEffect(() => {
     if (openNav) {
       onCloseNav();
@@ -60,7 +68,7 @@ export default function Nav({ openNav, onCloseNav }: any) {
   const renderAccount = (
     <Box
       sx={{
-        my: 2,
+        mt: 1,
         mx: 2.5,
         py: 2,
         px: 2.5,
@@ -91,56 +99,63 @@ export default function Nav({ openNav, onCloseNav }: any) {
         ))}
     </Stack>
   );
+
   const renderUpgrade = (
-    <Box sx={{ px: 2.5, pb: 3, mt: 10 }}>
+    <Box sx={{ px: 2.5, pb: 3 }}>
       <Stack
         alignItems="center"
         spacing={3}
         sx={{ pt: 5, borderRadius: 2, position: "relative" }}
       >
-        <Button onClick={handleDownload} variant="contained" color="inherit">
-          Exportar Datos
+        <Button
+          onClick={() => handleDownload(state)}
+          variant="contained"
+          color="inherit"
+        >
+          Exportar datos
         </Button>
       </Stack>
     </Box>
   );
-  const selectedHome = (home?.code || mode) && (
+
+  const selectedHome = () => (
     <Box
       sx={{
-        mb: 1,
-        mx: 1,
+        my: 1,
+        mx: 2.5,
         py: 2,
-        px: 0.1,
-        display: "flex",
+        px: 2.5,
         borderRadius: 1.5,
         alignItems: "center",
         bgcolor: (theme) => alpha(theme.palette.grey[500], 0.12),
       }}
     >
-      <Box sx={{ ml: 2 }}>
-        <Typography variant="h5" fontSize={"15px"}>
-          Jefe del hogar
-        </Typography>
-        <Typography variant="h6" fontSize={"15px"} fontWeight={"100"}>
-          {home?.boss ?? mode ? "Nombre Prueba" : ""}
-        </Typography>
-        <Typography variant="body1" sx={{ color: "text.secondary" }}>
-          <b>Dirección: </b>
-          {home?.address ?? mode ? "Direccion Prueba" : ""}
-        </Typography>
-        <Typography variant="body1" sx={{ color: "text.secondary" }}>
-          <b>Código: </b>
-          {home?.code ?? mode ? "Codigo Prueba" : ""}
-        </Typography>
-        {!home?.code && (
-          <Typography variant="caption" sx={{ color: "text.secondary" }}>
-            En modo desarrollo si no se ha seleccionado un hogar se mostraran
-            estos datos de prueba
+      <Typography variant="h6" sx={{ color: "primary.main" }}>
+        <b>
+          {!!hogarActualDireccion?.length
+            ? "Hogar actual"
+            : "Hogar no seleccionado"}
+        </b>
+      </Typography>
+      {!!hogarActualDireccion?.length && (
+        <Fragment>
+          <Typography sx={{ color: "primary.main" }}>
+            <b>Jefe del hogar: </b>
           </Typography>
-        )}
-      </Box>
+          <Typography variant="caption">
+            {hogarActualJefe.length ? hogarActualJefe : "Pendiente a definir"}
+          </Typography>
+          <Typography sx={{ color: "primary.main" }}>
+            <b>Dirección: </b>
+          </Typography>
+          <Typography variant="caption">
+            {hogarActualDireccion ?? ""}
+          </Typography>
+        </Fragment>
+      )}
     </Box>
   );
+
   const renderContent = (
     <Scrollbar
       sx={{
@@ -152,17 +167,18 @@ export default function Nav({ openNav, onCloseNav }: any) {
         },
       }}
     >
-      <Logo
+      {/* <Logo
         sx={{ ml: 4, mt: 2, width: 50, height: 50 }}
         onDoubleClick={themeActions.toggle}
-      />
+      /> */}
       {renderAccount}
-      {/* {selectedHome} */}
+      {selectedHome()}
       {drawerMenu()}
       <Box sx={{ flexGrow: 1 }} />
       {renderUpgrade}
     </Scrollbar>
   );
+
   function drawerMenu(routesList: Routes = routes, parent = "") {
     return (
       <Stack component="nav" spacing={0.5} sx={{ px: parent ? 0 : 2 }}>
@@ -175,9 +191,8 @@ export default function Nav({ openNav, onCloseNav }: any) {
               return <NavItem key={path} item={item} parent={parent} />;
             } else
               return (
-                <>
+                <Fragment key={path}>
                   <ListItemButton
-                    key={path}
                     onClick={() => handleClick(title)}
                     sx={{
                       minHeight: 44,
@@ -209,7 +224,7 @@ export default function Nav({ openNav, onCloseNav }: any) {
                       {drawerMenu(subPath, path)}
                     </Stack>
                   </Collapse>
-                </>
+                </Fragment>
               );
           })}
       </Stack>
@@ -287,3 +302,13 @@ function NavItem({ item, parent }: any) {
     </ListItemButton>
   );
 }
+
+export const atomHogarActualDireccion = atom({
+  key: "hogarActualDireccion",
+  default: "",
+});
+
+export const atomHogarActualJefe = atom({
+  key: "hogarActualJefe",
+  default: "",
+});

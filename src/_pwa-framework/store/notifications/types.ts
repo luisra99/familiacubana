@@ -1,4 +1,4 @@
-import type { OptionsObject, SnackbarKey, SnackbarMessage } from 'notistack';
+import type { OptionsObject, SnackbarKey, SnackbarMessage } from "notistack";
 
 interface Notification {
   message: SnackbarMessage;
@@ -6,7 +6,7 @@ interface Notification {
   dismissed: boolean;
 }
 
-declare module 'notistack' {
+declare module "notistack" {
   export interface VariantOverrides {
     // define custom variants
     customNotification: {

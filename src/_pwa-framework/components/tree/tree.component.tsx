@@ -3,7 +3,9 @@ import "./tree.css";
 import { Checkbox, SvgIconProps } from "@mui/material";
 import { FC, useEffect, useState } from "react";
 
+import { Add } from "@mui/icons-material";
 import { Box } from "@mui/system";
+import { Remove } from "@mui/icons-material";
 import { Tree } from "rsuite";
 
 export const CustomTree = ({
@@ -11,13 +13,24 @@ export const CustomTree = ({
   parentIcon: ParentIcon,
   childrenIcon: ChildrenIcon,
   multiSelect,
+  name,
+  setFieldValue,
+  defaultValues,
 }: {
   data: any;
   parentIcon: FC<SvgIconProps>;
   childrenIcon: FC<SvgIconProps>;
+  defaultValues?: any[];
   multiSelect?: boolean;
+  name?: string;
+  setFieldValue?: any;
 }) => {
-  const [selected, setSelected] = useState<string[]>([]);
+  const [selected, setSelected] = useState<any[]>(defaultValues ?? []);
+
+  useEffect(() => {
+    if (Array.isArray(defaultValues)) setSelected(defaultValues);
+  }, [defaultValues]);
+
   const handleChecked = (e: any) => {
     if (multiSelect) {
       const selectedIndex = selected.indexOf(e.target.name);
@@ -35,19 +48,36 @@ export const CustomTree = ({
         );
       }
       setSelected(newSelected);
-    } else setSelected([e.target.name]);
+      setFieldValue?.(name ?? "tree", newSelected, false);
+    } else {
+      setFieldValue?.(name ?? "tree", e.target.name, false);
+      setSelected([e.target.name]);
+    }
   };
-  useEffect(() => {
-    console.log(selected);
-  }, [selected]);
+
+  useEffect(() => {}, [selected]);
+
   return (
     <Tree
       data={data}
       showIndentLine
+      renderTreeIcon={(treeNode, expanded) => {
+        if (treeNode.children) {
+          return expanded ? <Remove /> : <Add />;
+        }
+        return null;
+      }}
       renderTreeNode={(node) => {
         return (
-          <Box display={"flex"} alignItems={"center"}>
-            {multiSelect && (
+          <Box
+            display={"flex"}
+            alignItems={"center"}
+            onClick={() => {
+              if (!multiSelect)
+                handleChecked({ target: { name: `${node.value}` } });
+            }}
+          >
+            {multiSelect && !node.children && (
               <Checkbox
                 checked={selected.indexOf(`${node.value}`) != -1}
                 name={`${node.value}`}

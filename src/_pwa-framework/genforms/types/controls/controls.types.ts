@@ -3,6 +3,7 @@ import {
   ICommonProps,
   ICustomIcons,
   IInputProps,
+  IMultipleOptionsProps,
   IOnChangeFunction,
   IOptionsProps,
   IRadios,
@@ -12,6 +13,7 @@ import {
 } from "../common.types";
 import {
   IDateValidation,
+  IMultiSelectValidation,
   INumberValidation,
   IRadioValidations,
   IRatingValidations,
@@ -20,11 +22,11 @@ import {
   ITextValidation,
 } from "../validation.types";
 
-import { ICustomCOmponent } from "../controls.types";
-
 export type IGenericControls =
+  | IScanner
   | ITextField
   | ISelect
+  | IMultiSelect
   | INumberField
   | IAutocomplete
   | IDatePicker
@@ -34,7 +36,7 @@ export type IGenericControls =
   | ISwitch
   | ISlider
   | IRating
-  | ICustomCOmponent;
+  | ICustomComponent;
 
 export type ITextField = {
   /**
@@ -43,7 +45,7 @@ export type ITextField = {
   type: "text";
   pattern?: RegExp;
   validations?: ITextValidation;
-  hidden?:any;
+  hidden?: any;
   multiline?: multiline;
 } & IInputProps;
 type multiline =
@@ -52,8 +54,16 @@ type multiline =
       maxRows?: number;
     }
   | boolean;
-  
-  
+
+export type IScanner = {
+  /**
+   * Tipo de control que desea crear.
+   */
+  type: "scanner";
+  parseFunction: (scannerResult: any) => Record<string, any>;
+  closeOnScan: boolean;
+} & ICommonProps;
+
 export type IPhoneOrEmail = {
   /**
    * Tipo de control que desea crear.
@@ -74,6 +84,7 @@ export type INumberField = {
   avoidSeparator?: boolean;
   prefix?: string;
   validations?: INumberValidation;
+  negativeValues?: boolean;
 } & IInputProps;
 
 export type ISelect = {
@@ -82,7 +93,18 @@ export type ISelect = {
    */
   type: "select";
   validations?: ISelectValidation;
+  checkValues?: any[];
+  useRef?: any;
+  showDelete?: boolean;
 } & IOptionsProps;
+
+export type IMultiSelect = {
+  type: "multiselect";
+  validations?: IMultiSelectValidation;
+  checkValues?: any[];
+  useRef?: any;
+} & IMultipleOptionsProps &
+  IOptionsProps;
 
 export type IAutocomplete = {
   /**
@@ -120,7 +142,7 @@ export type IRadio = {
   validations?: IRadioValidations;
   url?: string;
   defaultValue?: string;
-  onChangeCallback?: IOnChangeFunction
+  onChangeCallback?: IOnChangeFunction;
 } & ICommonProps;
 
 export type ICheck = {
@@ -165,4 +187,31 @@ export type ISlider = {
   max: number;
   validations?: ISliderValidations;
   valueLabelDisplay?: "auto" | "on" | "off";
+} & ICommonProps;
+
+export type ICustomComponent = {
+  type: "component";
+  // validations?:
+  //   | ISliderValidations
+  //   | IRatingValidations
+  //   | ITextValidation
+  //   | INumberValidation
+  //   | ISelectValidation
+  //   | IDateValidation
+  //   | IRadioValidations;
+  component: (props: {
+    id?: any;
+    initialValue?: any;
+    gridValues?: any;
+    name?: any;
+    label?: any;
+    disabled?: any;
+    hidden?: any;
+    sx?: any;
+    component?: any;
+    validations?: any;
+    formValue?: any;
+    error?: any;
+    setFieldValue?: any;
+  }) => any;
 } & ICommonProps;

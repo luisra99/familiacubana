@@ -1,91 +1,146 @@
-import { FormularioEviel1 } from "@/app/user-interfaces/forms/forms.config";
-import DeleteIcon from "@mui/icons-material/Delete";
-import GenericForm from "@/_pwa-framework/genforms/components/form-components/form.generic";
-import Meta from "@/_pwa-framework/components/Meta";
-import TableView from "@/_pwa-framework/user-solicitudes/view";
-import useModalState from "@/_pwa-framework/hooks/form/use-form-manager";
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-import { useLiveQuery } from "dexie-react-hooks";
-import { datico } from "@/app/user-interfaces/forms/models/model";
+import { Button, Stack, Typography } from "@mui/material";
+import { Delete, Edit } from "@mui/icons-material";
 import {
   crear,
   eliminar,
   modificar,
   obtenerDatosPorLlave,
 } from "@/app/user-interfaces/forms/models/controllers";
-import { Button, Stack, Typography } from "@mui/material";
-import { getHogar } from "@/app/hogarController/hogar.controller";
 import {
-  obtenerMiembros,
-  obtenerMiembrosSelect,
-} from "@/app/user-interfaces/forms/models/controllers.miembrohogar";
+  obtenerDatos,
+  obtenerGradoAutonomia,
+  tieneDiscapacidad,
+} from "./helpers";
+import { useEffect, useState } from "react";
+
+import { FormularioEviel1 } from "@/app/user-interfaces/forms/forms.config";
+import GenericForm from "@/_pwa-framework/genforms/components/form-components/form.generic";
+import { IGenericControls } from "@/_pwa-framework/genforms/types/controls/controls.types";
+import Meta from "@/_pwa-framework/components/Meta";
 import NotificationProvider from "@/_pwa-framework/sections/Notifications/provider";
-import { TiposdeAyuda } from "@/app/user-interfaces/controls/controls.config.ponzoa";
-import {
-  Discapacidad,
-  PresentaDiscapacidad,
-} from "@/app/user-interfaces/controls/controls.config.eviel";
+import TableView from "@/_pwa-framework/user-solicitudes/view";
+import { datico } from "@/app/user-interfaces/forms/models/model";
+import { getHogar } from "@/app/hogarController/hogar.controller";
+import { obtenerMiembros } from "@/app/user-interfaces/forms/models/controllers.miembrohogar";
+import { useConfirm } from "material-ui-confirm";
+import { useLiveQuery } from "dexie-react-hooks";
+import { useLocalStorage } from "@uidotdev/usehooks";
+import useModalState from "@/_pwa-framework/hooks/form/use-form-manager";
+import { useNavigate } from "react-router-dom";
 
 function AutonomiayNecesidadesEspeciales() {
-  const idhogar = getHogar() ?? 0;
   const { modalActions } = useModalState();
   const notificar = NotificationProvider();
   const [id, setid] = useState<any>(null);
+  const [idAditamento, setIdAditamento] = useState<any>(null);
+  const [idhogar] = useLocalStorage("hogarActual", null);
   const [miembros, setMiembros] = useState<any>([]);
   const [datatable, setDataTable] = useState<any>([]);
-  const [idmiembrohogar, setIdMiembroHogar] = useState<any>(0);
+  const [checkDiscapacidad, setCheckDiscapacidad] = useState<any>([]);
+  const [aditamentos, setAditamentos] = useState<any>([]);
+  const [aditamentosFiltrados, setAditamentosFiltrados] = useState<any>([]);
+  const confirm = useConfirm();
 
-  const navegar = useNavigate();
+  const aditamentosControl: IGenericControls = {
+    type: "select",
+    label: "Aditamentos",
+    name: "idaditamento",
+    validations: {
+      required: { message: "Debe seleccionar un aditamento" },
+    },
+    disabledOnEdit: true,
+    gridValues: { xs: 12, sm: 6, lg: 6, md: 6, xl: 6 },
+    options: aditamentosFiltrados,
+  };
+
+  useEffect(() => {
+    cargarNomencladores();
+  }, []);
+
+  useEffect(() => {
+    if (id) LoadAditamentos(id);
+  }, [id]);
+
+  useEffect(() => {
+    FiltrarAditamentos(datatable);
+  }, [datatable]);
+
+  const cargarNomencladores = async () => {
+    const nom_aditamentos = await (datico as any)["nom_concepto"]
+      .where("idpadre")
+      .equals("9383")
+      .toArray();
+    setAditamentos(nom_aditamentos);
+  };
+
+  const FiltrarAditamentos = async (aditamentosDeclarados?: any[]) => {
+    if (aditamentosDeclarados) {
+      const declarados: any[] = aditamentosDeclarados.map((item: any) =>
+        parseInt(item.idaditamento[0])
+      );
+
+      const filtrados = aditamentos.filter(
+        (item: any) => !declarados.includes(item.idconcepto)
+      );
+      setAditamentosFiltrados(filtrados);
+    } else {
+      setAditamentosFiltrados(aditamentos);
+    }
+  };
+
+  const LoadAditamentos = (idmiembro: any) =>
+    obtenerDatos(idmiembro).then((datos: any) => setDataTable(datos));
 
   useLiveQuery(async () => {
     const data = await obtenerMiembros();
-    console.log("miembros", data), setMiembros(data);
+    setMiembros(data);
+    const discapacidad = await tieneDiscapacidad(data);
+    setCheckDiscapacidad(discapacidad);
   });
-  async function onChangeMiembro(id: any) {
-    const datos = await obtenerDatos(id);
-    console.log("kakita", datos);
-    setDataTable(datos);
-  }
-  async function obtenerDatos(idmiembro: any) {
-    // console.log(idmiembro);
-    const data = await datico.dat_miembroaditamentos
-      .where({ idmiembrohogar: idmiembro })
-      .toArray();
-    console.log("data", data, idmiembro);
-    const result = await unionNomenclador(data);
-    return result;
-  }
-  async function unionNomenclador(arr: any) {
-    const join = await Promise.all(
-      arr.map(async (obj: any) => {
-        // console.log(obj);
-        const aditamento = await datico.nom_concepto.get(
-          parseInt(obj?.idaditamento[0] ?? 0)
-        );
-        const disponibilidad = await datico.nom_concepto.get(
-          parseInt(obj?.disponeadit[0] ?? 0)
-        );
-        console.log("diarrea", {
-          ...obj,
-          aditamento: aditamento?.denominacion,
-          disponibilidad: disponibilidad?.denominacion,
-        });
-        return {
-          ...obj,
-          aditamento: aditamento?.denominacion,
-          disponibilidad: disponibilidad?.denominacion,
-        };
-      })
-    );
-    return join;
-  }
 
-  function getPage() {
-    if (idhogar) {
-      if (miembros.length) {
+  const submitGradoAutonomia = async (values: any) => {
+    delete values.editMode;
+    await crear("dat_miembrogradoautonomia", {
+      ...values,
+      idmiembrohogar: values.idmiembro[0],
+      idcodigohogar: getHogar(),
+    }).then(() => {
+      notificar({
+        type: "success",
+        title:
+          "Se han adicionado los datos de autonomía y necesidades especiales al miembro satisfactoriamente",
+        content: "",
+      });
+    });
+  };
+
+  const navegar = useNavigate();
+  const siguiente = () => navegar("/autonomia/enfermedades");
+  const anterior = async () => {
+    const data = await obtenerMiembros();
+    const data_ocupacion = await datico.dat_miembroocupacion.toArray();
+    const filterdata = data?.filter((ele: any) => {
+      return data_ocupacion?.some((ocupacion: any) => {
         return (
+          ele.idconcepto === parseInt(ocupacion.idmiembrohogar[0]) &&
+          (ocupacion?.idtipoocupacion?.includes(9350) ||
+            ocupacion?.idtipoocupacion?.includes(9344) ||
+            ocupacion?.idtipoocupacion?.includes(9346))
+        );
+      });
+    });
+    console.log("filterdata", filterdata);
+    if (!filterdata.length) navegar("/ocupacion/principal");
+    else navegar("/ocupacion/no-vinculado");
+  };
+
+  return (
+    <>
+      <Meta title="Controles" />
+      {idhogar ? (
+        miembros.length ? (
           <GenericForm
+            applyButton={false}
             name="test"
             controls={[
               {
@@ -94,15 +149,13 @@ function AutonomiayNecesidadesEspeciales() {
                 label: "Miembro del hogar",
                 gridValues: { xs: 6, lg: 6, md: 6, sm: 6, xl: 6 },
                 options: miembros,
-
+                checkValues: checkDiscapacidad,
                 onChange: (e, refs) => {
                   const { value } = e.target;
-                  setIdMiembroHogar(value);
-                  onChangeMiembro(value);
-                  refs.setFieldValue("idautonomia", [], true),
-                    refs.setFieldValue("idcuidadoprimerainf", [], true);
-                  refs.setFieldValue("idmiembrodiscapacidad", [], true),
-                    refs.setFieldValue("iddiscapacidad", [], true);
+                  setid(value);
+                },
+                validations: {
+                  required: { message: "Este campo es obligatorio" },
                 },
               },
               {
@@ -111,23 +164,20 @@ function AutonomiayNecesidadesEspeciales() {
                 gridValues: { xs: 12, lg: 12, md: 12, sm: 12, xl: 12 },
                 label: "Grado de autonomía",
                 url: "9369",
-                disabled: (values) => values.idmiembro == "",
-                onChange: (e, refs) => {
-                  refs.setFieldValue("idautonomia", [], true),
-                    refs.setFieldValue("idcuidadoprimerainf", [], true),
-                    refs.setFieldValue("idmiembrodiscapacidad", [], true),
-                    refs.setFieldValue("iddiscapacidad", [], true);
+                validations: {
+                  required: { message: "Este campo es obligatorio" },
                 },
+                disabled: (values) => !values.idmiembro.length,
               },
               {
                 type: "component",
-                disabled: (values) =>
+                hidden: (values: any) =>
                   values.idmiembro == "" || values.idautonomia != "9371",
                 component: () => (
                   <Typography>
                     <b>Nota aclaratoria:</b> En el caso de niños y niñas se
                     registran en "se vale solo" a menos que exista una
-                    discapacidad que impida las actividades propias del cilo de
+                    discapacidad que impida las actividades propias del ciclo de
                     vida
                   </Typography>
                 ),
@@ -136,18 +186,28 @@ function AutonomiayNecesidadesEspeciales() {
                 gridValues: { xs: 12, lg: 12, md: 12, sm: 12, xl: 12 },
               },
               {
-                type: "select",
+                type: "multiselect",
                 name: "idtiposayuda",
                 gridValues: { xs: 12, lg: 12, md: 12, sm: 12, xl: 12 },
                 label: "Tipo de ayuda",
                 multiple: "check",
+                disabled: (values) => !values.idmiembro.length,
                 url: "9373",
-                disabled: (values) =>
+                // validations: {
+                //   required: {
+                //     message: "Este campo es obligatorio",
+                //     when: {
+                //       name: "idautonomia",
+                //       expression: (value) => value?.[0] == "9371",
+                //     },
+                //   },
+                // },
+                hidden: (values: any) =>
                   values.idmiembro == "" || values.idautonomia != "9371",
               },
               {
                 type: "component",
-                disabled: (values) =>
+                hidden: (values: any) =>
                   values.idmiembro == "" || values.idautonomia != "9371",
                 component: () => (
                   <Typography>
@@ -178,23 +238,37 @@ function AutonomiayNecesidadesEspeciales() {
                   { idconcepto: "1", denominacion: "Sí" },
                   { idconcepto: "2", denominacion: "No" },
                 ],
-                disabled: (values) => values.idmiembro == "",
-                onChange: (value, refs) =>
-                  refs.setFieldValue("iddiscapacidad", [], true),
+                validations: {
+                  required: { message: "Este campo es obligatorio" },
+                },
+                disabled: (values) => !values.idmiembro.length,
               },
               {
-                type: "select",
+                type: "multiselect",
                 label: "Discapacidad",
                 name: "iddiscapacidad",
                 url: "9376",
                 multiple: "check",
                 gridValues: { xs: 12 },
-
-                disabled: (values) =>
+                validations: {
+                  min: {
+                    value: 1,
+                    message: "Este campo es obligatorio",
+                    when: {
+                      name: "idmiembrodiscapacidad",
+                      expression: (value) => {
+                        return value[0] === "1";
+                      },
+                    },
+                  },
+                },
+                disabled: (values) => !values.idmiembro.length,
+                hidden: (values: any) =>
                   values.idmiembro == "" || values.idmiembrodiscapacidad != "1",
               },
               {
                 type: "component",
+
                 component: () => (
                   <>
                     <Typography variant="h6" marginX={"auto"} mt={5}>
@@ -202,14 +276,13 @@ function AutonomiayNecesidadesEspeciales() {
                     </Typography>
                     <Stack
                       spacing={2}
-                      direction="row"
+                      direction="row-reverse"
                       mx={"auto"}
                       my={2}
-                      px={5}
                       display={"inline-list-item"}
                     >
                       <Button
-                        onClick={() => modalActions.open("teste")}
+                        onClick={() => modalActions.open(`aditamento-${id}`)}
                         variant="contained"
                         sx={{ marginBottom: "10px !important" }}
                       >
@@ -218,160 +291,154 @@ function AutonomiayNecesidadesEspeciales() {
                     </Stack>
 
                     <TableView
-                      values={datatable} /*diarrea*/
+                      values={datatable}
                       headers={[
                         { name: "aditamento", label: "Aditamento" },
+                        { name: "idmiembrohogar" },
                         { name: "disponibilidad", label: "Disponibilidad" },
                       ]}
                       idKey="idmiembrogradoautonomia"
-                      title=""
                       multiSelect={false}
                       useCheckBox={false}
                       rowActions={[
                         {
+                          label: "Modificar",
+                          action: (values: any) => {
+                            FiltrarAditamentos();
+                            setIdAditamento(values.idmiembroaditamentos);
+                            modalActions.open(`aditamento-${id}`);
+                          },
+                          icon: Edit,
+                        },
+                        {
                           label: "Eliminar",
                           action: (values: any) => {
-                            console.log("action", values);
-                            eliminar(
-                              //dat_miembroaditamentos
-                              "dat_miembroaditamentos",
-                              "idmiembroaditamentos",
-                              values.idmiembroaditamentos
-                            ).then(() => {
-                              notificar({
-                                type: "success",
-                                title: "Eliminar",
-                                content: "Eliminado correctamente",
-                              });
-                              onChangeMiembro(idmiembrohogar);
-                            });
+                            confirm({
+                              title: "Eliminar",
+                              confirmationText: "Aceptar",
+                              cancellationText: "Cancelar",
+                              description: `¿Está seguro que desea eliminar el aditamento seleccionado?`,
+                            }).then(() =>
+                              eliminar(
+                                "dat_miembroaditamentos",
+                                "idmiembroaditamentos",
+                                values.idmiembroaditamentos
+                              ).then(() => {
+                                notificar({
+                                  type: "success",
+                                  title:
+                                    "El aditamento ha sido eliminado satisfactoriamente",
+                                  content: "",
+                                });
+                                LoadAditamentos(values.idmiembrohogar);
+                              })
+                            );
                           },
-                          icon: DeleteIcon,
+                          icon: Delete,
                         },
                       ]}
                     />
                   </>
                 ),
-                disabled: (values) =>
-                  values.idmiembro == "" ||  values.idmiembrodiscapacidad != "1",
+                hidden: (values: any) =>
+                  values.idmiembro == "" || values.idmiembrodiscapacidad != "1",
                 gridValues: { lg: 12, md: 12, sm: 12, xl: 12, xs: 12 },
-                name: "aditamentos",
 
+                name: "aditamentos",
                 label: "adt",
               },
             ]}
-            title=" Grado de autonomía y situación de discapacidad"
+            title="Grado de autonomía y situación de discapacidad"
             description=""
             endpointPath="persona"
             showSpecificDescription={false}
+            nextDisabledFunction={() => {
+              return (
+                miembros?.length !== checkDiscapacidad?.split?.(",")?.length
+              );
+            }}
             nextButton={{ text: "Siguiente", action: siguiente }}
             prevButton={{ text: "Anterior", action: anterior }}
             saveButton="Guardar"
+            acceptDisabledFunction={(values) => values.idmiembro == ""}
             idForEdit={id}
+            notifyValidation={(values) => {
+              if (
+                values.idmiembrodiscapacidad[0] === "1" &&
+                datatable.length === 0
+              )
+                return "Debe agregarse al menos un aditamento";
+            }}
             setIdFunction={setid}
-            submitFunction={(values) => {
-              if (id)
+            submitFunction={submitGradoAutonomia}
+            getByIdFunction={(id) => obtenerGradoAutonomia(id)}
+          />
+        ) : (
+          <Typography mx={2} my={2}>
+            <b>No existen miembros en el hogar seleccionado </b>
+          </Typography>
+        )
+      ) : (
+        <Typography mx={2} my={2}>
+          <b>No hay un hogar seleccionado </b>
+        </Typography>
+      )}
+
+      {id &&
+        miembros.map((miembro: { idconcepto: any }) => (
+          <GenericForm
+            name={`aditamento-${miembro.idconcepto}`}
+            controls={[aditamentosControl, ...FormularioEviel1]}
+            title="Adicionar aditamento"
+            endpointPath="persona"
+            showSpecificDescription={false}
+            idForEdit={idAditamento}
+            setIdFunction={setIdAditamento}
+            modalType="fullWith"
+            submitFunction={(values: any) => {
+              delete values.editMode;
+              if (idAditamento) {
                 modificar(
-                  "dat_miembrogradoautonomia",
-                  "idmiembrogradoautonomia",
-                  id,
-                  { ...values, idcodigohogar: getHogar() }
-                );
-              else {
-                const idautonomia = crear("dat_miembrogradoautonomia", {
-                  ...values,
-                  idmiembrohogar: values.idmiembro,
-                  idcodigohogar: getHogar(),
-                  // idtiposayuda: ()=>{if(values.idtiposayuda.filter((element:any)=> element ===""))return 3}
-                }).then((idautonomia) => {
-                  crear("dat_tiposayuda", {
-                    idmiembrogradoautonomia: idautonomia,
-                    idayuda: values.idtipoayuda,
-                  });
+                  "dat_miembroaditamentos",
+                  "idmiembroaditamentos",
+                  idAditamento,
+                  values
+                ).then(() => {
                   notificar({
                     type: "success",
-                    title: "Adicionar",
-                    content: "Se ha adicionado correctamente",
+                    title:
+                      "El aditamento ha sido modificado satisfactoriamente",
+                    content: "",
                   });
-                  onChangeMiembro(idmiembrohogar);
+                  LoadAditamentos(miembro.idconcepto);
+                });
+              } else {
+                crear("dat_miembroaditamentos", {
+                  ...values,
+                  idcodigohogar: getHogar(),
+                  idmiembrohogar: miembro.idconcepto,
+                }).then(() => {
+                  notificar({
+                    type: "success",
+                    title:
+                      "El aditamento ha sido adicionado satisfactoriamente",
+                    content: "",
+                  });
+                  LoadAditamentos(miembro.idconcepto);
                 });
               }
             }}
-            getByIdFunction={(id) =>
-              obtenerDatosPorLlave(
-                "dat_miembrogradoautonomia",
-                "idmiembrogradoautonomia",
+            getByIdFunction={async (id) => {
+              const arr = await obtenerDatosPorLlave(
+                "dat_miembroaditamentos",
+                "idmiembroaditamentos",
                 id
-              )
-            }
+              );
+
+              return arr[0];
+            }}
           />
-        );
-      }
-    } else {
-      return (
-        <Typography mx={2} my={2}>
-          <b>No hay un hogar seleccionado...</b>
-        </Typography>
-      );
-    }
-  }
-  function getFormModal() {
-    if (idmiembrohogar) {
-      return (
-        <GenericForm
-          name="teste"
-          controls={FormularioEviel1}
-          title="Adicionar aditamiento"
-          description=" "
-          endpointPath="persona"
-          showSpecificDescription={false}
-          idForEdit={id}
-          setIdFunction={setid}
-          modalType="fullWith"
-          submitFunction={(values) => {
-            if (id)
-              modificar("dat_miembroaditamentos", "idmiembroaditamentos", id, {
-                ...values,
-                idcodigohogar: getHogar(),
-                idmiembrohogar: idmiembrohogar,
-              });
-            else
-              crear("dat_miembroaditamentos", {
-                ...values,
-                idcodigohogar: getHogar(),
-                idmiembrohogar: idmiembrohogar,
-              }).then((id) => {
-                console.log(id);
-                notificar({
-                  type: "success",
-                  title: "Adicionar",
-                  content: "El ingreso ha sido adicionado correctamente",
-                });
-                onChangeMiembro(idmiembrohogar);
-              });
-          }}
-          getByIdFunction={(id) =>
-            obtenerDatosPorLlave(
-              "dat_miembrogradoautonomia",
-              "idmiembrogradoautonomia",
-              id
-            )
-          }
-          dataAction={[{ action: () => {}, label: "Aplicar" }]}
-        />
-      );
-    }
-  }
-
-  const siguiente = () => navegar("/autonomia/enfermedades");
-  const anterior = () => navegar("/ocupacion/no-vinculado");
-  const aceptar = () => navegar("/");
-
-  return (
-    <>
-      <Meta title="Controles" />
-      {getPage()}
-      {getFormModal()}
+        ))}
     </>
   );
 }

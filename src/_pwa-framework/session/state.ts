@@ -18,7 +18,14 @@ const backdropAtom = atom<any>({
   default: null,
 });
 
-export function useSession(): any {
+export function useSession(): [
+  state: any,
+  accessProfile: any,
+  methods: { create: any; restore: any; createOfflineSession: any },
+  close: any,
+  backdrop: any,
+  setBackDrop: any,
+] {
   const [state, setSession] = useRecoilState(sessionAtom);
   const [backdrop, setBackDrop] = useRecoilState(backdropAtom);
 
@@ -27,7 +34,8 @@ export function useSession(): any {
       status: false,
     });
     removeCookie("session_state");
-    window.location.href = "/sign-in";
+    removeCookie("JWT");
+    // window.location.href = "/sign-in";
   }
 
   async function create(code: string, session_state: string): Promise<boolean> {
@@ -50,12 +58,13 @@ export function useSession(): any {
     setBackDrop(true);
     let authorized =
       localStorage.getItem("offlineMode") === `${user}:${password}`;
-    console.log(
-      "Creando session offline",
-      localStorage.getItem("offlineMode"),
-      `${user}:${password}`,
-      authorized
-    );
+    mode &&
+      console.log(
+        "Creando session offline",
+        localStorage.getItem("offlineMode"),
+        `${user}:${password}`,
+        authorized
+      );
     let userData;
     if (authorized) {
       localStorage.setItem("offlineSessionActive", "true");

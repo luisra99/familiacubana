@@ -1,16 +1,14 @@
 import { getCookie } from "@/_pwa-framework/helpers/cookies";
-import { useSession } from "@/_pwa-framework/session/state";
 import { useEffect } from "react";
-import { restoreSession } from "@/_pwa-framework/session/helpers";
+import { useSession } from "@/_pwa-framework/session/state";
 
 function SessionManager() {
-  const [status, , create, close, , setBackDrop] = useSession();
+  const [status, , { create, restore }, close, setBackDrop] = useSession();
   useEffect(() => {
     if (!!getCookie("session_state")) {
       setBackDrop(true);
-      restoreSession()
+      restore()
         .then((userdata: any) => {
-          console.log(Date.now(), userdata.message);
           userdata.message ? close() : create(userdata);
         })
         .finally(() => setBackDrop(false));

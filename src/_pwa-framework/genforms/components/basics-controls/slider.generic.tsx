@@ -7,37 +7,43 @@ export const BasicSliderFields = ({
   name,
   label,
   disabled,
+  initialValue,
+  gridSx,
+  hidden,
   sx,
   startIcon,
   endIcon,
   min,
   max,
   validations,
-  initialValue,
   gridValues,
-  formValue,
 }: any) => {
-  const { setFieldValue, values } = useFormikContext();
+  const { setFieldValue, setFieldTouched, values, touched, errors } =
+    useFormikContext();
+
+  const error = (touched as any)[name] && (errors as any)[name];
+  const value = (values as any)[name];
 
   const handleSliderChange = useCallback(
     (event: Event, newValue: number | number[]) => {
-      setFieldValue(name, newValue, !!validations);
+      setFieldValue(name, newValue, false);
     },
     []
   );
   useEffect(() => {
-    setFieldValue(name, initialValue ?? 0, !!validations);
+    setFieldValue(name, initialValue ?? 0, false);
   }, [initialValue]);
 
   return (
     <Grid
       item
-      display={disabled?.(values) ? "none" : "unset"}
+      display={hidden?.(values) ? "none" : "unset"}
       xs={gridValues?.xs}
       sm={gridValues?.sm}
       md={gridValues?.md}
       lg={gridValues?.lg}
       xl={gridValues?.xl}
+      sx={gridSx}
     >
       <Box sx={{ width: "90%" }}>
         <Typography id="input-slider" gutterBottom>
@@ -49,7 +55,7 @@ export const BasicSliderFields = ({
             name={name}
             min={min}
             max={max}
-            value={formValue ?? 0}
+            value={(values as any)[name] ?? 0}
             onChange={handleSliderChange}
             valueLabelDisplay="auto"
             sx={sx}

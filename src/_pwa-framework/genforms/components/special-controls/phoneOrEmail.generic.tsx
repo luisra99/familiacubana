@@ -1,14 +1,16 @@
 import { MaskControl } from "../auxiliar-components/masked.auxiliar";
 import { TextField } from "@mui/material";
 import { useFormikContext } from "formik";
-import { useState } from "react";
 
 export const BasicPhoneOrEmailFields = ({
   id,
+  gridSx,
+  initialValue,
   name,
   label,
   color,
   disabled,
+  hidden,
   focused,
   placeholder,
   sx,
@@ -31,11 +33,13 @@ export const BasicPhoneOrEmailFields = ({
       },
     },
   };
-  const [value, setValue] = useState("");
-  const { setFieldValue, values } = useFormikContext();
+  const { setFieldValue, setFieldTouched, values, touched, errors } =
+    useFormikContext();
+
+  const error = (touched as any)[name] && (errors as any)[name];
+  const value = (values as any)[name];
   const handleChange = (e: any) => {
-    setFieldValue(name, e.value, !!validations);
-    setValue(e.value);
+    setFieldValue(name, e.value, false);
   };
 
   return (

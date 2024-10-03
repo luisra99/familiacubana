@@ -1,4 +1,4 @@
-import { FilePresent, HelpCenter, RemoveRedEye } from "@mui/icons-material";
+import { FilePresent, HelpCenter } from "@mui/icons-material";
 
 import { ISpeedDialActions } from "@/_pwa-framework/speedDial/types";
 
@@ -7,14 +7,12 @@ export const actions: ISpeedDialActions = [
     icon: HelpCenter,
     name: "Ayuda",
     action: () => {
-      window.open("/documentos/Manual de Usuario de prueba del Sistema de Caracterizacion de la Familia Cubana.pdf");
+      window.open(
+        "/documentos/Manual de Usuario de prueba del Sistema de Caracterización de la Familia Cubana.pdf"
+      );
     },
   },
-  {
-    icon: RemoveRedEye,
-    name: "Observaciones",
-    action: () => console.log("Observaciones"),
-  },
+
   {
     icon: FilePresent,
     name: `ICS_H`,

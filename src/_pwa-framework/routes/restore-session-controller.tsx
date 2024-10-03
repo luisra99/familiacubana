@@ -8,7 +8,6 @@ const RestoreSessionController = () => {
   const [path, setPath] = useState<string | null>(null);
 
   useEffect(() => {
-    console.log(Date.now(), "path", path, user);
     if (path == null) {
       const pagePath =
         new URL(window.location.href).searchParams.get("path") ?? "/";

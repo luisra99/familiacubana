@@ -5,29 +5,35 @@ import { useFormikContext } from "formik";
 
 export const BasicRatingFields = ({
   id,
+  gridSx,
+  initialValue,
   gridValues,
   name,
   label,
   disabled,
+  hidden,
   sx,
   customIcons,
   max,
   color,
   validations,
-  initialValue,
-  formValue,
 }: any) => {
-  const { setFieldValue, values } = useFormikContext();
+  const { setFieldValue, setFieldTouched, values, touched, errors } =
+    useFormikContext();
+
+  const error = (touched as any)[name] && (errors as any)[name];
+  const value = (values as any)[name];
   const [iconProps, setIconProps] = useState<any>({});
   const [style, setStyle] = useState<any>(sx ?? {});
   const handleChange = useCallback(
     (event: Event, newValue: number | number[]) => {
-      setFieldValue(name, newValue, !!validations);
+      setFieldValue(name, newValue, true);
+      setFieldTouched(name);
     },
     []
   );
   useEffect(() => {
-    setFieldValue(name, initialValue ?? 0, !!validations);
+    setFieldValue(name, initialValue ?? 0, false);
   }, [initialValue]);
   useEffect(() => {
     setStyle((style: any) => {
@@ -40,12 +46,13 @@ export const BasicRatingFields = ({
   return (
     <Grid
       item
-      display={disabled?.(values) ? "none" : "unset"}
+      display={hidden?.(values) ? "none" : "unset"}
       xs={gridValues?.xs}
       sm={gridValues?.sm}
       md={gridValues?.md}
       lg={gridValues?.lg}
       xl={gridValues?.xl}
+      sx={gridSx}
     >
       <Box
         sx={{
@@ -54,7 +61,7 @@ export const BasicRatingFields = ({
       >
         <Typography component="legend">{label}</Typography>
         <Rating
-          value={formValue}
+          value={value}
           name={name}
           id={id ?? name}
           onChange={handleChange}

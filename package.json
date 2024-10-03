@@ -35,6 +35,8 @@
     "@mui/utils": "^5.15.0",
     "@mui/x-date-pickers": "^7.1.0",
     "@rollup/plugin-inject": "^5.0.5",
+    "@uidotdev/usehooks": "^2.4.1",
+    "@yudiel/react-qr-scanner": "^2.0.4",
     "axios": "^1.6.8",
     "cuid": "^3.0.0",
     "date-fns": "^3.6.0",
@@ -48,6 +50,7 @@
     "i18next": "^23.11.2",
     "is-mobile": "^4.0.0",
     "material-ui-confirm": "^3.0.16",
+    "mui-file-input": "^4.0.5",
     "mui-nested-menu": "^3.3.0",
     "notistack": "^3.0.1",
     "numeral": "^2.0.6",
@@ -101,9 +104,9 @@
     ]
   },
   "author": {
-    "name": "Suren Atoyan",
-    "email": "contact@surenatoyan.com",
-    "url": "http://surenatoyan.com/"
+    "name": "XETID",
+    "email": "soporte@xetid.cu",
+    "url": "https://xetid.cu/"
   },
   "keywords": [
     "react",

@@ -1,6 +1,4 @@
 import Dexie, { Table } from "dexie";
-
-import cuid from "cuid";
 import {
   dat_atributo,
   dat_detallesconcepto,
@@ -12,17 +10,9 @@ import {
 
 //* Abstract entity model with `idgeneral` property initialization
 // * and `equals` method for entity comparisons.
-export abstract class AbstractEntity {
-  constructor(public idgeneral?: string) {
-    idgeneral ? (this.idgeneral = idgeneral) : (this.idgeneral = cuid());
-  }
-  equals(e1: AbstractEntity, e2: AbstractEntity) {
-    return e1.idgeneral == e2.idgeneral;
-  }
-}
 
 //formulario3 DB - Unidad de Alojamiento
-export class dat_unidaddealojamiento extends AbstractEntity {
+export class dat_unidaddealojamiento {
   constructor(
     public idunidaddealojamiento: number,
     public circunscripcion: string,
@@ -36,53 +26,46 @@ export class dat_unidaddealojamiento extends AbstractEntity {
     public zonavulnerable: boolean,
     public idzonavulnerable: any,
     public idestructura: number
-  ) {
-    super();
-  }
+  ) {}
 }
 
 //formulario  - Datos del Hogar
-export class dat_hogar extends AbstractEntity {
+export class dat_hogar {
   circunscripcion: string | undefined;
   constructor(
-    public idcodigohogar: number,    
-    public nautahogar: boolean,
-    public propgastossld: number,
-    public propgastosmed: number,
-    public ayudaprob: number,
-    public apoyolab: number,
-    public observaciones: string,
-    public idsituacionalegal: number,
-    public idestado: number,
-    public idtipogasto: number,
-    public idunidaddealojamiento: number
-  ) {
-    super();
-  }
+    public idcodigohogar: number,
+    public nautahogar?: boolean,
+    public propgastossld?: number,
+    public propgastosmed?: number,
+    public observaciones?: string,
+    public idsituacionalegal?: number,
+    public idestado?: number,
+    public idtipogasto?: number,
+    public idunidaddealojamiento?: number,
+    public problemasalud?: number
+  ) {}
+}
+export class dat_miembroenfbajaprev {
+  constructor(
+    public idmiembroenfbajaprev: number,
+    public idenfermedad: number,
+    public idmiembrohogar?: number,
+    public idcodigohogar?: number
+  ) {}
 }
 
 // Datos Estructura
-export class dat_estructura extends AbstractEntity {
-  constructor(
-    public idestructura: number,
-    public idgeneral?: string
-  ) {
-    super(idgeneral);
-  }
+export class dat_estructura {
+  constructor(public idestructura: number) {}
 }
 
 // Datos Zona Vulneraable
-export class dat_zonavulnerable extends AbstractEntity {
-  constructor(
-    public idzonavulnerable: number,
-    public idgeneral?: string
-  ) {
-    super(idgeneral);
-  }
+export class dat_zonavulnerable {
+  constructor(public idzonavulnerable: number) {}
 }
 
 // Datos Caracterización
-export class dat_caracterizacion extends AbstractEntity {
+export class dat_caracterizacion {
   constructor(
     public idcaracterizacion: number,
     public fechaentrev: string,
@@ -92,85 +75,78 @@ export class dat_caracterizacion extends AbstractEntity {
     public hfin: string,
     public tipo: number,
     public idmiembrohogar?: string,
-    public idcodigohogar?: string,
-    public idgeneral?: string
-  ) {
-    super(idgeneral);
-  }
+    public idcodigohogar?: string
+  ) {}
 }
 
 // Datos Locales de Vivienda
-export class dat_localesvivienda extends AbstractEntity {
+export class dat_localesvivienda {
   constructor(
     public idlocalesvivienda: number,
     public cantudormir: number,
     public cantedormir: number,
     public tipousococina: boolean,
     public cantidadcocina: number,
+    public cantidadsanitario: number,
     public idcombustible: number,
     public tienesanitario: boolean,
     public idtipousoservicio: boolean,
-    public idtiposanitario: number,
-    public idcodigohogar?: string,
-    public idgeneral?: string
-  ) {
-    super(idgeneral);
-  }
+    public idcodigohogar?: string
+  ) {}
 }
 
 // Datos Ubicacion Locales
-export class dat_ubicacionlocales extends AbstractEntity {
+export class dat_ubicacionlocales {
   constructor(
     public idubicacionlocal: number,
     public idtipoubicacion: number,
-    public idlocalesvivienda?: number,
-    public idgeneral?: string
-  ) {
-    super(idgeneral);
-  }
+    public idcodigohogar: string,
+    public idlocalesvivienda?: number
+  ) {}
+}
+
+export class dat_ubicacionsanitaria {
+  constructor(
+    public idubicacionsanitario: number,
+    public idlocalesvivienda: number,
+    public idtiposanitario: number,
+    public idubicacion: number,
+    public idcodigohogar?: string
+  ) {}
 }
 
 // Datos Hogar Diversidad Alimentaria
-export class dat_hogardiversidadalimentaria extends AbstractEntity {
+export class dat_hogardiversidadalimentaria {
   constructor(
     public idhogardiversidadalimentaria: number,
-    public losencontro: boolean,
-    public legustan: boolean,
-    public frecuencia: number,
-    public idcodigohogar?: number,
-    public idgeneral?: string,
-    public idtipoalimento?: number,
-  ) {
-    super(idgeneral);
-  }
+    public losencontro: string,
+    public legustan: string,
+    public frecuencia: string,
+    public idcodigohogar: number,
+    public idtipoalimento?: number
+  ) {}
 }
 
 // Datos Configuracion de Dispositivos
-export class conf_dispositivos extends AbstractEntity {
+export class conf_dispositivos {
   constructor(
     public iddispositivo: number,
-    public idestructura?: number,
-    public idgeneral?: string
-  ) {
-    super(idgeneral);
-  }
+    public idestructura?: number
+  ) {}
 }
 
 // Datos Configuracion de Estado de Funcionalidad
-export class conf_estadofuncionalidad extends AbstractEntity {
+export class conf_estadofuncionalidad {
   constructor(
     public idhogarfunciconalidades: number,
     public idfuncionalidad: number,
     public idestado: number,
-    public idcodigohogar?: number,
-    public idgeneral?: string
-  ) {
-    super(idgeneral);
-  }
+    public idcodigohogar?: number
+  ) {}
 }
 
 // Datos Servicios de la Vivienda
-export class dat_seviciosvivienda extends AbstractEntity {
+export class dat_seviciosvivienda {
   constructor(
     public idserviciosvivienda: number,
     public idinstalacionacueducto: number,
@@ -178,107 +154,85 @@ export class dat_seviciosvivienda extends AbstractEntity {
     public idprocedenciaagua: number,
     public iddesague: number,
     public idelectricidad: number,
-    public idcodigohogar?: number,
-    public idgeneral?: string
-  ) {
-    super(idgeneral);
-  }
+    public idcodigohogar: number
+  ) {}
 }
 
 // Datos Miembros Estrategias
-export class dat_miembroestrategias extends AbstractEntity {
+export class dat_miembroestrategias {
   constructor(
     public idmiembroestrategia: number,
     public idestrategia: number,
-    public idcodigohogar?: number,
-    public idmiembrohogar?: number,
-    public idgeneral?: string
-  ) {
-    super(idgeneral);
-  }
+    public idcodigohogar: number,
+    public idmiembrohogar?: number
+  ) {}
 }
 
 // Datos Afectacion Material Vivienda
-export class dat_afectacionmatvivienda extends AbstractEntity {
+export class dat_afectacionmatvivienda {
   constructor(
     public idafectacionemat: number,
-    public idafectacion: number,
-    public idcodigohogar?: number,
-    public idgeneral?: string
-  ) {
-    super(idgeneral);
-  }
+    public idafectacion: string,
+    public idcodigohogar: string
+  ) {}
 }
 
 // Datos Estado de Construccion de la Vivienda
-export class dat_estadoconstvivienda extends AbstractEntity {
+export class dat_estadoconstvivienda {
   constructor(
     public idestadoconstvivienda: number,
-    public idestadoconst: number,
-    public idcodigohogar?: number,
-    public idgeneral?: string
-  ) {
-    super(idgeneral);
-  }
+    public idestadoconst: string,
+    public idcodigohogar: string
+  ) {}
 }
 
 // Datos Hogar Mobiliarios Equipos
-export class dat_hogarmobiliarioequipos extends AbstractEntity {
+export class dat_hogarmobiliarioequipos {
   constructor(
     public idhogarmobiliario: number,
     public cantidad: number,
     public idmobiliarioequipo: number,
     public estado: number,
-    public idcodigohogar?: number,
-    public idgeneral?: string
-  ) {
-    super(idgeneral);
-  }
+    public tipoMobiliario: number,
+    public idcodigohogar: number
+  ) {}
 }
 
 // Datos Hogar Gastos
-export class dat_hogargastos extends AbstractEntity {
+export class dat_hogargastos {
   constructor(
-    public idhogasrgasto: number,
+    public idhogargasto: number,
     public iddestino: number,
-    public montocup: number,
-    public pesogasto: number,
-    public proporciongasto: number,
-    public idcodigohogar?: number,
-    public idgeneral?: string
-  ) {
-    super(idgeneral);
-  }
+    public idcodigohogar: number,
+    public montocup?: number,
+    public pesogasto?: number,
+    public proporciongasto?: number
+  ) {}
 }
 
 // Datos Miembro Encuesta
-export class dat_miembroencuesta extends AbstractEntity {
+export class dat_miembroencuesta {
   constructor(
-    public idmiembroencuesta: number,
-    public problemasalud: number,
     public atendido: boolean,
+    public idmiembroencuesta?: number,
     public idcodigohogar?: number,
-    public idmiembrohogar?: number,
-    public idgeneral?: string
-  ) {
-    super(idgeneral);
-  }
+    public idmiembrohogar?: number
+  ) {}
 }
 
 // Datos Motivo Atencion
-export class dat_motivonoatencion extends AbstractEntity {
+export class dat_motivonoatencion {
   constructor(
     public idmotivonoatencion: number,
     public idmotivo: number,
+    public idrespuesta?: number,
     public idmiembrohogar?: number,
-    public idgeneral?: string
-  ) {
-    super(idgeneral);
-  }
+    public idcodigohogar?: number
+  ) {}
 }
 
 // Datos Miembros del Hogae
-export class dat_miembrohogar extends AbstractEntity {  
+export class dat_miembrohogar {
   constructor(
     public idmiembrohogar: number,
     public pnombre: string,
@@ -304,106 +258,85 @@ export class dat_miembrohogar extends AbstractEntity {
     public madremenor19: boolean,
     public redesapoyo: number,
     public certificado: boolean,
-    public idcodigohogar?: number,
-    public idgeneral?: string
-  ) {
-    super(idgeneral);
-  }
+    public idcodigohogar: number,
+    public apoyolaboresd?: number,
+    public ayudaprobleconomico?: number
+  ) {}
 }
 
 // Datos Miembro de Autonomia
-export class dat_miembrogradoautonomia extends AbstractEntity {
+export class dat_miembrogradoautonomia {
   constructor(
     public idmiembrogradoautonomia: number,
-    public idautonomia: number,
-    public idcodigohogar?: number,
-    public idmiembrohogar?: number,
-    public idgeneral?: string
-  ) {
-    super(idgeneral);
-  }
+    public idautonomia: string,
+    public idcodigohogar?: string,
+    public idmiembrohogar?: string
+  ) {}
 }
 
 // Datos Tipos de Ayuda
-export class dat_tiposayuda extends AbstractEntity {
+export class dat_tiposayuda {
   constructor(
     public idtiposayuda: number,
     public idayuda: number,
-    public idmiembrogradoautonomia?: number,
-    public idgeneral?: string
-  ) {
-    super(idgeneral);
-  }
+    public idmiembrogradoautonomia?: number
+  ) {}
 }
 
 // Datos Miembros de Discapacidad
-export class dat_miembrodiscapacidad extends AbstractEntity {
+export class dat_miembrodiscapacidad {
   constructor(
     public idmiembrodiscapacidad: number,
     public iddiscapacidad: number,
     public idcodigohogar?: number,
     public idmiembro?: number,
-    public idgeneral?: string
-  ) {
-    super(idgeneral);
-  }
+    public idmiembrohogar?: number
+  ) {}
 }
 
 // Datos Miembros Aditamentos
-export class dat_miembroaditamentos extends AbstractEntity {
+export class dat_miembroaditamentos {
   constructor(
     public idmiembroaditamentos: number,
     public idaditamento: number,
     public disponeadit: boolean,
     public idcodigohogar?: number,
-    public idmiembrohogar?: number,
-    public idgeneral?: string
-  ) {
-    super(idgeneral);
-  }
+    public idmiembrohogar?: number
+  ) {}
 }
 
 // Datos Miembros Beneficios
-export class dat_miembrobeneficios extends AbstractEntity {
+export class dat_miembrobeneficios {
   constructor(
     public idmiembrobeneficios: number,
     public idbeneficio: number,
-    public idmiembrohogar?: number,
-    public idgeneral?: string
-  ) {
-    super(idgeneral);
-  }
+    public idmiembrohogar?: number
+  ) {}
 }
 
 // Datos Miembros Enfermedades Crónicas
-export class dat_miembroenfcronicas extends AbstractEntity {
+export class dat_miembroenfcronicas {
   constructor(
     public idmiembroenfcronica: number,
     public idenfermedad: number,
     public accede: boolean,
     public idtipoenfermedad: number,
     public idcodigohogar?: number,
-    public idmiembrohogar?: number,
-    public idgeneral?: string
-  ) {
-    super(idgeneral);
-  }
+    public idmiembrohogar?: number
+  ) {}
 }
 
 // Datos Vía de Acceso
-export class dat_viasacceso extends AbstractEntity {
+export class dat_viasacceso {
   constructor(
     public idviacceso: number,
-    public idtipoviaacceso: number,
-    public idmiembroenfcronica?: number,
-    public idgeneral?: string
-  ) {
-    super(idgeneral);
-  }
+    public idtipoviaacceso: Array<any>,
+    public idmiembroenfcronica?: number
+  ) {}
 }
 
 // Datos Miembros Fuentes de Ingreso
-export class dat_miembrofuentesingresos extends AbstractEntity {
+export class dat_miembrofuentesingresos {
   constructor(
     public idmiembrofuentesingresos: number,
     public montomensual: number,
@@ -411,311 +344,310 @@ export class dat_miembrofuentesingresos extends AbstractEntity {
     public idmoneda: number,
     public idfuente: number,
     public idcodigohogar?: number,
-    public idmiembrohogar?: number,
-    public idgeneral?: string
-  ) {
-    super(idgeneral);
-  }
+    public idmiembrohogar?: number
+  ) {}
 }
 
 // Datos Miembro de Ocupacion
-export class dat_miembroocupacion extends AbstractEntity {
+export class dat_miembroocupacion {
   constructor(
     public idmiembroocupacion: number,
     public idocupacion: number,
-    public idtipoocupacion: number,
+    public idtipoocupacion: String[],
     public idcodigohogar?: number,
-    public idmiembrohogar?: number,
-    public idgeneral?: string
-  ) {
-    super(idgeneral);
-  }
+    public idmiembrohogar?: number
+  ) {}
 }
 // Datos dat_polprogsoc
-export class dat_polprogsoc extends AbstractEntity {
+export class dat_polprogsoc {
   constructor(
     public idpolprogsoc: number,
     public idbeneficio: number,
     public accede: boolean,
-    public idmiembrohogar?: number,
-    public idgeneral?: string
-  ) {
-    super(idgeneral);
-  }
+    public idmiembrohogar?: number
+  ) {}
 }
 // Datos dat_situacnnaj
-export class dat_situacnnaj extends AbstractEntity { // cambiada
+export class dat_situacnnaj {
+  // cambiada
   constructor(
-    public idsituacnnaj: number,//esta
-    public idsituacioneduc: number,//esta 
-    public idcodigohogar?: number,//esta
-    public idmiembrohogar?: number,//esta ok
+    public idsituacnnaj: number, //esta
+    public idsituacioneduc: number, //esta
+    public idcodigohogar?: number, //esta
+    public idmiembrohogar?: number, //esta ok
     public idcuidadoprimerainf?: number,
     public idcuidadohogar?: number,
     public idsne?: number,
-    public idetp?: number,
-    public idgeneral?: string
-  ) {
-    super(idgeneral);
-  }
+    public idetp?: number
+  ) {}
 }
 
 // Datos dat_nnaocupacion
-export class dat_nnaocupacion extends AbstractEntity {
+export class dat_nnaocupacion {
   constructor(
     public idcodigohogar: number,
-    public idmiembrohogar: number,
+    public idmiembrohogar: number, //
     public idnnaocupacion: number,
-    public idtipoactividad: number,
-    public idcanthoras: number,
-    public idhorario: number,
-    public autorizadomtss: number,
-    public idsituacnnaj?: number,
-    public idgeneral?: string
-  ) {
-    super(idgeneral);
-  }
+    public idtipoactividad: number, //
+    public idcanthoras: number, //
+    public idhorario: number, //
+    public autorizadomtss: number, //
+    public idsituacnnaj?: number //
+  ) {}
 }
 
 // Datos dat_miebrobeneficioprogalim
-export class dat_miebrobeneficioprogalim extends AbstractEntity {
+export class dat_miebrobeneficioprogalim {
   constructor(
     public idmiebrobeneficioprogalim: number,
     public idbeneficioprog: number,
-    public idmiembrohogar?: number,
-    public idgeneral?: string
-  ) {
-    super(idgeneral);
-  }
+    public idmiembrohogar?: number
+  ) {}
 }
 
 // Datos Miembros Situacion Social
-export class dat_miembrosituacionsocial extends AbstractEntity {
+export class dat_miembrosituacionsocial {
   constructor(
     public idiembrosituacionsocial: number,
     public idsituacionsocial: number,
     public idcodigohogar?: number,
-    public idmiembrohogar?: number,
-    public idgeneral?: string
-  ) {
-    super(idgeneral);
-  }
+    public idmiembrohogar?: number
+  ) {}
 }
 
 // Datos Hogares Estrategias
-export class dat_hogarestrategias extends AbstractEntity {
+export class dat_hogarestrategias {
   constructor(
     public idhogarestrategia: number,
     public idestrategia: number,
     public dias: number,
-    public idcodigohogar?: number,
-    public idgeneral?: string
-  ) {
-    super(idgeneral);
-  }
+    public idcodigohogar: number
+  ) {}
+}
+
+export class dat_situacionsocialorg {
+  constructor(
+    public idsituacionsocialorg: number,
+    public idorganismo: number,
+    public idsituacionsocial: number
+  ) {}
 }
 
 // Datos Miembo Programas
-export class dat_miembropogramas extends AbstractEntity {
+export class dat_miembropogramas {
   constructor(
     public idmiembroprograma: number,
     public idprograma: number,
-    public idcodigohogar?: number,
-    public idmiembrohogar?: number,
-    public idgeneral?: string
-  ) {
-    super(idgeneral);
-  }
+    public idmiembrohogar: number,
+    public idcodigohogar?: number
+  ) {}
 }
 
 // Datos dat_nvinculacionmiembro
-export class dat_nvinculacionmiembro extends AbstractEntity {
+export class dat_nvinculacionmiembro {
   constructor(
     public idnvinculacionmiembro: number,
-    public tipo: number,
-    public idcausa: number,
-    public idmotivocuida: number,
+    public tipo: number, //ya
+    public idcausa: number, //ya
+    // public idmotivocuida: number,
     public idmotivodecision: number,
-    public idremuneraciones: number,
+    // public idremuneraciones: number,
     public idcodigohogar?: number,
-    public idmiembrohogar?: number,
-    public idmiembroocupacion?: number,
-    public idgeneral?: string
-  ) {
-    super(idgeneral);
-  }
+    public idmiembrohogar?: number
+    // public idmiembroocupacion?: number,
+  ) {}
+}
+// Datos remuneraciones
+export class dat_remuneraciones {
+  constructor(
+    public idremuneraciones: number,
+    public idnvinculacionmiembro: number,
+    public remuneracion: number,
+    public idcodigohogar?: number
+  ) {}
+}
+// Datos remuneraciones
+export class dat_quiencuida {
+  constructor(
+    public idquiencuida: number,
+    public idnvinculacionmiembro: number,
+    public idparentesco?: number,
+    public cantidad?: string,
+    public idmiembrohogar?: string,
+    public idcodigohogar?: string
+  ) {}
 }
 
 // Datos Estado No Acceso
 // Datos Estado No Acceso
-export class dat_estadonoacceso extends AbstractEntity {
+export class dat_estadonoacceso {
   constructor(
     public idcausanoacceso: number,
     public idcausa: number,
-    public idrespuesta?: number,
-    public idpolprogsoc?: number,
-    public idgeneral?: string
-  ) {
-    super(idgeneral);
-  }
+    public conocequeexiste: boolean,
+    public entramites: boolean,
+    public ayudaparaacceder: boolean,
+    public idpolprogsoc?: number
+  ) {}
 }
 
 // Datos dat_causadesvnnaj
-export class dat_causadesvnnaj extends AbstractEntity {
+export class dat_causadesvnnaj {
   constructor(
     public idcausadesvnnaj: number,
     public idcausadesv: number,
     public otrascausas: string,
-    public idsituacnnaj?: number,
-    public idgeneral?: string
-  ) {
-    super(idgeneral);
-  }
+    public idsituacnnaj?: number
+  ) {}
 }
 
 // Datos dat_nnasitdelictiva
-export class dat_nnasitdelictiva extends AbstractEntity {
+export class dat_nnasitdelictiva {
   constructor(
     public idnnasitdelictiva: number,
     public idtiposituacion: number,
-    public idsituacnnaj?: number,
-    public idgeneral?: string
-  ) {
-    super(idgeneral);
-  }
+    public idsituacnnaj?: number
+  ) {}
 }
 
-export class dat_manejosdesechos extends AbstractEntity {
+export class dat_manejosdesechos {
   constructor(
     public idmanejodesechos: number,
     public idtipomanejos: number,
-    public idcodigohogar?: number,
-    public idgeneral?: string
-  ) {
-    super(idgeneral);
-  }
+    public idcodigohogar: number
+  ) {}
 }
-
 export class FamiliaCubana extends Dexie {
-  dat_unidaddealojamiento!: Table<dat_unidaddealojamiento>;
-  dat_hogar!: Table<dat_hogar>;
-  dat_estructura!: Table<dat_estructura>;
-  dat_zonavulnerable!: Table<dat_zonavulnerable>;
-  dat_caracterizacion!: Table<dat_caracterizacion>;
-  dat_localesvivienda!: Table<dat_localesvivienda>;
-  dat_ubicacionlocales!: Table<dat_ubicacionlocales>;
-  dat_hogardiversidadalimentaria!: Table<dat_hogardiversidadalimentaria>;
   conf_dispositivos!: Table<conf_dispositivos>;
   conf_estadofuncionalidad!: Table<conf_estadofuncionalidad>;
-  dat_seviciosvivienda!: Table<dat_seviciosvivienda>;
-  dat_miembroestrategias!: Table<dat_miembroestrategias>;
   dat_afectacionmatvivienda!: Table<dat_afectacionmatvivienda>;
+  dat_atributo!: Table<dat_atributo>;
+  dat_caracterizacion!: Table<dat_caracterizacion>;
+  dat_causadesvnnaj!: Table<dat_causadesvnnaj>;
+  dat_detallesconcepto!: Table<dat_detallesconcepto>;
   dat_estadoconstvivienda!: Table<dat_estadoconstvivienda>;
-  dat_hogarmobiliarioequipos!: Table<dat_hogarmobiliarioequipos>;
+  dat_estadonoacceso!: Table<dat_estadonoacceso>;
+  dat_estructura!: Table<dat_estructura>;
+  dat_hogar!: Table<dat_hogar>;
+  dat_hogardiversidadalimentaria!: Table<dat_hogardiversidadalimentaria>;
+  dat_hogarestrategias!: Table<dat_hogarestrategias>;
   dat_hogargastos!: Table<dat_hogargastos>;
-  dat_miembroencuesta!: Table<dat_miembroencuesta>;
-  dat_motivonoatencion!: Table<dat_motivonoatencion>;
-  dat_miembrohogar!: Table<dat_miembrohogar>;
-  dat_miembrogradoautonomia!: Table<dat_miembrogradoautonomia>;
-  dat_tiposayuda!: Table<dat_tiposayuda>;
-  dat_miembrodiscapacidad!: Table<dat_miembrodiscapacidad>;
+  dat_hogarmobiliarioequipos!: Table<dat_hogarmobiliarioequipos>;
+  dat_localesvivienda!: Table<dat_localesvivienda>;
+  dat_manejosdesechos!: Table<dat_manejosdesechos>;
+  dat_matrizrelacional!: Table<dat_matrizrelacional>;
+  dat_miebrobeneficioprogalim!: Table<dat_miebrobeneficioprogalim>;
   dat_miembroaditamentos!: Table<dat_miembroaditamentos>;
   dat_miembrobeneficios!: Table<dat_miembrobeneficios>;
+  dat_miembrodiscapacidad!: Table<dat_miembrodiscapacidad>;
+  dat_miembroencuesta!: Table<dat_miembroencuesta>;
+  dat_miembroenfbajaprev!: Table<dat_miembroenfbajaprev>;
   dat_miembroenfcronicas!: Table<dat_miembroenfcronicas>;
-  dat_viasacceso!: Table<dat_viasacceso>;
+  dat_miembroestrategias!: Table<dat_miembroestrategias>;
   dat_miembrofuentesingresos!: Table<dat_miembrofuentesingresos>;
+  dat_miembrogradoautonomia!: Table<dat_miembrogradoautonomia>;
+  dat_miembrohogar!: Table<dat_miembrohogar>;
   dat_miembroocupacion!: Table<dat_miembroocupacion>;
-  dat_polprogsoc!: Table<dat_polprogsoc>;
-  dat_situacnnaj!: Table<dat_situacnnaj>;
-  dat_nnaocupacion!: Table<dat_nnaocupacion>;
-  dat_miebrobeneficioprogalim!: Table<dat_miebrobeneficioprogalim>;
-  dat_miembrosituacionsocial!: Table<dat_miembrosituacionsocial>;
-  dat_hogarestrategias!: Table<dat_hogarestrategias>;
   dat_miembropogramas!: Table<dat_miembropogramas>;
-  dat_nvinculacionmiembro!: Table<dat_nvinculacionmiembro>;
-  dat_estadonoacceso!: Table<dat_estadonoacceso>;
-  dat_causadesvnnaj!: Table<dat_causadesvnnaj>;
+  dat_miembrosituacionsocial!: Table<dat_miembrosituacionsocial>;
+  dat_motivonoatencion!: Table<dat_motivonoatencion>;
+  dat_nnaocupacion!: Table<dat_nnaocupacion>;
   dat_nnasitdelictiva!: Table<dat_nnasitdelictiva>;
-  nom_tipoconcepto!: Table<nom_tipoconcepto>;
-  dat_atributo!: Table<dat_atributo>;
-  dat_detallesconcepto!: Table<dat_detallesconcepto>;
+  dat_nvinculacionmiembro!: Table<dat_nvinculacionmiembro>;
+  dat_polprogsoc!: Table<dat_polprogsoc>;
+  dat_quiencuida!: Table<dat_quiencuida>;
+  dat_remuneraciones!: Table<dat_remuneraciones>;
   dat_rolconcepto!: Table<dat_rolconcepto>;
+  dat_seviciosvivienda!: Table<dat_seviciosvivienda>;
+  dat_situacionsocialorg!: Table<dat_situacionsocialorg>;
+  dat_situacnnaj!: Table<dat_situacnnaj>;
+  dat_tiposayuda!: Table<dat_tiposayuda>;
+  dat_ubicacionlocales!: Table<dat_ubicacionlocales>;
+  dat_ubicacionsanitaria!: Table<dat_ubicacionsanitaria>;
+  dat_unidaddealojamiento!: Table<dat_unidaddealojamiento>;
+  dat_viasacceso!: Table<dat_viasacceso>;
+  dat_zonavulnerable!: Table<dat_zonavulnerable>;
   nom_concepto!: Table<nom_concepto>;
-  dat_matrizrelacional!: Table<dat_matrizrelacional>;
-  dat_manejosdesechos!: Table<dat_manejosdesechos>;
+  nom_tipoconcepto!: Table<nom_tipoconcepto>;
 
   constructor() {
     super("FamiliaCubana");
     this.version(1).stores({
+      dat_situacionsocialorg:
+        "++idsituacionsocialorg, idorganismo, idsituacionsocial",
       dat_unidaddealojamiento:
         "++idunidaddealojamiento, circunscripcion, cdr, direccion, geolocalizacion, idzonaresidencia, idtipovivienda, idasentamiento, planturquino, zonavulnerable, idzonavulnerable, idestructura",
       dat_hogar:
-        "++idcodigohogar, nautahogar, propgastossld, propgastosmed, ayudaprob, apoyolab, observaciones, idsituacionalegal, idestado, idtipogasto, idunidaddealojamiento",
-      dat_estructura: "++idestructura, idgeneral",
-      dat_zonavulnerable: "++idzonavulnerable, idgeneral",
+        "++idcodigohogar,problemasalud, nautahogar, propgastossld, propgastosmed,observaciones, idsituacionalegal, idestado, idtipogasto, idunidaddealojamiento",
+      dat_estructura: "++idestructura",
+      dat_zonavulnerable: "++idzonavulnerable",
       dat_caracterizacion:
-        "++idcaracterizacion, fechaentrev, fregistro, identrevistador, hinicio, hfin, tipo, idcodigohogar, idmiembrohogar, idgeneral",
+        "++idcaracterizacion, fechaentrev, fregistro, identrevistador, hinicio, hfin, tipo, idcodigohogar, idmiembrohogar",
       dat_localesvivienda:
-        "++idlocalesvivienda, cantudormir, cantedormir, tipousococina, cantidadcocina, idcombustible, tienesanitario, idtipousoservicio, idtiposanitario, idcodigohogar, idgeneral",
+        "++idlocalesvivienda, cantudormir, cantedormir, tipousococina, cantidadcocina, idcombustible, tienesanitario, idtipousoservicio, idtiposanitario, idcodigohogar",
       dat_ubicacionlocales:
-        "++idubicacionlocal, idtipoubicacion, idlocalesvivienda, idgeneral",
+        "++idubicacionlocal, idtipoubicacion, idlocalesvivienda,idcodigohogar",
       dat_hogardiversidadalimentaria:
-        "++idhogardiversidadalimentaria, losencontro, legustan, frecuencia, idcodigohogar, idtipoalimento, idgeneral",
-      conf_dispositivos: "++iddispositivo, idestructura, idgeneral",
+        "++idhogardiversidadalimentaria, losencontro, legustan, frecuencia, idcodigohogar, idtipoalimento",
+      conf_dispositivos: "++iddispositivo, idestructura",
       conf_estadofuncionalidad:
-        "++idhogarfunciconalidades, idfuncionalidad, idestado, idcodigohogar, idgeneral",
+        "++idhogarfunciconalidades, idfuncionalidad, idestado, idcodigohogar",
       dat_seviciosvivienda:
-        "++idserviciosvivienda, idinstalacionacueducto, idfrecsumagua, idprocedenciaagua,iddesague,idelectricidad, idcodigohogar, idgeneral",
+        "++idserviciosvivienda, idinstalacionacueducto, idfrecsumagua, idprocedenciaagua,iddesague,idelectricidad, idcodigohogar",
       dat_miembroestrategias:
-        "++idmiembroestrategia, idestrategia, idcodigohogar, idmiembrohogar, idgeneral",
+        "++idmiembroestrategia, idestrategia, idcodigohogar, idmiembrohogar",
       dat_afectacionmatvivienda:
-        "++idafectacionemat, idafectacion, idcodigohogar, idgeneral",
+        "++idafectacionemat, idafectacion, idcodigohogar",
       dat_estadoconstvivienda:
-        "++idestadoconstvivienda, idestadoconst, idcodigohogar, idgeneral",
+        "++idestadoconstvivienda, idestadoconst, idcodigohogar",
       dat_hogarmobiliarioequipos:
-        "++idhogarmobiliario, cantidad, idmobiliarioequipo, estado, idcodigohogar, idgeneral",
+        "++idhogarmobiliario, cantidad, idmobiliarioequipo, estado, tipoMobiliario, idcodigohogar",
       dat_hogargastos:
-        "++idhogasrgasto, iddestino, montocup, pesogasto, proporciongasto, idcodigohogar, idgeneral",
+        "++idhogargasto, iddestino, montocup, pesogasto, proporciongastoalimentacion, proporciongastomedicamento, idcodigohogar",
       dat_miembroencuesta:
-        "++idmiembroencuesta, problemasalud, atendido,idcodigohogar, idmiembrohogar, idgeneral",
+        "++idmiembroencuesta, atendido,idcodigohogar, idmiembrohogar",
       dat_motivonoatencion:
-        "++idmotivonoatencion, idmotivo, idcodigohogar, idmiembrohogar, idgeneral",
+        "++idmotivonoatencion, idmotivo, idcodigohogar, idmiembrohogar, idrespuesta",
       dat_miembrohogar:
-        "++idmiembrohogar, pnombre, snombre, papellido, sapellido, cidentidad, edad, idcolorpiel, dirscan, fotocarne, idsexo, idparentesco, idorientacionsex, idnivelescolar, idnivelescolargrado, idgradovencido, registroconsum, idpamunicipionac, datosmoviles, estaembarazada, lactando, madremenor19, redesapoyo, certificado, idcodigohogar, idgeneral",
+        "++idmiembrohogar, pnombre, apoyolaboresd, ayudaprobleconomico, snombre, papellido, sapellido, cidentidad, edad, idcolorpiel, dirscan, fotocarne, idsexo, idparentesco, idorientacionsex, idnivelescolar, idgradovencido, registroconsum, idpamunicipionac, datosmoviles, estaembarazada, lactando, madremenor19, redesapoyo, certificado, idcodigohogar",
       dat_miembrogradoautonomia:
-        "++idmiembrogradoautonomia, idautonomia, idcodigohogar, idmiembrohogar, idgeneral",
+        "++idmiembrogradoautonomia, idautonomia, idcodigohogar, idmiembrohogar",
       dat_tiposayuda:
-        "++idtiposayuda, idayuda, idcodigohogar, idmiembrogradoautonomia, idgeneral",
+        "++idtiposayuda, idayuda, idcodigohogar, idmiembrogradoautonomia",
       dat_miembrodiscapacidad:
-        "++idmiembrodiscapacidad, iddiscapacidad, idcodigohogar, idmiembro, idgeneral",
+        "++idmiembrodiscapacidad, iddiscapacidad, idcodigohogar, idmiembro,idmiembrohogar",
       dat_miembroaditamentos:
-        "++idmiembroaditamentos, idaditamento, disponeadit,idcodigohogar, idmiembrohogar, idgeneral",
+        "++idmiembroaditamentos, idaditamento, disponeadit,idcodigohogar, idmiembrohogar",
       dat_miembrobeneficios:
-        "++idmiembrobeneficios, idbeneficio,idcodigohogar, idmiembrohogar, idgeneral",
+        "++idmiembrobeneficios, idbeneficio,idcodigohogar, idmiembrohogar",
       dat_miembroenfcronicas:
-        "++idmiembroenfcronica, idenfermedad, accede, idtipoenfermedad, idcodigohogar, idmiembrohogar, idgeneral",
+        "++idmiembroenfcronica, idenfermedad, accede, idtipoenfermedad, idcodigohogar, idmiembrohogar",
       dat_viasacceso:
-        "++idviacceso, idtipoviaacceso, idcodigohogar, idmiembroenfcronica, idgeneral",
+        "++idviacceso, idtipoviaacceso, idcodigohogar, idmiembroenfcronica",
       dat_miembrofuentesingresos:
-        "++idmiembrofuentesingresos, montomensual, esotrafuente, idmoneda, idfuente, idcodigohogar, idmiembrohogar, idgeneral",
-        dat_miembroocupacion:
-        "++idmiembroocupacion, idocupacion, idtipoocupacion, idcodigohogar, idmiembrohogar, idgeneral",
+        "++idmiembrofuentesingresos, montomensual, esotrafuente, idmoneda, idfuente, idcodigohogar, idmiembrohogar",
+      dat_miembroocupacion:
+        "++idmiembroocupacion, idocupacion, idtipoocupacion, idcodigohogar, idmiembrohogar",
       dat_polprogsoc:
-        "++idpolprogsoc, idbeneficio, accede, idcodigohogar, idmiembrohogar, idgeneral",
-        dat_situacnnaj:
-        "++idsituacnnaj, idsituacioneduc, idcodigohogar, idmiembrohogar,idcuidadoprimerainf,idcuidadohogar,idsne,idetp, idgeneral",
+        "++idpolprogsoc, idbeneficio, accede, idcodigohogar, idmiembrohogar",
+      dat_situacnnaj:
+        "++idsituacnnaj, idsituacioneduc, idcodigohogar, idmiembrohogar,idcuidadoprimerainf,idcuidadohogar,idsne,idetp",
       dat_nnaocupacion:
-        "++idnnaocupacion,idmiembrohogar, idtipoactividad, idcanthoras, idhorario, autorizadomtss, idsituacnnaj, idgeneral",      
+        "++idnnaocupacion,idmiembrohogar,idcodigohogar, idtipoactividad, idcanthoras, idhorario, autorizadomtss, idsituacnnaj",
       dat_miebrobeneficioprogalim:
-        "++idmiebrobeneficioprogalim, idbeneficioprog, idcodigohogar, idmiembrohogar, idgeneral",
+        "++idmiebrobeneficioprogalim, idbeneficioprog, idcodigohogar, idmiembrohogar",
       dat_miembrosituacionsocial:
-        "++idiembrosituacionsocial, idsituacionsocial, idcodigohogar, idmiembrohogar, idgeneral",
+        "++idiembrosituacionsocial, idsituacionsocial, idcodigohogar, idmiembrohogar",
       dat_hogarestrategias:
-        "++idhogarestrategia, idestrategia, dias, idcodigohogar, idgeneral",
+        "++idhogarestrategia, idestrategia, dias, idcodigohogar",
       dat_miembropogramas:
-        "++idmiembroprograma, idprograma, idcodigohogar, idmiembrohogar, idgeneral",
-      dat_nvinculacionmiembro: 
-      "++idnvinculacionmiembro,tipo,idcausa,idmotivocuida,idmotivodecision,idremuneraciones,idcodigohogar,idmiembrohogar,idmiembroocupacion,idgeneral",
+        "++idmiembroprograma, idprograma, idcodigohogar, idmiembrohogar",
+      dat_nvinculacionmiembro:
+        "++idnvinculacionmiembro,tipo,idcausa,idmotivodecision,idcodigohogar,idmiembrohogar,idgeneral",
+      dat_remuneraciones:
+        "++idremuneraciones,idnvinculacionmiembro,remuneracion,idgeneral,idcodigohogar",
+      dat_quiencuida:
+        "++idquiencuida,idnvinculacionmiembro,idparentesco,idcodigohogar,idgeneral,cantidad",
       nom_tipoconcepto:
         "++idtipoconcepto, denominacion, descripcion, fhasta, idtipo",
       dat_atributo: "++idatributo, denomicacion, tipo, idtipoconcepto",
@@ -725,10 +657,16 @@ export class FamiliaCubana extends Dexie {
         "++idconcepto, idpadre, denominacion, nivel, fechafin, codigo, visible, idestructura, orden, idtipoconcepto",
       dat_matrizrelacional:
         "++idrelacion, fechafin, idestructura, idconceptorelacionado, idconceptopadre, idconceptopadrerel, idtipoconcepto",
-      dat_manejosdesechos:
-        "++idmanejodesechos, idtipomanejos, idcodigohogar, idgeneral",
-        dat_estadonoacceso:
-        " ++idcausanoacceso,idcausa,idrespuesta,idpolprogsoc,idgeneral",
+      dat_manejosdesechos: "++idmanejodesechos, idtipomanejos, idcodigohogar",
+      dat_estadonoacceso:
+        " ++idcausanoacceso,idcausa,idpolprogsoc,idgeneral,conocequeexiste,entramites,ayudaparaacceder",
+      dat_miembroenfbajaprev:
+        "++idmiembroenfbajaprev, idenfermedad, idmiembrohogar, idcodigohogar",
+      dat_ubicacionsanitaria:
+        "++idubicacionsanitario,idlocalesvivienda,idtiposanitario,idubicacion,idcodigohogar,idgeneral",
+      dat_causadesvnnaj:
+        " ++idcausadesvnnaj,idcausadesv,otrascausas,idsituacnnaj",
+      dat_nnasitdelictiva: "++idnnasitdelictiva,idtiposituacion,idsituacnnaj",
     });
   }
 }

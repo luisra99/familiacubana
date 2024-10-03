@@ -12,36 +12,97 @@ import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
 import DevicesRoundedIcon from "@mui/icons-material/DevicesRounded";
 import EdgesensorHighRoundedIcon from "@mui/icons-material/EdgesensorHighRounded";
 import ViewQuiltRoundedIcon from "@mui/icons-material/ViewQuiltRounded";
+import { borderColor } from "@mui/system";
 
 const items = [
   {
     icon: <ViewQuiltRoundedIcon />,
-    title: "Caracteristica 1",
-    description: "Descripción breve...",
+    title: "Módulo 1",
+    description:
+      "Registra información general de los hogares, la vivienda y los miembros que la componen.",
     imageLight:
       'url("/static/images/templates/templates-images/dash-light.png")',
     imageDark: 'url("/static/images/templates/templates-images/dash-dark.png")',
     body: "Descripción detallada....",
   },
   {
-    icon: <EdgesensorHighRoundedIcon />,
-    title: "Caracteristica 2",
+    icon: <ViewQuiltRoundedIcon />,
+    title: "Módulo 2",
+    description:
+      "Registra las entradas monetarias que reciben todos los miembros del hogar.",
     imageLight:
-      'url("/static/images/templates/templates-images/mobile-light.png")',
-    imageDark:
-      'url("/static/images/templates/templates-images/mobile-dark.png")',
-    description: "Descripción breve...",
+      'url("/static/images/templates/templates-images/dash-light.png")',
+    imageDark: 'url("/static/images/templates/templates-images/dash-dark.png")',
     body: "Descripción detallada....",
   },
   {
-    icon: <DevicesRoundedIcon />,
-    title: "Caracteristica 3",
+    icon: <ViewQuiltRoundedIcon />,
+    title: "Módulo 3",
+    description:
+      "Registra las actividades laborales, de estudios u otras, habituales de los miembros adultos del hogar.",
     imageLight:
-      'url("/static/images/templates/templates-images/devices-light.png")',
-    imageDark:
-      'url("/static/images/templates/templates-images/devices-dark.png")',
-    description: "Descripción breve...",
-
+      'url("/static/images/templates/templates-images/dash-light.png")',
+    imageDark: 'url("/static/images/templates/templates-images/dash-dark.png")',
+    body: "Descripción detallada....",
+  },
+  {
+    icon: <ViewQuiltRoundedIcon />,
+    title: "Módulo 4",
+    description:
+      "Capta la situación de los miembros del hogar en cuanto a sus condiciones de vida, incluyendo la cobertura de sus necesidades.",
+    imageLight:
+      'url("/static/images/templates/templates-images/dash-light.png")',
+    imageDark: 'url("/static/images/templates/templates-images/dash-dark.png")',
+    body: "Descripción detallada....",
+  },
+  {
+    icon: <ViewQuiltRoundedIcon />,
+    title: "Módulo 5",
+    description:
+      "Registra los beneficios de programas de protección social y cuidados a los que acceden o necesitan acceder los miembros de la familia.",
+    imageLight:
+      'url("/static/images/templates/templates-images/dash-light.png")',
+    imageDark: 'url("/static/images/templates/templates-images/dash-dark.png")',
+    body: "Descripción detallada....",
+  },
+  {
+    icon: <ViewQuiltRoundedIcon />,
+    title: "Módulo 6",
+    description:
+      "Se registra la situación de niños, niñas, adolescentes y jóvenes del hogar.",
+    imageLight:
+      'url("/static/images/templates/templates-images/dash-light.png")',
+    imageDark: 'url("/static/images/templates/templates-images/dash-dark.png")',
+    body: "Descripción detallada....",
+  },
+  {
+    icon: <ViewQuiltRoundedIcon />,
+    title: "Módulo 7",
+    description:
+      "Se registran las condiciones de la vivienda, acceso a servicios y equipamiento del hogar.",
+    imageLight:
+      'url("/static/images/templates/templates-images/dash-light.png")',
+    imageDark: 'url("/static/images/templates/templates-images/dash-dark.png")',
+    body: "Descripción detallada....",
+  },
+  {
+    icon: <ViewQuiltRoundedIcon />,
+    title: "Módulo 8",
+    description:
+      "Se registran los gastos, consumo y disponibilidad de alimentos y estrategias de solución de problemas en el hogar de conjunto.",
+    imageLight:
+      'url("/static/images/templates/templates-images/dash-light.png")',
+    imageDark: 'url("/static/images/templates/templates-images/dash-dark.png")',
+    body: "Descripción detallada....",
+  },
+  {
+    icon: <ViewQuiltRoundedIcon />,
+    title: "Módulo 9",
+    description:
+      "Se consolida la información y se muestra según los modelos aestablecidos.",
+    imageLight:
+      'url("/static/images/templates/templates-images/dash-light.png")',
+    imageDark: 'url("/static/images/templates/templates-images/dash-dark.png")',
     body: "Descripción detallada....",
   },
 ];
@@ -58,20 +119,20 @@ export default function Features() {
   return (
     <Container id="features" sx={{ py: { xs: 8, sm: 16 } }}>
       <Grid container spacing={6}>
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} >
           <div>
             <Typography component="h2" variant="h4" color="text.primary">
-              Facilidades de la plataforma
+              Funcionalidades
             </Typography>
             <Typography
               variant="body1"
               color="text.secondary"
               sx={{ mb: { xs: 2, sm: 4 } }}
             >
-              Desde descripción de la plataforma y sus distintos usos...
+              Al alcance todo lo que necesitas
             </Typography>
           </div>
-          <Grid
+          {/* <Grid
             container
             item
             gap={1}
@@ -103,16 +164,16 @@ export default function Features() {
                 }}
               />
             ))}
-          </Grid>
-          <Box
+          </Grid> */}
+          {/* <Box
             component={Card}
             variant="outlined"
             sx={{
               display: { xs: "auto", sm: "none" },
               mt: 4,
             }}
-          >
-            <Box
+          > */}
+            {/* <Box
               sx={{
                 backgroundImage: (theme) =>
                   theme.palette.mode === "light"
@@ -122,8 +183,8 @@ export default function Features() {
                 backgroundPosition: "center",
                 minHeight: 280,
               }}
-            />
-            <Box sx={{ px: 2, pb: 2 }}>
+            /> */}
+            {/* <Box sx={{ px: 2, pb: 2 }}>
               <Typography
                 color="text.primary"
                 variant="body2"
@@ -155,83 +216,87 @@ export default function Features() {
                   sx={{ mt: "1px", ml: "2px" }}
                 />
               </Link>
-            </Box>
-          </Box>
-          <Stack
+            </Box> */}
+          {/* </Box> */}
+          {/* <Stack
             direction="column"
             justifyContent="center"
             alignItems="flex-start"
             spacing={2}
             useFlexGap
             sx={{ width: "100%", display: { xs: "none", sm: "flex" } }}
-          >
+          > */}
+          <Grid container spacing={2}>
             {items.map(({ icon, title, description }, index) => (
-              <Card
-                key={index}
-                variant="outlined"
-                component={Button}
-                onClick={() => handleItemClick(index)}
-                sx={{
-                  p: 3,
-                  height: "fit-content",
-                  width: "100%",
-                  background: "none",
-                  backgroundColor:
-                    selectedItemIndex === index ? "action.selected" : undefined,
-                  borderColor: (theme) => {
-                    if (theme.palette.mode === "light") {
-                      return selectedItemIndex === index
-                        ? "primary.light"
-                        : "grey.200";
-                    }
-                    return selectedItemIndex === index
-                      ? "primary.dark"
-                      : "grey.800";
-                  },
-                }}
-              >
-                <Box
+              <Grid item sx={{ borderColor: "red" }} xs={6} lg={4}>
+                <Card
+                  key={index}
+                  variant="outlined"
+                  component={Button}
+                  onClick={() => handleItemClick(index)}
                   sx={{
+                    p: 3,
+                    height: "fit-content",
                     width: "100%",
-                    display: "flex",
-                    textAlign: "left",
-                    flexDirection: { xs: "column", md: "row" },
-                    alignItems: { md: "center" },
-                    gap: 2.5,
+                    background: "none",
+                    backgroundColor:
+                      selectedItemIndex === index
+                        ? "action.selected"
+                        : undefined,
+                    borderColor: (theme) => {
+                      if (theme.palette.mode === "light") {
+                        return selectedItemIndex === index
+                          ? "primary.light"
+                          : "grey.200";
+                      }
+                      return selectedItemIndex === index
+                        ? "primary.dark"
+                        : "grey.800";
+                    },
                   }}
                 >
                   <Box
                     sx={{
-                      color: (theme) => {
-                        if (theme.palette.mode === "light") {
-                          return selectedItemIndex === index
-                            ? "primary.main"
-                            : "grey.300";
-                        }
-                        return selectedItemIndex === index
-                          ? "primary.main"
-                          : "grey.700";
-                      },
+                      width: "100%",
+                      display: "flex",
+                      textAlign: "left",
+                      flexDirection: { xs: "column", md: "row" },
+                      alignItems: { md: "center" },
+                      gap: 2.5,
                     }}
                   >
-                    {icon}
-                  </Box>
-                  <Box sx={{ textTransform: "none" }}>
-                    <Typography
-                      color="text.primary"
-                      variant="body2"
-                      fontWeight="bold"
+                    <Box
+                      sx={{
+                        color: (theme) => {
+                          if (theme.palette.mode === "light") {
+                            return selectedItemIndex === index
+                              ? "primary.main"
+                              : "grey.300";
+                          }
+                          return selectedItemIndex === index
+                            ? "primary.main"
+                            : "grey.700";
+                        },
+                      }}
                     >
-                      {title}
-                    </Typography>
-                    <Typography
-                      color="text.secondary"
-                      variant="body2"
-                      sx={{ my: 0.5 }}
-                    >
-                      {description}
-                    </Typography>
-                    <Link
+                      {icon}
+                    </Box>
+                    <Box sx={{ textTransform: "none" }}>
+                      <Typography
+                        color="text.primary"
+                        variant="body2"
+                        fontWeight="bold"
+                      >
+                        {title}
+                      </Typography>
+                      <Typography
+                        color="text.secondary"
+                        variant="body2"
+                        sx={{ my: 0.5 }}
+                      >
+                        {description}
+                      </Typography>
+                      {/* <Link
                       color="primary"
                       variant="body2"
                       fontWeight="bold"
@@ -244,20 +309,23 @@ export default function Features() {
                       onClick={(event) => {
                         event.stopPropagation();
                       }}
-                    >
-                      <span>Leer más...</span>
+                    > */}
+                      {/* <span>Leer más...</span>
                       <ChevronRightRoundedIcon
                         fontSize="small"
                         sx={{ mt: "1px", ml: "2px" }}
                       />
-                    </Link>
+                    </Link> */}
+                    </Box>
                   </Box>
-                </Box>
-              </Card>
+                </Card>
+              </Grid>
             ))}
-          </Stack>
+          </Grid>
+
+          {/* </Stack> */}
         </Grid>
-        <Grid
+        {/* <Grid
           item
           xs={12}
           md={6}
@@ -288,7 +356,7 @@ export default function Features() {
               </Typography>
             </Box>
           </Card>
-        </Grid>
+        </Grid> */}
       </Grid>
     </Container>
   );

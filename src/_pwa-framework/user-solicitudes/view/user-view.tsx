@@ -1,9 +1,12 @@
 import { Button, DialogActions } from "@mui/material";
+import { FC, useEffect } from "react";
+import TablePagination, {
+  LabelDisplayedRowsArgs,
+} from "@mui/material/TablePagination";
 import { applyFilter, emptyRows, getComparator } from "../utils";
 
 import Card from "@mui/material/Card";
 import Container from "@mui/material/Container";
-import { FC } from "react";
 import Scrollbar from "../scrollbar";
 import Stack from "@mui/material/Stack";
 import type { SvgIconProps } from "@mui/material/SvgIcon";
@@ -12,10 +15,10 @@ import TableBody from "@mui/material/TableBody";
 import TableContainer from "@mui/material/TableContainer";
 import TableEmptyRows from "../table-empty-rows";
 import TableNoData from "../table-no-data";
-import TablePagination from "@mui/material/TablePagination";
 import Typography from "@mui/material/Typography";
 import UserTableHead from "../user-table-head";
 import UserTableRow from "../user-table-row";
+import UserTableToolbar from "../user-table-toolbar";
 import { useState } from "react";
 
 // ----------------------------------------------------------------------
@@ -30,18 +33,23 @@ export function TableView({
   dataActions,
   rowActions,
   disabled,
+  hidden,
   setState,
   defaultValues,
   name: formName,
   setFieldValue,
+  setFieldTouched,
   useCheckBox,
+  search,
+  hideTableHead,
+  selectedRows,
 }: {
   headers: {
     name: string;
     align?: "left" | "right" | "center";
-    label: string;
+    label?: string;
   }[];
-  title: string;
+  title?: string;
   values: any[];
   idKey: string;
   multiSelect: boolean;
@@ -51,28 +59,40 @@ export function TableView({
     label: string;
     action: (values: any) => void;
     icon?: FC<SvgIconProps>;
+    disabled?: (values?: any) => boolean;
     color?: string;
   }[];
   disabled?: boolean;
+  selectedRows?: any[];
   setState?: any;
   defaultValues?: any;
   name?: string;
   setFieldValue?: any;
+  setFieldTouched?: any;
   useCheckBox?: boolean;
+  search?: boolean;
+  hidden?: any;
+  hideTableHead?: boolean;
 }) {
   const [page, setPage] = useState(0);
 
   const [order, setOrder] = useState("asc");
 
-  const [selected, setSelected] = useState<any[]>(
-    Array.isArray(defaultValues) ? defaultValues : []
-  );
+  const [selected, setSelected] = useState<any[]>(defaultValues ?? []);
 
   const [orderBy, setOrderBy] = useState("name");
 
   const [filterName, setFilterName] = useState("");
 
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(20);
+
+  useEffect(() => {
+    if (defaultValues) {
+      setSelected(defaultValues);
+    } else {
+      setSelected([]);
+    }
+  }, [defaultValues]);
 
   const handleSort = (event: any, id: any) => {
     const isAsc = orderBy === id && order === "asc";
@@ -81,39 +101,42 @@ export function TableView({
       setOrderBy(id);
     }
   };
-
   const handleSelectAllClick = (event: any) => {
-    if (event.target.checked) {
-      const newSelecteds = values.map((n) => n[idKey]);
-      setSelected(newSelecteds);
-      setState?.(newSelecteds);
+    if (!multiSelect) {
       return;
+    } else {
+      if (event.target.checked) {
+        const newSelecteds = values.map((n) => n[idKey]);
+        setSelected(newSelecteds);
+        setState?.(newSelecteds);
+        return;
+      }
     }
     setSelected([]);
   };
 
   const handleClick = (event: any, name: any) => {
-    // console.log(name, idKey);
-    const selectedIndex = selected.indexOf(name);
+    const selectedIndex = (selectedRows ?? selected).indexOf(name);
 
     let newSelected: any[] = [];
     if (selectedIndex === -1) {
       if (!multiSelect) {
         newSelected = [name];
       } else {
-        newSelected = newSelected.concat(selected, name);
+        newSelected = newSelected.concat(selectedRows ?? selected, name);
       }
     } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
+      newSelected = newSelected.concat((selectedRows ?? selected).slice(1));
+    } else if (selectedIndex === (selectedRows ?? selected).length - 1) {
+      newSelected = newSelected.concat((selectedRows ?? selected).slice(0, -1));
     } else if (selectedIndex > 0) {
       newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1)
+        (selectedRows ?? selected).slice(0, selectedIndex),
+        (selectedRows ?? selected).slice(selectedIndex + 1)
       );
     }
-    setFieldValue(formName, newSelected);
+    setFieldValue?.(formName, newSelected, true);
+    setFieldTouched?.(formName);
     setSelected(newSelected);
     setState?.(newSelected);
   };
@@ -136,57 +159,67 @@ export function TableView({
     inputData: values,
     comparator: getComparator(order, orderBy),
     filterName,
-    name: filterBy,
+    headers,
   });
 
   const notFound = !dataFiltered.length && !!filterName;
+  // useEffect(() => {
+  //   if (defaultValues) setSelected(defaultValues);
+  // }, [defaultValues]);
 
   return (
-    <Container sx={{ minWidth: "100%" }}>
-      <Stack
-        direction="row"
-        alignItems="center"
-        justifyContent="space-between"
-        mb={5}
-        display={disabled ? "none" : "unset"}
-      >
-        <Typography variant="h5">{title}</Typography>
-      </Stack>
-
+    <Container sx={{ minWidth: "100%", padding: "0 !important" }}>
+      {title && (
+        <Stack
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
+          mb={5}
+          display={disabled ? "none" : "unset"}
+        >
+          <Typography variant="h5">{title}</Typography>
+        </Stack>
+      )}
       <Card sx={{ display: disabled ? "none" : "unset", width: "100%" }}>
-        {/* <UserTableToolbar
-          numSelected={selected.length}
-          filterName={filterName}
-          onFilterName={handleFilterByName}
-          filterBy={filterBy}
-        /> */}
+        {search && (
+          <UserTableToolbar
+            numSelected={(selectedRows ?? selected).length}
+            filterName={filterName}
+            onFilterName={handleFilterByName}
+            filterBy={filterBy}
+          />
+        )}
 
         <Scrollbar>
           <TableContainer sx={{ overflow: "unset" }}>
-            <Table sx={{ minWidth: 800 }}>
-              <UserTableHead
-                order={order}
-                orderBy={orderBy}
-                rowCount={values.length}
-                numSelected={selected.length}
-                onRequestSort={handleSort}
-                onSelectAllClick={handleSelectAllClick}
-                headLabel={headers}
-                rowActions={rowActions}
-                useCheckBox={useCheckBox ?? true}
-              />
+            <Table>
+              {!hideTableHead && (
+                <UserTableHead
+                  order={order}
+                  orderBy={orderBy}
+                  rowCount={values.length}
+                  numSelected={(selectedRows ?? selected).length}
+                  onRequestSort={handleSort}
+                  onSelectAllClick={handleSelectAllClick}
+                  headLabel={headers}
+                  rowActions={rowActions}
+                  useCheckBox={useCheckBox ?? true}
+                />
+              )}
               <TableBody>
                 {dataFiltered
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   ?.map((row: any) => {
-                    // console.log(row);
                     return (
                       <UserTableRow
                         key={row?.[idKey]}
                         row={row}
-                        headers={headers}
+                        headers={headers.filter((item) => item.label)}
                         actions={rowActions}
-                        selected={selected.indexOf(row?.[idKey]) !== -1}
+                        selected={
+                          (selectedRows ?? selected).indexOf(row?.[idKey]) !==
+                          -1
+                        }
                         handleClick={(event) =>
                           handleClick(event, row?.[idKey])
                         }
@@ -209,10 +242,10 @@ export function TableView({
           {dataActions?.map((action) => (
             <Button
               onClick={() => {
-                const selectedRows = values.filter((item) =>
-                  selected.includes(item[idKey])
+                const _selectedRows = values.filter((item) =>
+                  (selectedRows ?? selected).includes(item[idKey])
                 );
-                action.action(selectedRows);
+                action.action(_selectedRows);
               }}
               color="primary"
               variant="contained"
@@ -222,13 +255,17 @@ export function TableView({
           ))}
         </DialogActions>
         <TablePagination
+          style={{ marginTop: 100 }}
           page={page}
           component="div"
           count={values.length}
           rowsPerPage={rowsPerPage}
           onPageChange={handleChangePage}
           labelRowsPerPage="Filas por página"
-          rowsPerPageOptions={[5, 10, 25]}
+          rowsPerPageOptions={[5, 10, 15, 20, 25]}
+          labelDisplayedRows={(info: LabelDisplayedRowsArgs) =>
+            `${info.from} - ${info.to} de ${info.count}`
+          }
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Card>

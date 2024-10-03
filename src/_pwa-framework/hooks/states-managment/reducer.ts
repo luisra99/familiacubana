@@ -12,9 +12,6 @@ export default function sessionReducer(state: IUserInfo, update: Update): any {
       return userData;
     }
     case "log-out":
-      state?.ISUser
-        ? console.log(Date.now(), "Cerrar sesion del IS")
-        : console.log(Date.now(), "Cerrar session del backend");
       return false;
     case "sign-up":
       //Logica para registrar

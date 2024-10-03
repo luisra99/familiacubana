@@ -12,6 +12,7 @@ import { BasicSliderFields } from "../components/basics-controls/slider.generic"
 import { BasicSwitchFields } from "../components/basics-controls/switch.generic";
 import { BasicTextFields } from "../components/basics-controls/input.generic";
 import { BasicTimeFields } from "../components/basics-controls/time.generic";
+import { ScannerGeneric } from "../components/special-controls/scanner.generic";
 
 export function getControl(type: EControls) {
   return DICTIONARY[type];
@@ -20,6 +21,7 @@ export function getControl(type: EControls) {
 const DICTIONARY: ControlDictionary = {
   number: BasicNumberFields,
   select: BasicSelectFields,
+  multiselect: BasicSelectFields,
   autocomplete: BasicAutocompleteFields,
   date: BasicDateFields,
   time: BasicTimeFields,
@@ -30,4 +32,5 @@ const DICTIONARY: ControlDictionary = {
   radio: BasicRadioFields,
   rating: BasicRatingFields,
   component: BasicCustomComponent,
+  scanner: ScannerGeneric,
 };

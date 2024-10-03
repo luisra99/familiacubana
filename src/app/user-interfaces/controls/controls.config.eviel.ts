@@ -18,23 +18,23 @@ export const PresentaDiscapacidad: IGenericControls = {
     { idconcepto: "1", denominacion: "Sí" },
     { idconcepto: "2", denominacion: "No" },
   ],
-   disabled: (values) => values.idmiembro == "", 
-   
+  hidden: (values: any) => values.idmiembro == "",
 };
 
 export const Discapacidad: IGenericControls = {
-  type: "select",
+  type: "multiselect",
   label: "Discapacidad",
   name: "iddiscapacidad",
   url: "9376",
   multiple: "check",
   gridValues: { xs: 12 },
-  disabled: (values) => values.idmiembro == "" || values.idmiembrodiscapacidad != "1" ,
+  hidden: (values: any) =>
+    values.idmiembro == "" || values.idmiembrodiscapacidad != "1",
 };
 
 //Nomenclador incorrecto
 export const enfermedades: IGenericControls = {
-  type: "select",
+  type: "multiselect",
   label: "Enfermedades de baja prevalencia",
   name: "idenfermedad",
   url: "9409",
@@ -43,7 +43,7 @@ export const enfermedades: IGenericControls = {
 
 //Nomenclador incorrecto
 export const BeneficiosSalud: IGenericControls = {
-  type: "select",
+  type: "multiselect",
   label: "Beneficios focalizados de salud",
   name: "idbeneficio",
   url: "9802",
@@ -76,7 +76,7 @@ export const Remuneraciones: IGenericControls = {
 };
 
 export const EscogerOpcion: IGenericControls = {
-  type: "select",
+  type: "multiselect",
   label: "Escoja la opción",
   name: "idremuneraciones",
   multiple: "check",
@@ -106,7 +106,7 @@ export const MontoMensual: IGenericControls = {
   label: "Monto mensual",
   name: "montomensual",
   format: "finance",
-  disabled: (values) => values.idmiembrofuentesingresos != "2",
+  hidden: (values: any) => values.idmiembrofuentesingresos != "2",
 };
 
 export const Moneda: IGenericControls = {
@@ -131,7 +131,7 @@ export const Cual: IGenericControls = {
   name: "esotrafuente",
   multiline: { minRows: 1 },
   gridValues: { xs: 12, sm: 12, lg: 6, md: 12, xl: 6 },
-  disabled: (values) => values.idfuente != "opt1",
+  hidden: (values: any) => values.idfuente != "opt1",
 };
 
 export const EstrategiasAlimentarias: IGenericControls = {
@@ -231,14 +231,14 @@ export const ProcedenciaPrincipalAgua: IGenericControls = {
 
 export const SistemaDesague: IGenericControls = {
   type: "select",
-  label: "Sistema de Desague",
+  label: "Sistema de Desagüe",
   name: "idserviciosvivienda",
   gridValues: { xs: 12, lg: 4, md: 4, sm: 12, xl: 4 },
   url: "9644",
 };
 
 export const ManejoDesechos: IGenericControls = {
-  type: "select",
+  type: "multiselect",
   label: "Manejo de desechos",
   name: "idserviciosvivienda",
   url: "9644",
@@ -286,7 +286,7 @@ export const Ultimomeses: IGenericControls = {
   direction: "row",
   labelPlacement: "end",
   gridValues: { xl: 12, lg: 12, md: 12, sm: 12, xs: 12 },
-  disabled: (values) => values.idmiembrohogar == "",
+  hidden: (values: any) => values.idmiembrohogar == "",
 };
 
 export const Ocupacion: IGenericControls = {
@@ -356,7 +356,7 @@ export const Ocupaciones: IGenericControls = {
     { idconcepto: "19", denominacion: "Estudiante" },
     { idconcepto: "20", denominacion: "NTNE" },
   ],
-  disabled: (values) => values.idocupacion == "opt2",
+  hidden: (values: any) => values.idocupacion == "opt2",
   direction: "row",
   labelPlacement: "end",
   gridValues: { xl: 12, lg: 12, md: 12, sm: 12, xs: 12 },
@@ -452,11 +452,11 @@ export const otrasRazones: IGenericControls = {
   name: "otrascausas",
   gridValues: { md: 6 },
   multiline: { minRows: 2 },
-  disabled: (values) => values.idcausadesv == "opt1",
+  hidden: (values: any) => values.idcausadesv == "opt1",
 };
 
 export const situacionNNA: IGenericControls = {
-  type: "select",
+  type: "multiselect",
   label: "Situación de NNA que cometen hechos que la ley tipifica como delito",
   name: "idsituacnnaj",
   multiple: "check",
@@ -512,9 +512,9 @@ export const Delincuencia: IGenericControls = {
 export const MPD: IGenericControls = {
   type: "text",
   gridValues: { xs: 12, sm: 6, lg: 6, md: 6, xl: 6 },
-  label: "MPD (Madre o padre en situacion de discapacidad)",
+  label: "MPD (Madre o padre en situación de discapacidad)",
   name: "idmotivocuida",
-  disabled: (values) => values.idmotivodecision != "opt1",
+  hidden: (values: any) => values.idmotivodecision != "opt1",
 };
 
 export const MPA: IGenericControls = {
@@ -523,7 +523,7 @@ export const MPA: IGenericControls = {
 
   label: "MPD (Madre o padre ancianos)",
   name: "idmotivocuida",
-  disabled: (values) => values.idmotivodecision != "opt1",
+  hidden: (values: any) => values.idmotivodecision != "opt1",
 };
 
 export const HD: IGenericControls = {
@@ -532,7 +532,7 @@ export const HD: IGenericControls = {
 
   label: "HD (Hijo/a en situación de discapacidad )",
   name: "idmotivocuida",
-  disabled: (values) => values.idmotivodecision != "opt1",
+  hidden: (values: any) => values.idmotivodecision != "opt1",
 };
 
 export const HijoM: IGenericControls = {
@@ -541,7 +541,7 @@ export const HijoM: IGenericControls = {
 
   label: "HM (Hijo/a menor)",
   name: "idmotivocuida",
-  disabled: (values) => values.idmotivodecision != "opt1",
+  hidden: (values: any) => values.idmotivodecision != "opt1",
 };
 
 export const ND: IGenericControls = {
@@ -550,7 +550,7 @@ export const ND: IGenericControls = {
 
   label: "ND (Nieto/a en situación de discapacidad)",
   name: "idmotivocuida",
-  disabled: (values) => values.idmotivodecision != "opt1",
+  hidden: (values: any) => values.idmotivodecision != "opt1",
 };
 
 export const NietoMenor: IGenericControls = {
@@ -559,7 +559,7 @@ export const NietoMenor: IGenericControls = {
 
   label: "NM (Nieto/a menor)",
   name: "idmotivocuida",
-  disabled: (values) => values.idmotivodecision != "opt1",
+  hidden: (values: any) => values.idmotivodecision != "opt1",
 };
 
 export const SuegroD: IGenericControls = {
@@ -568,7 +568,7 @@ export const SuegroD: IGenericControls = {
 
   label: "SD (Suegro/a en situación de discapacidad)",
   name: "idmotivocuida",
-  disabled: (values) => values.idmotivodecision != "opt1",
+  hidden: (values: any) => values.idmotivodecision != "opt1",
 };
 
 export const SuegroA: IGenericControls = {
@@ -577,7 +577,7 @@ export const SuegroA: IGenericControls = {
 
   label: "SA (Suegro p suegra ancianos)",
   name: "idmotivocuida",
-  disabled: (values) => values.idmotivodecision != "opt1",
+  hidden: (values: any) => values.idmotivodecision != "opt1",
 };
 
 export const HED: IGenericControls = {
@@ -586,7 +586,7 @@ export const HED: IGenericControls = {
 
   label: "HED (Hermano/a en situación de discapacidad)",
   name: "idmotivocuida",
-  disabled: (values) => values.idmotivodecision != "opt1",
+  hidden: (values: any) => values.idmotivodecision != "opt1",
 };
 
 export const HEA: IGenericControls = {
@@ -595,7 +595,7 @@ export const HEA: IGenericControls = {
 
   label: "HEA (Hermano/a ancianos)",
   name: "idmotivocuida",
-  disabled: (values) => values.idmotivodecision != "opt1",
+  hidden: (values: any) => values.idmotivodecision != "opt1",
 };
 
 export const Otros: IGenericControls = {
@@ -604,7 +604,7 @@ export const Otros: IGenericControls = {
 
   label: "Otros",
   name: "idmotivocuida",
-  disabled: (values) => values.idmotivodecision != "opt1",
+  hidden: (values: any) => values.idmotivodecision != "opt1",
 };
 
 export const MotivoDesicion: IGenericControls = {
@@ -637,7 +637,7 @@ export const escojaElMiembro2: IGenericControls = {
   ],
 };
 
-// dat_miembrogradodeautonomia / dat_tiposdeayuda /dat_miembrodiscapacidad / dat_miembroaditamientos //
+// dat_miembrogradodeautonomia / dat_tiposdeayuda /dat_miembrodiscapacidad / dat_miembroAditamentos //
 
 export const escojaElMiembro3: IGenericControls = {
   type: "select",
@@ -676,20 +676,27 @@ export const escojaElMiembro5: IGenericControls = {
   ],
 };
 
-export const Aditamientos: IGenericControls = {
+export const Aditamentos: IGenericControls = {
   type: "select",
-  label: "Aditamientos",
+  label: "Aditamentos",
   name: "idaditamento",
   url: "9383",
+  validations: {
+    required: { message: "Debe seleccionar un aditamento" },
+  },
+  disabledOnEdit:true,
   gridValues: { xs: 12, sm: 6, lg: 6, md: 6, xl: 6 },
 };
 
-export const Disponibilad: IGenericControls = {
+export const Disponibilidad: IGenericControls = {
   type: "select",
-  label: "Disponibilad",
+  label: "Disponibilidad",
   name: "disponeadit",
   url: "9395",
-  gridValues: { xs: 12 , sm: 6, lg: 6, md: 6, xl: 6 },
+  validations: {
+    required: { message: "Debe seleccionar la disponibilidad" },
+  },
+  gridValues: { xs: 12, sm: 6, lg: 6, md: 6, xl: 6 },
 };
 
 export const Actividad: IGenericControls = {
@@ -697,8 +704,7 @@ export const Actividad: IGenericControls = {
   label: "Actividad",
   name: "idtipoactividad",
   gridValues: { xs: 12, sm: 6, lg: 6, md: 6, xl: 6 },
-  url : "9501"
-      
+  url: "9501",
 };
 
 export const cantidadHoras: IGenericControls = {
@@ -706,7 +712,7 @@ export const cantidadHoras: IGenericControls = {
   label: "Cantidad de horas",
   name: "idcanthoras",
   gridValues: { xs: 12, sm: 6, lg: 6, md: 6, xl: 6 },
-  url:"10136",
+  url: "10136",
 };
 
 export const horarios: IGenericControls = {
@@ -714,7 +720,7 @@ export const horarios: IGenericControls = {
   label: "Horarios",
   name: "idhorario",
   gridValues: { xs: 12, sm: 6, lg: 6, md: 6, xl: 6 },
-  url:"10140",
+  url: "10140",
 };
 export const autorizacion: IGenericControls = {
   type: "select",
@@ -759,8 +765,8 @@ export const escojaopcion: IGenericControls = {
   label: "Escoja la opción",
   name: "idtipoactividad",
   options: [
-    { idconcepto: "opt1", denominacion: "Propio" },
-    { idconcepto: "opt2", denominacion: "Asignado" },
+    { idconcepto: "0", denominacion: "Propio" },
+    { idconcepto: "1", denominacion: "Asignado" },
   ],
 };
 
@@ -783,7 +789,7 @@ export const gastocup: IGenericControls = {
 export const alimentacion: IGenericControls = {
   type: "select",
   label: "Alimentación",
-  name: "proporciongasto",
+  name: "proporciongastoalimentacion",
   url: "9639",
   gridValues: { xs: 12, sm: 6, lg: 6, md: 6, xl: 6 },
 };
@@ -791,8 +797,7 @@ export const alimentacion: IGenericControls = {
 export const medicamentos5: IGenericControls = {
   type: "select",
   label: "Medicamentos",
-  name: "proporciongasto",
+  name: "proporciongastomedicamento",
   gridValues: { xs: 12, sm: 6, lg: 6, md: 6, xl: 6 },
-
   url: "9639",
 };

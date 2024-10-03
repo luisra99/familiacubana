@@ -27,7 +27,7 @@ export default function UserTableHead({
   return (
     <TableHead>
       <TableRow>
-        {useCheckBox && 
+        {useCheckBox && (
           <TableCell padding="checkbox">
             <Checkbox
               indeterminate={numSelected > 0 && numSelected < rowCount}
@@ -35,40 +35,47 @@ export default function UserTableHead({
               onChange={onSelectAllClick}
             />
           </TableCell>
-        }
-        {headLabel.map((headCell: any) => (
-          <TableCell
-            key={headCell.name}
-            align={headCell.align || "left"}
-            sortDirection={orderBy === headCell.id ? order : false}
-            sx={{ width: headCell.width, minWidth: headCell.minWidth }}
-          >
-            <TableSortLabel
-              hideSortIcon
-              active={orderBy === headCell.id}
-              direction={orderBy === headCell.id ? order : "asc"}
-              onClick={onSort(headCell.id)}
-            >
-              {headCell.label}
-              {orderBy === headCell.id ? (
-                <Box sx={{ ...visuallyHidden }}>
-                  {order === "desc" ? "sorted descending" : "sorted ascending"}
-                </Box>
-              ) : null}
-            </TableSortLabel>
-          </TableCell>
-        ))}{" "}
+        )}
+        {headLabel.map(
+          (headCell: any) =>
+            headCell.label && (
+              <TableCell
+                key={headCell.name}
+                align={headCell.align || "left"}
+                sortDirection={orderBy === headCell.id ? order : false}
+                sx={{
+                  width: headCell.width,
+                  minWidth: headCell.minWidth,
+                  color: "primary.main",
+                  fontWeight: "bold",
+                }}
+              >
+                <TableSortLabel
+                  hideSortIcon
+                  active={orderBy === headCell.id}
+                  direction={orderBy === headCell.id ? order : "asc"}
+                  onClick={onSort(headCell.id)}
+                >
+                  {headCell.label}
+                  {orderBy === headCell.id ? (
+                    <Box sx={{ ...visuallyHidden }}>
+                      {order === "desc"
+                        ? "sorted descending"
+                        : "sorted ascending"}
+                    </Box>
+                  ) : null}
+                </TableSortLabel>
+              </TableCell>
+            )
+        )}
         {rowActions && (
           <TableCell align={"left"} sortDirection={false}>
             <TableSortLabel hideSortIcon></TableSortLabel>
             <TableSortLabel hideSortIcon></TableSortLabel>
-
             <TableSortLabel hideSortIcon></TableSortLabel>
             <TableSortLabel hideSortIcon></TableSortLabel>
           </TableCell>
         )}
-        <TableCell align={"left"}></TableCell>
-        <TableCell align={"left"}></TableCell>
       </TableRow>
     </TableHead>
   );
@@ -83,5 +90,5 @@ UserTableHead.propTypes = {
   onRequestSort: PropTypes.func,
   onSelectAllClick: PropTypes.func,
   rowActions: PropTypes.array,
-  useCheckBox: PropTypes.bool
+  useCheckBox: PropTypes.bool,
 };

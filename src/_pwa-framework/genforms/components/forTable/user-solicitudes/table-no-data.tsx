@@ -18,7 +18,6 @@ export default function TableNoData({ query }: any) {
           <Typography variant="h6" paragraph>
             No se encontró
           </Typography>
-
           <Typography variant="body2">
             No hay resultados para&nbsp;
             <strong>&quot;{query}&quot;</strong>.

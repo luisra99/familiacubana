@@ -1,4 +1,4 @@
-import { logInService, restoreSessionService } from "./services";
+import { logInService } from "./services";
 
 export const logIng = (is: string, setLoanding?: (state: boolean) => void) => {
   logInService(is).then((url: string) => {
@@ -15,6 +15,6 @@ export const offlineLogIng = (username: string, password: string) => {
     import.meta.env.ENV_SERVER_URL
   }/create-session?username=${username}&password=${password}`;
 };
-export const restoreSession = async () => {
-  return await restoreSessionService();
-};
+// export const restoreSession = async () => {
+//   return await restoreSessionService();
+// };

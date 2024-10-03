@@ -16,18 +16,22 @@ export type ICommonProps = {
   placeholder?: string;
   sx?: SxProps;
   gridValues?: IGridValues;
+  gridSx?: SxProps;
   disabled?: IDisableFunction;
   hidden?: IDisableFunction;
   onChange?: IOnChangeFunction;
-  options?:Object
+  options?: Object;
+  disabledOnEdit?: boolean;
 };
 
 export type IOptionsProps = ICommonProps & {
-  multiple?: "native" | "check" | "chips";
   group?: boolean;
   options?: any[];
   defaultValue?: string | string[];
   url?: string;
+};
+export type IMultipleOptionsProps = {
+  multiple: "native" | "check" | "chips";
 };
 
 export type IInputProps = ICommonProps & {
@@ -62,14 +66,16 @@ export type ICustomIcons = {
 };
 
 export type IDisableFunction = (args?: any) => boolean;
-export type IOnChangeFunction = (event?: any, refs?:any) => void;
+export type IOnChangeFunction = (event?: any, refs?: any) => void;
 
 export type ControlDictionary = Record<EControls, (props: any) => any>;
 export type ColorValueHex = `#${string}`;
 export type EControls =
+  | "scanner"
   | "text"
   | "number"
   | "select"
+  | "multiselect"
   | "autocomplete"
   | "date"
   | "time"
@@ -79,12 +85,26 @@ export type EControls =
   | "slider"
   | "rating"
   | "component";
+export type EControlsForValidate =
+  | "text"
+  | "number"
+  | "select"
+  | "autocomplete"
+  | "multiselect"
+  | "date"
+  | "time"
+  | "radio"
+  | "check"
+  | "switch"
+  | "slider"
+  | "component"
+  | "rating";
 
 type IAlternateIcons = {
   outlinedIcon: IconNames;
   filledIcon: IconNames;
 };
-type IGridValues = {
+export type IGridValues = {
   xs?: IBreakPointsValues;
   sm?: IBreakPointsValues;
   md?: IBreakPointsValues;

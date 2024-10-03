@@ -1,5 +1,3 @@
-import { title } from "../config";
-
 // this utility is used to welcome users in the console
 function getRandomRGBNumber() {
   return Math.floor(Math.random() * 256);
@@ -24,8 +22,6 @@ function welcome() {
     "border-radius: 5px",
     "padding: 10px",
   ].join(";");
-
-  console.log(Date.now(), `%c=== ${title} ===`, styles);
 }
 
 export default welcome;

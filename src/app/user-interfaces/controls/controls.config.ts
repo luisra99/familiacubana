@@ -26,33 +26,7 @@ export const Unidades: IGenericControls = {
   gridValues: { md: 3 },
   format: "units",
 };
-export const ChipSelect: IGenericControls = {
-  type: "select",
-  name: "testchipselect",
-  label: "Chips Select",
-  multiple: "chips",
-  url: "asd",
-};
-export const CheckSelect: IGenericControls = {
-  type: "select",
-  name: "testcheckselect",
-  label: "Check Select",
-  multiple: "check",
-  options: [
-    { value: "opt1", label: "Opción 1" },
-    { value: "opt2", label: "Opción 2" },
-  ],
-};
-export const MultipleSelect: IGenericControls = {
-  type: "select",
-  name: "testmultipleselect",
-  label: "Select Multiple",
-  multiple: "native",
-  options: [
-    { value: "opt1", label: "Opción 1" },
-    { value: "opt2", label: "Opción 2" },
-  ],
-};
+
 export const SelectSimple: IGenericControls = {
   type: "select",
   name: "testsimpleselect",
@@ -62,14 +36,7 @@ export const SelectSimple: IGenericControls = {
     { value: "opt2", label: "Opción 2" },
   ],
 };
-export const AutocompleteMultiple: IGenericControls = {
-  type: "autocomplete",
-  name: "test-autocompletemultiple",
-  label: "Autocomplete",
-  gridValues: { md: 3 },
-  multiple: "native",
-  url: "asd",
-};
+
 export const AutocompleteSimple: IGenericControls = {
   type: "autocomplete",
   name: "test-autocomplete-simple",

@@ -6,25 +6,33 @@ import { useFormikContext } from "formik";
 
 export const BasicAutocompleteFields = ({
   id,
+  gridSx,
+  initialValue,
   gridValues,
   name,
   label,
   disabled,
+  hidden,
   placeholder,
   sx,
   multiple,
   options,
   validations,
-  initialValue,
   formValue,
+  disabledOnEdit,
+  editMode,
 }: any) => {
   const [dataSource] = useFormDataSource();
 
   const [items, setItems] = useState(dataSource?.[name] ?? options ?? []);
-  const { setFieldValue, values } = useFormikContext();
+  const { setFieldValue, setFieldTouched, values, touched, errors } =
+    useFormikContext();
+
+  const error = (touched as any)[name] && (errors as any)[name];
+  const value = (values as any)[name];
 
   useEffect(() => {
-    setFieldValue(name, initialValue, !!validations);
+    setFieldValue(name, initialValue, false);
   }, [initialValue]);
 
   const handleChange = useCallback(
@@ -40,10 +48,10 @@ export const BasicAutocompleteFields = ({
         } else {
           cloned.splice(index, 1);
         }
-        setFieldValue(name, cloned, !!validations);
+        setFieldValue(name, cloned, true);
         return;
       }
-      setFieldValue(name, newValue, !!validations);
+      setFieldValue(name, newValue, true);
     },
     []
   );
@@ -51,12 +59,13 @@ export const BasicAutocompleteFields = ({
   return (
     <Grid
       item
-      display={disabled?.(values) ? "none" : "unset"}
+      display={hidden?.(values) ? "none" : "unset"}
       xs={gridValues?.xs}
       sm={gridValues?.sm}
       md={gridValues?.md}
       lg={gridValues?.lg}
       xl={gridValues?.xl}
+      sx={gridSx}
     >
       <Autocomplete
         id={id ?? name}
@@ -64,14 +73,23 @@ export const BasicAutocompleteFields = ({
         options={items}
         multiple={!!multiple}
         autoComplete
-        disabled={disabled?.(values)}
+        disabled={(editMode && disabledOnEdit) || disabled?.(values)}
         onChange={handleChange}
         value={formValue}
         sx={sx}
         autoHighlight
         getOptionLabel={(option: any) => option?.label ?? ""}
         renderInput={(params: any) => (
-          <TextField {...params} label={label} placeholder={placeholder} />
+          <TextField
+            {...params}
+            label={
+              <label>
+                {label}
+                {validations?.required && <b style={{ color: "red" }}> * </b>}
+              </label>
+            }
+            placeholder={placeholder}
+          />
         )}
       />
     </Grid>

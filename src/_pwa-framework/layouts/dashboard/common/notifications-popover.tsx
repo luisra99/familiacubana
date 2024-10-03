@@ -1,25 +1,22 @@
-import { useState } from "react";
-import PropTypes from "prop-types";
-
-import Box from "@mui/material/Box";
-import List from "@mui/material/List";
-import Badge from "@mui/material/Badge";
-import Button from "@mui/material/Button";
 import Avatar from "@mui/material/Avatar";
+import Badge from "@mui/material/Badge";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
 import Divider from "@mui/material/Divider";
-import Tooltip from "@mui/material/Tooltip";
-import Popover from "@mui/material/Popover";
-import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
-import ListItemText from "@mui/material/ListItemText";
-import ListSubheader from "@mui/material/ListSubheader";
+import Iconify from "@/_pwa-framework/user-solicitudes/iconify";
+import List from "@mui/material/List";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
 import ListItemButton from "@mui/material/ListItemButton";
-
-import { fToNow } from "@/_pwa-framework/utils/format-time.js";
-
-import Iconify from "@/_pwa-framework/components/iconify";
+import ListItemText from "@mui/material/ListItemText";
+import ListSubheader from "@mui/material/ListSubheader";
+import Popover from "@mui/material/Popover";
+import PropTypes from "prop-types";
 import Scrollbar from "@/_pwa-framework/components/scrollbar";
+import Tooltip from "@mui/material/Tooltip";
+import Typography from "@mui/material/Typography";
+import { fToNow } from "@/_pwa-framework/utils/format-time.js";
+import { useState } from "react";
 
 // ----------------------------------------------------------------------
 
@@ -96,7 +93,17 @@ export default function NotificationsPopover() {
     <>
       <IconButton color={open ? "primary" : "default"} onClick={handleOpen}>
         <Badge badgeContent={totalUnRead} color="error">
-          <Iconify width={24} icon="solar:bell-bing-bold-duotone" />
+          <svg width={24} height={24}>
+            <path
+              fill="currentColor"
+              d="M18.75 9v.704c0 .845.24 1.671.692 2.374l1.108 1.723c1.011 1.574.239 3.713-1.52 4.21a25.794 25.794 0 0 1-14.06 0c-1.759-.497-2.531-2.636-1.52-4.21l1.108-1.723a4.393 4.393 0 0 0 .693-2.374V9c0-3.866 3.022-7 6.749-7s6.75 3.134 6.75 7"
+              opacity=".5"
+            />
+            <path
+              fill="currentColor"
+              d="M12.75 6a.75.75 0 0 0-1.5 0v4a.75.75 0 0 0 1.5 0zM7.243 18.545a5.002 5.002 0 0 0 9.513 0c-3.145.59-6.367.59-9.513 0"
+            />
+          </svg>
         </Badge>
       </IconButton>
 

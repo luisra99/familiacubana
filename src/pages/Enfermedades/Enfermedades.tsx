@@ -1,390 +1,548 @@
-import {
-  Beneficios,
-  Enfermedades as enfermedadesForm,
-  enfermedadesCronicas,
-} from "@/app/user-interfaces/controls/controls.config.ponzoa";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import { AdicionarEnfermedadesCronicas } from "@/app/user-interfaces/forms/forms.config";
-import GenericForm from "@/_pwa-framework/genforms/components/form-components/form.generic";
-import Meta from "@/_pwa-framework/components/Meta";
-import TableView from "@/_pwa-framework/user-solicitudes/view";
-import useModalState from "@/_pwa-framework/hooks/form/use-form-manager";
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
 import { Button, Divider, Stack, Typography } from "@mui/material";
-import { useLiveQuery } from "dexie-react-hooks";
-import { datico } from "@/app/user-interfaces/forms/models/model";
 import {
   crear,
   eliminar,
   modificar,
   obtenerDatosPorLlave,
 } from "@/app/user-interfaces/forms/models/controllers";
-import { getHogar } from "@/app/hogarController/hogar.controller";
-import { datico as db } from "@/app/user-interfaces/forms/models/model";
+import {
+  getByIdFunctionMiembro,
+  getEnfermedadesMiembroNomencladas,
+  getEnfermedadesQueNoTiene,
+  miembrosConEnfermedades,
+} from "./utils";
+import { useCallback, useEffect, useState } from "react";
+
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import GenericForm from "@/_pwa-framework/genforms/components/form-components/form.generic";
+import { IGenericControls } from "@/_pwa-framework/genforms/types/controls/controls.types";
+import Meta from "@/_pwa-framework/components/Meta";
 import NotificationProvider from "@/_pwa-framework/sections/Notifications/provider";
+import TableView from "@/_pwa-framework/user-solicitudes/view";
+import { datico } from "@/app/user-interfaces/forms/models/model";
+import { getHogar } from "@/app/hogarController/hogar.controller";
 import { obtenerMiembros } from "@/app/user-interfaces/forms/models/controllers.miembrohogar";
+import { useConfirm } from "material-ui-confirm";
+import { useLiveQuery } from "dexie-react-hooks";
+import useModalState from "@/_pwa-framework/hooks/form/use-form-manager";
+import { useNavigate } from "react-router-dom";
 
 function Enfermedades() {
-  const idhogar = getHogar() ?? 0;
-  const [idmiembrohogar, setIdMiembroHogar] = useState<any>(0);
-  const [enfermedades, setEnfermedades] = useState<any>([]);
+  const idHogar = getHogar() ?? 0;
+  const [idMiembro, setIdMiembro] = useState<any>(null);
+  const [idEnfermedad, setIdEnfermedad] = useState<any>(null);
+
+  const [enfermedadesMiembro, setEnfermedadesMiembro] = useState<any>([]);
   const [miembros, setMiembros] = useState<any>([]);
-  const [vias, setVias] = useState<any>([]);
-  const notificar = NotificationProvider();
+  const [enfermedades, setEnfermedades] = useState<any>([]);
+  const [enfermedadesFiltradas, setEnfermedadesFiltradas] = useState<any>([]);
+
+  const [miembrosCheckEnfermedad, setMiembrosCheck] = useState<any>([]);
 
   const { modalActions } = useModalState();
-  const [id, setid] = useState<any>(null);
+  const confirm = useConfirm();
+  const notificar = NotificationProvider();
   const navegar = useNavigate();
-
-  useLiveQuery(async () => {
-    const data = await obtenerMiembros();
-    setMiembros(data);
-  });
-
-  async function unionNomenclador(arr: any) {
-    console.log("arr", arr);
-    const join = await Promise.all(
-      arr.map(async (obj: any) => {
-        console.log("obj", obj);
-        const patologia = await db.nom_concepto.get(
-          parseInt(obj?.idtipoenfermedad[0] ?? 0)
-        );
-        const accede = obj?.accede[0] === "1" ? "Si" : "No";
-        const arrNum = obj?.idtipoviaacceso?.map((srtr: any) => parseInt(srtr));
-        const data = await db.nom_concepto
-          .where("idconcepto")
-          .anyOf(arrNum)
-          .toArray();
-        const eli = data.map((obj) => obj.denominacion).join(", ");
-
-        return {
-          ...obj,
-          patologia: patologia?.denominacion,
-          accede: accede,
-          via: eli,
-        };
-      })
-    );
-    return join;
-  }
-  async function addnomenclador(arr: any) {
-    const join = await Promise.all(
-      arr.map(async (obj: any) => {
-        console.log("objobj", obj);
-        const miviaacceso = await db.dat_viasacceso
-          .where({ idmiembroenfcronica: parseInt(obj?.idmiembroenfcronica) })
-          .toArray();
-        console.log("miviaacceso", miviaacceso);
-        // arr["idtipoviaacceso"] = miviaacceso[0].idtipoviaacceso;
-        return {
-          ...obj,
-          idtipoviaacceso: miviaacceso[0]?.idtipoviaacceso,
-        };
-      })
-    );
-    console.log("join", join);
-    const result = await unionNomenclador(join);
-    return result;
-  }
-
-  async function obtenerDatos(idmiembro: any) {
-    const data = await db.dat_miembroenfcronicas
-      .where({ idmiembrohogar: idmiembro })
-      .toArray();
-    const result1 = await addnomenclador(data);
-    return result1;
-  }
-
-  async function onChangeMiembro(id: any) {
-    const datos = await obtenerDatos(id);
-    console.log("datoseliminado", datos);
-    setEnfermedades(datos);
-  }
 
   const siguiente = () => navegar("/autonomia/servicios");
   const anterior = () => navegar("/autonomia/discapacidad");
 
-  function getPage() {
-    if (idhogar) {
-      if (miembros.length) {
-        return (
-          <GenericForm
-            name="1"
-            controls={[
-              {
-                type: "select",
-                label: "Miembro del hogar",
-                name: "idmiembro",
-                gridValues: { xl: 12, lg: 12, md: 12, sm: 12, xs: 12 },
-                options: miembros,
-                onChange: (e, ref) => {
-                  const { value } = e.target;
-                  console.log("eee", value);
-                  setIdMiembroHogar(value),
-                    ref.setFieldValue("idenfermedad", [], true),
-                    ref.setFieldValue("idbeneficio", [], true),
-                    onChangeMiembro(value);
-                },
-              },
-              {
-                type: "component",
-                component: () => (
-                  <Typography mt={"12px"}>Enfermedades crónicas</Typography>
-                ),
-                label: "",
-                name: "",
-                gridValues: { xs: 12, lg: 7, md: 6, sm: 6, xl: 7 },
-                disabled: (values) => values.idmiembro == 0,
-              },
-              {
-                type: "component",
-                component: () => <Divider sx={{ mt: 0, mb: 1 }} />,
-                label: "",
-                name: "",
-                gridValues: { xs: 12, lg: 12, md: 12, sm: 12, xl: 12 },
-                disabled: (values) => values.idmiembro == 0,
-              },
-              enfermedadesCronicas,
-              {
-                type: "component",
+  useLiveQuery(async () => {
+    const data = await obtenerMiembros();
+    setMiembros(data);
+    const miembrosConDatos = await miembrosConEnfermedades(data);
+    setMiembrosCheck(miembrosConDatos.filter((item) => !!item).join(","));
+    const enfermedades = await obtenerDatosPorLlave(
+      "nom_concepto",
+      "idpadre",
+      "9793"
+    );
+    setEnfermedades(enfermedades);
+  });
 
-                component: () => (
-                  <>
-                    <Typography variant="h6" marginX={"auto"} mt={5}>
-                      Enfermedades crónicas
-                    </Typography>
-
-                    <Stack
-                      spacing={2}
-                      direction="row"
-                      mx={"auto"}
-                      my={2}
-                      px={5}
-                      display={"inline-list-item"}
-                    >
-                      <Button
-                        onClick={() => modalActions.open("2")}
-                        variant="contained"
-                        sx={{ marginBottom: "10px !important" }}
-                      >
-                        Adicionar
-                      </Button>
-                    </Stack>
-                    <TableView
-                      values={enfermedades}
-                      useCheckBox={false}
-                      headers={[
-                        {
-                          name: "patologia",
-                          align: "center",
-                          label: "Patología",
-                        },
-                        {
-                          name: "accede",
-                          align: "center",
-                          label: "Accede a medicamentos",
-                        },
-                        {
-                          name: "via",
-                          align: "center",
-                          label: "Vías de acceso",
-                        },
-                      ]}
-                      idKey="idmiembroenfcronica"
-                      title=""
-                      multiSelect={true}
-                      rowActions={[
-                        {
-                          label: "Modificar",
-                          action: (values: any) => {
-                            modalActions.open("3");
-                          },
-                          icon: EditIcon,
-                        },
-
-                        {
-                          label: "Eliminar",
-                          action: (values: any) => {
-                            console.log("valuess", idmiembrohogar);
-                            const llave = values.idmiembroenfcronica;
-                            eliminar(
-                              "dat_miembroenfcronicas",
-                              "idmiembroenfcronica",
-                              llave
-                            ).then(() => onChangeMiembro(idmiembrohogar));
-                            eliminar(
-                              "dat_viasacceso",
-                              "idmiembroenfcronica",
-                              llave
-                            ).then(() => onChangeMiembro(idmiembrohogar));
-                          },
-                          icon: DeleteIcon,
-                        },
-                      ]}
-                    />
-                  </>
-                ),
-                gridValues: { lg: 12, md: 12, sm: 12, xl: 12, xs: 12 },
-                name: "aditamentos",
-                label: "adt",
-                disabled: (values) =>
-                  values.idmiembroenfcronica == "2" ||
-                  values.idmiembroenfcronica !== "1" ||
-                  values.idmiembro == 0,
-              },
-
-              {
-                type: "component",
-                component: () => <Divider sx={{ mt: 0, mb: 1 }} />,
-                label: "",
-                name: "",
-                gridValues: { xs: 12, lg: 12, md: 12, sm: 12, xl: 12 },
-                disabled: (values) => values.idmiembro == 0,
-              },
-              {
-                type: "select",
-                name: "idenfermedad",
-                label: "Enfermedades de baja prevalencia",
-                gridValues: { xs: 12, lg: 6, md: 6, sm: 6, xl: 6 },
-                url: "9399",
-                multiple: "check",
-                disabled: (values) => values.idmiembro == 0,
-              },
-              {
-                type: "select",
-                name: "idbeneficio",
-                label: "Beneficios focalizados de salud",
-                url: "9802",
-                multiple: "check",
-                gridValues: { xs: 12, lg: 6, md: 6, sm: 6, xl: 6 },
-                disabled: (values) => values.idmiembro == 0,
-              },
-            ]}
-            title="Enfermedades"
-            description=" "
-            endpointPath="persona"
-            showSpecificDescription={false}
-            idForEdit={id}
-            saveButton="Guardar"
-            nextButton={{ text: "Siguiente", action: siguiente }}
-            prevButton={{ text: "Anterior", action: anterior }}
-            submitFunction={(values) => {
-              console.log('valoritos',values)
-              crear("dat_miembrobeneficios", {
-                idmiembrohogar: values.idmiembro[0],
-                idbeneficio: values.idbeneficio,
-              }).then((id) => {               
-                onChangeMiembro(idmiembrohogar);
-              });
-              crear("dat_miembroenfcronicas", {
-                idmiembrohogar: values.idmiembro[0],
-                idenfermedad:values.idenfermedad
-              }).then((id) => {
-                notificar({
-                  type: "success",
-                  title: "Adicionar",
-                  content: "Enfermedad adicionada correctamente",
-                });
-                onChangeMiembro(idmiembrohogar);
-              });
-            }}
-          />
+  useEffect(() => {
+    if (idMiembro) {
+      getEnfermedadesQueNoTiene(idMiembro).then((elementofiltrados: any) => {
+        LoadDatos(idMiembro).finally(() =>
+          setEnfermedadesFiltradas([...elementofiltrados])
         );
-      } else {
-        return (
-          <Typography mx={2} my={2}>
-            <b>No hay miembros en el hogar seleccionado...</b>
-          </Typography>
-        );
-      }
-    } else {
-      return (
-        <Typography mx={2} my={2}>
-          <b>No hay un hogar seleccionado...</b>
-        </Typography>
-      );
+      });
     }
+  }, [idMiembro]);
+
+  useEffect(() => {
+    if (idMiembro)
+      getEnfermedadesQueNoTiene(idMiembro).then((elementofiltrados: any) => {
+        setEnfermedadesFiltradas([...elementofiltrados]);
+      });
+  }, [enfermedadesMiembro]);
+
+  async function LoadDatos(idMiembro: any) {
+    const enfermedadesMiembro =
+      await getEnfermedadesMiembroNomencladas(idMiembro);
+    setEnfermedadesMiembro(enfermedadesMiembro);
   }
-  function getFormADD() {
-    if (idmiembrohogar)
-      return (
-        <GenericForm
-          name="2"
-          controls={AdicionarEnfermedadesCronicas}
-          title="Adicionar enfermedad crónica "
-          description=" "
-          endpointPath="persona"
-          showSpecificDescription={false}
-          idForEdit={id}
-          modalType="fullWith"
-          setIdFunction={setid}
-          submitFunction={(values) => {
-            console.log("idmiemnro", values, idmiembrohogar);
-            if (id) {
-              modificar("dat_miembroenfcronicas", "idmiembroenfcronica", id, {
-                ...values,
-                idmiembrohogar: idmiembrohogar,
-                idtipoenfermedad:values.idtipoenfermedad
-              }).then(() => {
-                notificar({
-                  type: "success",
-                  title: "Adicionar",
-                  content: "La enfermedad ha sido adicionada correctamente",
-                });
-                onChangeMiembro(idmiembrohogar);
-              });
-            } else {
-              
-              const idenfermedades = crear("dat_miembroenfcronicas", {
-                idtipoenfermedad: values.idtipoenfermedad,
-                accede: values.accede,
-                idmiembrohogar: idmiembrohogar,
-              }).then((idenfermedades) => {
-                console.log("lolo", values);
-                crear("dat_viasacceso", {
-                  idtipoviaacceso: values.idtipoviaacceso,
-                  idmiembroenfcronica: idenfermedades,
-                });
-                notificar({
-                  type: "success",
-                  title: "Adicionar",
-                  content: "La enfermedad ha sido adicionada correctamente",
-                });
-                onChangeMiembro(idmiembrohogar);
-              });
-            }
-          }}
-          getByIdFunction={(id) =>
-            obtenerDatosPorLlave(
-              "dat_miembroenfcronicas",
-              "idmiembroenfcronica",
-              id
-            )
+
+  const enfermedadesControls = useCallback((): IGenericControls[] => {
+    return [
+      {
+        type: "select",
+        name: "idtipoenfermedad",
+        label: "Patalogía",
+        options: enfermedadesFiltradas ?? [],
+        gridValues: { md: 4, lg: 4, sm: 4, xl: 4, xs: 4 },
+        validations: {
+          required: { message: "Este campo es obligatorio" },
+        },
+        disabledOnEdit: true,
+      },
+      {
+        type: "select",
+        name: "accede",
+        label: "Accede a medicamentos",
+        options: [
+          { idconcepto: "1", denominacion: "Sí" },
+          { idconcepto: "2", denominacion: "No" },
+        ],
+        gridValues: { md: 4, lg: 4, sm: 4, xl: 4, xs: 4 },
+        onChange: (e, ref) => {
+          ref.setFieldValue("idtipoviaacceso", [], true);
+        },
+        validations: {
+          required: {
+            message: "Este campo es obligatorio",
+          },
+        },
+      },
+      {
+        type: "multiselect",
+        name: "idtipoviaacceso",
+        label: "Vía de acceso",
+        url: "9416",
+        multiple: "check",
+        gridValues: { md: 4, lg: 4, sm: 4, xl: 4, xs: 4 },
+        hidden: (values: any) => {
+          return values?.accede[0] !== "1";
+        },
+        validations: {
+          required: {
+            message: "Este campo es obligatorio",
+            when: {
+              name: "accede",
+              expression: (value: any) => {
+                return value[0] === "1";
+              },
+            },
+          },
+        },
+      },
+    ];
+  }, [enfermedadesFiltradas]);
+  const enfermedadesFormControls = useCallback((): IGenericControls[] => {
+    return [
+      {
+        type: "component",
+        component: () => (
+          <Typography variant="h6" sx={{ ml: 1, mb: 4 }}>
+            Enfermedades
+          </Typography>
+        ),
+        label: "",
+        name: "",
+        gridValues: { xs: 12, lg: 12, md: 12, sm: 12, xl: 12 },
+      },
+      {
+        type: "select",
+        label: "Miembro del hogar",
+        name: "idmiembro",
+        gridValues: { xs: 12, lg: 8, md: 8, sm: 8, xl: 8 },
+        options: miembros,
+        checkValues: miembrosCheckEnfermedad,
+        onChange: (e, ref) => {
+          const { value } = e.target;
+          setIdMiembro(value);
+          ref.setFieldValue("idenfermedad", [], false);
+          ref.setFieldValue("idbeneficio", [], false);
+        },
+        validations: {
+          required: { message: "Este campo es obligatorio" },
+        },
+      },
+      {
+        type: "radio",
+        label: "¿Padece enfermedades crónicas?",
+        name: "idmiembroenfcronica",
+        radios: [
+          { idconcepto: "1", denominacion: "Sí" },
+          { idconcepto: "2", denominacion: "No" },
+        ],
+        direction: "row",
+        labelPlacement: "end",
+        gridValues: { md: 12, lg: 12, sm: 12, xl: 12, xs: 12 },
+      },
+      {
+        type: "component",
+        component: () => (
+          <>
+            <Stack
+              spacing={2}
+              direction="row"
+              mx={"auto"}
+              my={2}
+              display={"inline-list-item"}
+            >
+              <Button
+                disabled={!idMiembro || !enfermedadesFiltradas.length}
+                onClick={(e: any) => {
+                  modalActions.open("Enfermedades");
+                }}
+                variant="contained"
+                sx={{ marginBottom: "10px !important" }}
+              >
+                Adicionar
+              </Button>
+            </Stack>
+            <TableView
+              values={idMiembro ? enfermedadesMiembro : []}
+              useCheckBox={false}
+              headers={[
+                {
+                  name: "patologia",
+                  align: "left",
+                  label: "Patología",
+                },
+                {
+                  name: "accede",
+                  align: "left",
+                  label: "Accede a medicamentos",
+                },
+                {
+                  name: "via",
+                  align: "left",
+                  label: "Vías de acceso",
+                },
+              ]}
+              idKey="idmiembroenfcronica"
+              multiSelect={true}
+              rowActions={[
+                {
+                  label: "Modificar",
+                  action: (values: any) => {
+                    setEnfermedadesFiltradas([...enfermedades]);
+                    setIdEnfermedad(values.idmiembroenfcronica);
+                    modalActions.open("Enfermedades");
+                  },
+                  icon: EditIcon,
+                },
+                {
+                  label: "Eliminar",
+                  action: (values: any) => {
+                    const llave = values.idmiembroenfcronica;
+                    confirm({
+                      title: "Eliminar",
+                      confirmationText: "Aceptar",
+                      cancellationText: "Cancelar",
+                      description: `¿Está seguro que desea eliminar la enfermedad seleccionada?`,
+                    }).then(() =>
+                      eliminar(
+                        "dat_miembroenfcronicas",
+                        "idmiembroenfcronica",
+                        llave
+                      ).then(() => {
+                        eliminar(
+                          "dat_viasacceso",
+                          "idmiembroenfcronica",
+                          llave
+                        ).then(() => LoadDatos(idMiembro));
+                        notificar({
+                          type: "success",
+                          title:
+                            "La enfermedad crónica ha sido eliminada satisfactoriamente",
+                          content: "",
+                        });
+                      })
+                    );
+                  },
+                  icon: DeleteIcon,
+                },
+              ]}
+            />
+          </>
+        ),
+        gridValues: { lg: 12, md: 12, sm: 12, xl: 12, xs: 12 },
+        name: "tablaEnfermedades",
+        label: "adt",
+        hidden: (values: any) =>
+          values.idmiembroenfcronica == "2" ||
+          values.idmiembroenfcronica !== "1",
+      },
+      {
+        type: "component",
+        component: () => <Divider sx={{ mt: 0, mb: 1 }} />,
+        label: "",
+        name: "",
+        gridValues: { xs: 12, lg: 12, md: 12, sm: 12, xl: 12 },
+      },
+      {
+        type: "multiselect",
+        name: "idenfermedad",
+        label: "Enfermedades de baja prevalencia",
+        gridValues: { xs: 12, lg: 6, md: 6, sm: 6, xl: 6 },
+        url: "9399",
+        multiple: "check",
+      },
+      {
+        type: "multiselect",
+        name: "idbeneficio",
+        label: "Beneficios focalizados de salud",
+        url: "9802",
+        multiple: "check",
+        gridValues: { xs: 12, lg: 6, md: 6, sm: 6, xl: 6 },
+      },
+    ];
+  }, [
+    idHogar,
+    miembros,
+    miembrosCheckEnfermedad,
+    idMiembro,
+    enfermedadesFiltradas,
+    enfermedadesMiembro,
+  ]);
+  const enfermedadesGetByIdFunction = useCallback(
+    async (idEnfermedad: string) => {
+      const enfermedadesMiembro = await datico.dat_miembroenfcronicas
+        .where({
+          idmiembroenfcronica: idEnfermedad,
+          idmiembrohogar: idMiembro,
+        })
+        .first();
+      const viasAccesoMedicamento = await datico.dat_viasacceso
+        .where({
+          idmiembroenfcronica: enfermedadesMiembro?.idmiembroenfcronica,
+        })
+        .toArray();
+
+      return {
+        idtipoenfermedad: enfermedadesMiembro?.idtipoenfermedad ?? [],
+        accede: enfermedadesMiembro?.accede ?? [],
+        idtipoviaacceso: viasAccesoMedicamento?.[0]?.idtipoviaacceso ?? [],
+        editMode: !!enfermedadesMiembro?.idtipoenfermedad,
+      };
+    },
+    [idMiembro]
+  );
+  const enfermedadesSubmitFunction = useCallback(
+    async (values: any) => {
+      let edit = values.editMode;
+      delete values.editMode;
+      if (!edit) {
+        crear("dat_miembroenfcronicas", {
+          idtipoenfermedad: values.idtipoenfermedad,
+          accede: values.accede,
+          idmiembrohogar: idMiembro,
+        }).then((idenfermedades: any) => {
+          crear("dat_viasacceso", {
+            idtipoviaacceso: values.idtipoviaacceso,
+            idmiembroenfcronica: idenfermedades,
+          });
+          LoadDatos(idMiembro);
+          notificar({
+            type: "success",
+            title:
+              "La enfermedad crónica ha sido adicionada satisfactoriamente",
+            content: "",
+          });
+        });
+      } else {
+        modificar(
+          "dat_miembroenfcronicas",
+          "idmiembroenfcronica",
+          values.idtipoenfermedad,
+          {
+            ...values,
           }
-          dataAction={[{ action: () => {}, label: "Aplicar" }]}
-        />
-      );
-  }
+        ).then(() => {
+          modificar(
+            "dat_viasacceso",
+            "idmiembroenfcronica",
+            values.idtipoenfermedad,
+            {
+              ...values,
+            }
+          );
+          LoadDatos(idMiembro);
+          notificar({
+            type: "success",
+            title:
+              "Se han adicionado los datos de enfermedades al miembro satisfactoriamente",
+            content: "",
+          });
+        });
+      }
+    },
+    [idMiembro]
+  );
 
   return (
     <>
       <Meta title="Controles" />
+      {idHogar ? (
+        miembros.length ? (
+          <GenericForm
+            name="1"
+            controls={enfermedadesFormControls()}
+            endpointPath="persona"
+            showSpecificDescription={false}
+            idForEdit={idMiembro}
+            saveButton="Guardar"
+            acceptDisabledFunction={(values) => values.idmiembro == ""}
+            applyButton={false}
+            nextButton={{ text: "Siguiente", action: siguiente }}
+            prevButton={{ text: "Anterior", action: anterior }}
+            getByIdFunction={getByIdFunctionMiembro}
+            submitFunction={async (values: any) => {
+              const enfer_bajaprev = await datico.dat_miembroenfbajaprev
+                .where({ idmiembrohogar: values.idmiembro[0] })
+                .toArray();
+              const enfer_beneficio = await datico.dat_miembrobeneficios
+                .where({ idmiembrohogar: values.idmiembro[0] })
+                .toArray();
+              const existe_enfcronicas = await datico.dat_miembroenfcronicas
+                .where({ idmiembrohogar: values.idmiembro[0] })
+                .toArray();
 
-      {getPage()}
-
-      {getFormADD()}
-
+              if (values.idmiembroenfcronica === "1") {
+                if (!existe_enfcronicas.length) {
+                  notificar({
+                    type: "warning",
+                    title: "Debe especificar al menos una enfermedad crónica",
+                    content: "",
+                  });
+                } else {
+                  enfer_bajaprev?.length
+                    ? modificar(
+                        "dat_miembroenfbajaprev",
+                        "idmiembrohogar",
+                        values.idmiembro[0],
+                        {
+                          idcodigohogar: getHogar(),
+                          idenfermedad: values.idenfermedad,
+                        }
+                      )
+                    : crear("dat_miembroenfbajaprev", {
+                        idmiembrohogar: values.idmiembro[0],
+                        idenfermedad: values.idenfermedad,
+                      });
+                  enfer_beneficio?.length
+                    ? modificar(
+                        "dat_miembrobeneficios",
+                        "idmiembrohogar",
+                        values.idmiembro[0],
+                        {
+                          idcodigohogar: getHogar(),
+                          idbeneficio: values.idbeneficio,
+                        }
+                      )
+                    : crear("dat_miembrobeneficios", {
+                        idmiembrohogar: values.idmiembro[0],
+                        idbeneficio: values.idbeneficio,
+                      });
+                  notificar({
+                    type: "success",
+                    title:
+                      "Se han adicionado los datos de enfermedades al miembro satisfactoriamente",
+                    content: "",
+                  });
+                }
+              } else {
+                enfer_bajaprev?.length
+                  ? modificar(
+                      "dat_miembroenfbajaprev",
+                      "idmiembrohogar",
+                      values.idmiembro[0],
+                      {
+                        idcodigohogar: getHogar(),
+                        idenfermedad: values.idenfermedad[0],
+                      }
+                    ).then(() => {
+                      existe_enfcronicas.length &&
+                        eliminar(
+                          "dat_miembroenfcronicas",
+                          "idmiembrohogar",
+                          values.idmiembro[0]
+                        );
+                    })
+                  : crear("dat_miembroenfbajaprev", {
+                      idmiembrohogar: values.idmiembro[0],
+                      idenfermedad: values.idenfermedad[0],
+                    }).then(() => {
+                      existe_enfcronicas.length &&
+                        eliminar(
+                          "dat_miembroenfcronicas",
+                          "idmiembrohogar",
+                          values.idmiembro[0]
+                        ).then(() => {});
+                    });
+                enfer_beneficio?.length
+                  ? modificar(
+                      "dat_miembrobeneficios",
+                      "idmiembrohogar",
+                      values.idmiembro[0],
+                      {
+                        idcodigohogar: getHogar(),
+                        idbeneficio: values.idbeneficio,
+                      }
+                    ).then(() => {
+                      existe_enfcronicas.length &&
+                        eliminar(
+                          "dat_miembroenfcronicas",
+                          "idmiembrohogar",
+                          values.idmiembro[0]
+                        ).then(() => {});
+                    })
+                  : crear("dat_miembrobeneficios", {
+                      idmiembrohogar: values.idmiembro[0],
+                      idbeneficio: values.idbeneficio,
+                    }).then(() => {
+                      existe_enfcronicas.length &&
+                        eliminar(
+                          "dat_miembroenfcronicas",
+                          "idmiembrohogar",
+                          values.idmiembro[0]
+                        ).then(() => {});
+                    });
+                notificar({
+                  type: "success",
+                  title:
+                    "La información sobre enfermedades se ha guardado satisfactoriamente",
+                  content: "",
+                });
+              }
+            }}
+          />
+        ) : (
+          <Typography mx={2} my={2}>
+            <b>No existen miembros en el hogar seleccionado</b>
+          </Typography>
+        )
+      ) : (
+        <Typography mx={2} my={2}>
+          <b>No existe un hogar seleccionado</b>
+        </Typography>
+      )}
       <GenericForm
-        name="3"
-        controls={AdicionarEnfermedadesCronicas}
-        title="Modificar enfermedad crónica "
-        description=" "
+        name="Enfermedades"
+        controls={enfermedadesControls()}
+        createTitle="Adicionar enfermedades"
+        editTitle="Modificar enfermedades"
         endpointPath="persona"
         showSpecificDescription={false}
-        idForEdit={id}
+        idForEdit={idEnfermedad}
+        setIdFunction={setIdEnfermedad}
         modalType="fullWith"
+        getByIdFunction={enfermedadesGetByIdFunction}
+        submitFunction={enfermedadesSubmitFunction}
       />
     </>
   );

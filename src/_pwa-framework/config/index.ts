@@ -2,8 +2,8 @@ import appConfig from "@/app/app-config.json";
 import isMobile from "@/utils/is-mobile";
 const mode: boolean = import.meta.env.ENV_MODE === "dev" ? true : false;
 const apiScope = mode
-  ? `https://sri-familiacubana.xutil.cu/gw-dev/`
-  : `https://sri-familiacubana.xutil.cu/gw/`;
+  ? `${import.meta.env.ENV_SERVER_URL}/gw-dev/`
+  : `${import.meta.env.ENV_SERVER_URL}/gw/`;
 
 const email = appConfig.email;
 const title = appConfig.title;
@@ -42,7 +42,7 @@ const notifications: any = {
       vertical: "bottom",
       horizontal: "left",
     },
-    autoHideDuration: 6000,
+    autoHideDuration: 5000,
   },
   maxSnack: isMobile ? 3 : 4,
 };

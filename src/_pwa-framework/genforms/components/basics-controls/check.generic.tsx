@@ -5,22 +5,32 @@ import { useFormikContext } from "formik";
 
 export const BasicCheckFields = ({
   id,
+  gridSx,
+  initialValue,
   gridValues,
   name,
   label,
   disabled,
+  hidden,
   sx,
   labelPlacement,
   color,
   customIcons,
-  initialValue,
-  formValue,
+  onChange,
+  disabledOnEdit,
+  editMode,
 }: any) => {
-  const { setFieldValue, values } = useFormikContext();
+  const { setFieldValue, setFieldTouched, values, touched, errors } =
+    useFormikContext();
+
+  const error = (touched as any)[name] && (errors as any)[name];
+  const value = (values as any)[name];
   const [iconProps, setIconProps] = useState<any>({});
   const [style, setStyle] = useState<any>(sx ?? {});
   const handleChange = useCallback((event: any) => {
+    onChange?.(event);
     setFieldValue(name, event?.target?.checked, false);
+    setFieldTouched(name);
   }, []);
 
   useEffect(() => {
@@ -37,20 +47,21 @@ export const BasicCheckFields = ({
   return (
     <Grid
       item
-      display={disabled?.(values) ? "none" : "unset"}
+      display={hidden?.(values) ? "none" : "unset"}
       xs={gridValues?.xs}
       sm={gridValues?.sm}
       md={gridValues?.md}
       lg={gridValues?.lg}
       xl={gridValues?.xl}
+      sx={gridSx}
     >
       <FormControlLabel
         id={id ?? name}
         name={name}
         control={<Checkbox sx={style} {...iconProps} />}
         label={label}
-        checked={formValue}
-        disabled={disabled?.(values)}
+        checked={value}
+        disabled={(editMode && disabledOnEdit) || disabled?.(values)}
         onChange={handleChange}
         labelPlacement={labelPlacement}
       />

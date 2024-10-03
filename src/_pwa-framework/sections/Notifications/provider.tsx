@@ -1,16 +1,18 @@
-import useNotifications from "@/_pwa-framework/store/notifications";
 import { Alert, AlertTitle, IconButton } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
+
 import { AlertColor } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import useNotifications from "@/_pwa-framework/store/notifications";
 
 function NotificationProvider() {
   const [, notificationsActions] = useNotifications();
 
   const notify = (notification: CustomNotification) => {
-    const id = Math.random().toString();
+    const key = Math.random().toString();
     notificationsActions.push({
       message: notification.title,
       options: {
+        key,
         content: (
           <Alert
             severity={notification.type}
@@ -20,7 +22,7 @@ function NotificationProvider() {
                 color="inherit"
                 size="small"
                 onClick={() => {
-                  notificationsActions.close(id);
+                  notificationsActions.close(key);
                 }}
               >
                 <CloseIcon fontSize="inherit" />
@@ -40,7 +42,7 @@ function NotificationProvider() {
 export interface CustomNotification {
   type?: AlertColor;
   title: string;
-  content: string;
+  content?: string;
 }
 
 export default NotificationProvider;

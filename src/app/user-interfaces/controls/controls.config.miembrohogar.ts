@@ -5,7 +5,7 @@ export const nombre: IGenericControls = {
   label: "Nombre",
   name: "pnombre",
   pattern: /[A-z]/,
-  gridValues: { xs: 6, lg: 6, md: 6, sm: 6, xl: 6 }
+  gridValues: { xs: 6, lg: 6, md: 6, sm: 6, xl: 6 },
 };
 
 export const primerApellido: IGenericControls = {
@@ -13,7 +13,7 @@ export const primerApellido: IGenericControls = {
   label: "Primer apellido",
   name: "papellido",
   pattern: /[A-z]/,
-  gridValues: { xs: 6, lg: 6, md: 6, sm: 6, xl: 6 }
+  gridValues: { xs: 6, lg: 6, md: 6, sm: 6, xl: 6 },
 };
 
 export const segundoApellido: IGenericControls = {
@@ -37,7 +37,7 @@ export const CI: IGenericControls = {
   label: "Carnet de identidad",
   name: "cidentidad",
   gridValues: { xs: 6, lg: 6, md: 6, sm: 6, xl: 6 },
-  pattern: /[0-9]/
+  pattern: /[0-9]/,
 };
 
 export const Edad: IGenericControls = {
@@ -92,14 +92,14 @@ export const orientacionSexual: IGenericControls = {
   label: "Orientación sexual",
   gridValues: { xs: 6, lg: 6, md: 6, sm: 6, xl: 6 },
   name: "idorientacionsex",
-  url: ""
+  url: "",
 };
 
 export const nivelDeEstudio: IGenericControls = {
   type: "radio",
   label: "¿Cuál es el nivel de estudio más alto que terminó?",
   gridValues: { xs: 6, lg: 6, md: 6, sm: 6, xl: 4 },
-  name: "idnivelescolar", 
+  name: "idnivelescolar",
   radios: [
     { idconcepto: "opt1", denominacion: "Ninguno" },
     { idconcepto: "opt2", denominacion: "Primaria" },
@@ -110,7 +110,7 @@ export const nivelDeEstudio: IGenericControls = {
     { idconcepto: "opt7", denominacion: "Técnico medio" },
     { idconcepto: "opt8", denominacion: "Técnico superior" },
     { idconcepto: "opt9", denominacion: "Universitario" },
-  ]
+  ],
 };
 
 export const Ninguno: IGenericControls = {
@@ -118,22 +118,20 @@ export const Ninguno: IGenericControls = {
   label: "¿Cual es el grado de estudio más alto que aprobó?",
   gridValues: { xs: 6, lg: 6, md: 6, sm: 6, xl: 4 },
   name: "idgradovencido1",
-  radios: [
-    { idconcepto: "o1", denominacion: "Primaria" },
-  ],
-  disabled: (values) => values.idnivelescolar !== "opt1"
+  radios: [{ idconcepto: "o1", denominacion: "Primaria" }],
+  hidden: (values: any) => values.idnivelescolar !== "opt1",
 };
 
 export const Primaria: IGenericControls = {
   type: "radio",
   label: "¿Cual es el grado de estudio más alto que aprobó?",
   gridValues: { xs: 6, lg: 6, md: 6, sm: 6, xl: 4 },
-  name: "idgradovencido1",  
+  name: "idgradovencido1",
   radios: [
     { idconcepto: "o2", denominacion: "Secundaria básica" },
     { idconcepto: "o3", denominacion: "Obrero calificado" },
   ],
-  disabled: (values) => values.idnivelescolar !== "opt2",
+  hidden: (values: any) => values.idnivelescolar !== "opt2",
 };
 
 export const secundariaBasica: IGenericControls = {
@@ -142,12 +140,11 @@ export const secundariaBasica: IGenericControls = {
   gridValues: { xs: 6, lg: 6, md: 6, sm: 6, xl: 4 },
   name: "idgradovencido1",
   radios: [
-
     { idconcepto: "o4", denominacion: "Preuniversitario" },
     { idconcepto: "o5", denominacion: "Obrero calificado" },
     { idconcepto: "o6", denominacion: "Pedagogía nivel medio" },
   ],
-  disabled: (values) => values.idnivelescolar !== "opt3",
+  hidden: (values: any) => values.idnivelescolar !== "opt3",
 };
 
 export const Obrerocalificado: IGenericControls = {
@@ -156,7 +153,7 @@ export const Obrerocalificado: IGenericControls = {
   gridValues: { xs: 6, lg: 6, md: 6, sm: 6, xl: 4 },
   name: "idgradovencido1",
   radios: [],
-  disabled: (values) => values.idnivelescolar !== "",
+  hidden: (values: any) => values.idnivelescolar !== "",
 };
 
 export const Preuniversitario: IGenericControls = {
@@ -164,10 +161,8 @@ export const Preuniversitario: IGenericControls = {
   label: "¿Cual es el grado de estudio más alto que aprobó?",
   gridValues: { xs: 6, lg: 6, md: 6, sm: 6, xl: 4 },
   name: "idgradovencido1",
-  radios: [
-    { idconcepto: "o7", denominacion: "Universidad" },
-  ],
-  disabled: (values) => values.idnivelescolar !== "opt5",
+  radios: [{ idconcepto: "o7", denominacion: "Universidad" }],
+  hidden: (values: any) => values.idnivelescolar !== "opt5",
 };
 
 export const Pedagogíanivelmedio: IGenericControls = {
@@ -179,7 +174,7 @@ export const Pedagogíanivelmedio: IGenericControls = {
     { idconcepto: "o8", denominacion: "Técnico superior" },
     { idconcepto: "o9", denominacion: "Universidad" },
   ],
-  disabled: (values) => values.idnivelescolar !== "opt6",
+  hidden: (values: any) => values.idnivelescolar !== "opt6",
 };
 
 export const Tecnicomedio: IGenericControls = {
@@ -187,10 +182,8 @@ export const Tecnicomedio: IGenericControls = {
   label: "¿Cual es el grado de estudio más alto que aprobó?",
   gridValues: { xs: 6, lg: 6, md: 6, sm: 6, xl: 4 },
   name: "idgradovencido1",
-  radios: [
-    { idconcepto: "o10", denominacion: "Universidad" },
-  ],
-  disabled: (values) => values.idnivelescolar !== "opt7",
+  radios: [{ idconcepto: "o10", denominacion: "Universidad" }],
+  hidden: (values: any) => values.idnivelescolar !== "opt7",
 };
 
 export const Tecnicosuperior: IGenericControls = {
@@ -198,10 +191,8 @@ export const Tecnicosuperior: IGenericControls = {
   label: "¿Cual es el grado de estudio más alto que aprobó?",
   gridValues: { xs: 6, lg: 6, md: 6, sm: 6, xl: 4 },
   name: "idgradovencido1",
-  radios: [
-    { idconcepto: "o11", denominacion: "Universidad" },
-  ],
-  disabled: (values) => values.idnivelescolar !== "opt8",
+  radios: [{ idconcepto: "o11", denominacion: "Universidad" }],
+  hidden: (values: any) => values.idnivelescolar !== "opt8",
 };
 
 export const Universitario: IGenericControls = {
@@ -210,7 +201,7 @@ export const Universitario: IGenericControls = {
   gridValues: { xs: 6, lg: 6, md: 6, sm: 6, xl: 4 },
   name: "idgradovencido1",
   radios: [],
-  disabled: (values) => values.idnivelescolar !== "",
+  hidden: (values: any) => values.idnivelescolar !== "",
 };
 
 export const gradoPrimaria: IGenericControls = {
@@ -226,7 +217,8 @@ export const gradoPrimaria: IGenericControls = {
     { idconcepto: "op5", denominacion: "5" },
     { idconcepto: "op6", denominacion: "6" },
   ],
-  disabled: (values) => values.idgradovencido1 !== "o1" || values.idnivelescolar !== 'opt1'
+  hidden: (values: any) =>
+    values.idgradovencido1 !== "o1" || values.idnivelescolar !== "opt1",
 };
 
 export const gradoSecundaria: IGenericControls = {
@@ -239,7 +231,8 @@ export const gradoSecundaria: IGenericControls = {
     { idconcepto: "op8", denominacion: "8 " },
     { idconcepto: "op9", denominacion: "9 " },
   ],
-  disabled: (values) => values.idgradovencido1 !== "o2" || values.idnivelescolar !== 'opt2',
+  hidden: (values: any) =>
+    values.idgradovencido1 !== "o2" || values.idnivelescolar !== "opt2",
 };
 
 export const gradoObreroCalificado: IGenericControls = {
@@ -253,7 +246,7 @@ export const gradoObreroCalificado: IGenericControls = {
     { idconcepto: "op12", denominacion: "3 " },
     { idconcepto: "op13", denominacion: "4 " },
   ],
-  disabled: (values) => values.idgradovencido1 !== "o3",
+  hidden: (values: any) => values.idgradovencido1 !== "o3",
 };
 
 export const gradoPreuniversitario: IGenericControls = {
@@ -266,7 +259,7 @@ export const gradoPreuniversitario: IGenericControls = {
     { idconcepto: "op15", denominacion: "11" },
     { idconcepto: "op16", denominacion: "12" },
   ],
-  disabled: (values) => values.idgradovencido1 !== "o4",
+  hidden: (values: any) => values.idgradovencido1 !== "o4",
 };
 
 export const gradoPedagogiaNivelMedio: IGenericControls = {
@@ -280,7 +273,7 @@ export const gradoPedagogiaNivelMedio: IGenericControls = {
     { idconcepto: "op19", denominacion: "3 " },
     { idconcepto: "op20", denominacion: "4 " },
   ],
-  disabled: (values) => values.idgradovencido1 !== "o5",
+  hidden: (values: any) => values.idgradovencido1 !== "o5",
 };
 
 export const gradoTecnicoMedio: IGenericControls = {
@@ -293,7 +286,7 @@ export const gradoTecnicoMedio: IGenericControls = {
     { idconcepto: "op22", denominacion: "2 " },
     { idconcepto: "op23", denominacion: "3 " },
   ],
-  disabled: (values) => values.idgradovencido1 !== "o6",
+  hidden: (values: any) => values.idgradovencido1 !== "o6",
 };
 
 export const gradoUniversitario: IGenericControls = {
@@ -310,7 +303,8 @@ export const gradoUniversitario: IGenericControls = {
     { idconcepto: "op29", denominacion: "6 " },
     { idconcepto: "op30", denominacion: "Técnico superior " },
   ],
-  disabled: (values) => values.idgradovencido1 !== "o7" || values.idgradovencido1 !== "opt1",
+  hidden: (values: any) =>
+    values.idgradovencido1 !== "o7" || values.idgradovencido1 !== "opt1",
 };
 
 export const registroDeConsumidores: IGenericControls = {
@@ -340,7 +334,7 @@ export const embarazada: IGenericControls = {
   label: "Se encuentra embarazada",
   gridValues: { xs: 3, lg: 3, md: 3, sm: 3, xl: 3 },
   name: "estaembarazada",
-  disabled: (values) => values.idsexo != "9285",
+  hidden: (values: any) => values.idsexo != "9285",
   options: [
     { idconcepto: "opt1", denominacion: "Si" },
     { idconcepto: "opt2", denominacion: "No" },
@@ -356,7 +350,7 @@ export const lactando: IGenericControls = {
     { idconcepto: "opt1", denominacion: "Si" },
     { idconcepto: "opt2", denominacion: "No" },
   ],
-  disabled: (values) => values.idsexo != "9285",
+  hidden: (values: any) => values.idsexo != "9285",
 };
 
 export const madreantes: IGenericControls = {
@@ -368,7 +362,7 @@ export const madreantes: IGenericControls = {
     { idconcepto: "opt1", denominacion: "Si" },
     { idconcepto: "opt2", denominacion: "No" },
   ],
-  disabled: (values) => values.idsexo != "9285",
+  hidden: (values: any) => values.idsexo != "9285",
 };
 
 export const cantidadHijos: IGenericControls = {
@@ -380,5 +374,5 @@ export const cantidadHijos: IGenericControls = {
   validations: {
     length: { value: 2, message: "Cantidad de Hijos" },
   },
-  disabled: (values) => values.idsexo != "9285",
+  hidden: (values: any) => values.idsexo != "9285",
 };

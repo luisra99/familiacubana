@@ -1,134 +1,163 @@
 import { Grain, Handyman } from "@mui/icons-material";
+import {
+  crear,
+  deleteRowsIfExist,
+  obtenerDatosPorLlave,
+} from "@/app/user-interfaces/forms/models/controllers";
+import { useEffect, useState } from "react";
 
 import { CustomTree } from "@/_pwa-framework/components/tree/tree.component";
 import GenericForm from "@/_pwa-framework/genforms/components/form-components/form.generic";
 import Meta from "@/_pwa-framework/components/Meta";
+import NotificationProvider from "@/_pwa-framework/sections/Notifications/provider";
 import { Typography } from "@mui/material";
+import { datico } from "@/app/user-interfaces/forms/models/model";
+import { getHogar } from "@/app/hogarController/hogar.controller";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-import {
-  crear,
-  modificar,
-  obtenerDatosPorLlave,
-} from "@/app/user-interfaces/forms/models/controllers";
 
 function Afectaciones() {
-  const [id, setid] = useState<any>(null);
+  const notificar = NotificationProvider();
+  const idHogar = getHogar();
+
   const navegar = useNavigate();
+  const [treeData, setTreeData] = useState([]);
+  useEffect(() => {
+    cargarArbol();
+  }, []);
+  const cargarArbol = async () => {
+    let arbol: any = [];
+    await datico.nom_concepto
+      .where("idpadre")
+      .equals("9507")
+      .toArray()
+      .then(async (data: any) => {
+        arbol = data.map((concepto: any) => {
+          let leaf: any = {};
+          leaf.value = concepto.idconcepto.toString();
+          leaf.label = concepto.denominacion;
+          leaf.children = concepto.hijos?.map((item: any) => {
+            return {
+              value: item.idconcepto.toString(),
+              label: item.denominacion,
+            };
+          });
+
+          return leaf;
+        });
+        setTreeData(arbol);
+      });
+  };
 
   const siguiente = () => navegar("/servicios-equipamientos/locales");
   const anterior = () => navegar("/servicios-equipamientos/materiales");
+
   return (
     <>
       <Meta title="Controles" />
-      <GenericForm
-        name="test"
-        controls={[
-          {
-            type: "component",
-            component: () => (
-              <>
-                <Typography sx={{ mt: -4 }}>
+      {idHogar ? (
+        <GenericForm
+          name="test"
+          controls={[
+            {
+              type: "component",
+              component: () => (
+                <Typography>
                   <b>Nota aclaratoria:</b> La información solicitada aplica a la
                   vivienda o a la parte de ella que ocupa el hogar
                 </Typography>
-                <Typography sx={{ mt: 3 }} variant="caption"></Typography>
-              </>
-            ),
-            label: "",
-            name: "",
-            gridValues: { xs: 12, lg: 12, md: 12, sm: 12, xl: 12 },
-          },
+              ),
+              label: "",
+              name: "",
+              gridValues: { xs: 12, lg: 12, md: 12, sm: 12, xl: 12 },
+            },
+            {
+              type: "component",
+              component: () => (
+                <Typography sx={{ mt: 3 }} fontSize={"17px"}>
+                  Afectaciones que presenta la vivienda en
+                </Typography>
+              ),
+              label: "",
+              name: "",
+              gridValues: { xs: 12, lg: 12, md: 12, sm: 12, xl: 12 },
+            },
 
-          {
-            type: "component",
-            component: () => (
-              <CustomTree
-                data={folder}
-                parentIcon={Handyman}
-                childrenIcon={Grain}
-                multiSelect={true}
-              />
-            ),
-            label: "",
-            name: "",
-            gridValues: { xs: 12, lg: 12, md: 12, sm: 12, xl: 12 },
-          },
-        ]}
-        title="Afectaciones que presenta la vivienda"
-        description=""
-        endpointPath="persona"
-        showSpecificDescription={false}
-        idForEdit={id}
-        saveButton="Guardar"
-        setIdFunction={setid}
-        submitFunction={(values) => {
-          if (id)
-            modificar(
+            {
+              type: "component",
+              component: (props) => (
+                <CustomTree
+                  data={treeData}
+                  parentIcon={Handyman}
+                  childrenIcon={Grain}
+                  multiSelect={true}
+                  defaultValues={props.formValue}
+                  {...props}
+                />
+              ),
+              label: "",
+              name: "afectaciones",
+              gridValues: { xs: 12, lg: 12, md: 12, sm: 12, xl: 12 },
+            },
+          ]}
+          title="Afectaciones que presenta la vivienda"
+          description=""
+          endpointPath="persona"
+          showSpecificDescription={false}
+          idForEdit={idHogar}
+          saveButton="Guardar"
+          submitFunction={async (values: any) => {
+            await deleteRowsIfExist(
               "dat_afectacionmatvivienda",
-              "idafectacionemat",
-              id,
-              values
+              { idcodigohogar: idHogar },
+              "idafectacionemat"
+            ).then(() => {
+              const afectaciones: string[] = Object.values(
+                values.afectaciones ?? {}
+              );
+              if (afectaciones.length) {
+                afectaciones.forEach((afectacion: string) => {
+                  crear("dat_afectacionmatvivienda", {
+                    idafectacion: afectacion,
+                    idcodigohogar: idHogar,
+                  });
+                });
+              }
+            });
+            notificar({
+              type: "success",
+              title:
+                "Las afectaciones de la vivienda se han guardado satisfactoriamente",
+            });
+          }}
+          getByIdFunction={async (id) => {
+            const afectaciones = await obtenerDatosPorLlave(
+              "dat_afectacionmatvivienda",
+              "idcodigohogar",
+              id
             );
-          else crear("dat_afectacionmatvivienda", values);
-        }}
-        getByIdFunction={(id) =>
-          obtenerDatosPorLlave(
-            "dat_afectacionmatvivienda",
-            "idafectacionemat",
-            id
-          )
-        }
-        nextButton={{ text: "Siguiente", action: siguiente }}
-        prevButton={{ text: "Anterior", action: anterior }}
-      />
+
+            return {
+              afectaciones: afectaciones.map(
+                (afectacion: any) => afectacion.idafectacion
+              ),
+            };
+          }}
+          // nextButton={{
+          //   text: "Siguiente",
+          //   action: siguiente,
+          //   submitOnAction: true,
+          // }}
+          prevButton={{ text: "Anterior", action: anterior }}
+          nextButton={{ text: "Siguiente", action: siguiente }}
+          applyButton={false}
+        />
+      ) : (
+        <Typography mx={2} my={2}>
+          <b>No existe un hogar seleccionado</b>
+        </Typography>
+      )}
     </>
   );
 }
 
 export default Afectaciones;
-const folder = [
-  {
-    value: "nome6",
-    label: " Afectaciones presenta la vivienda ",
-    children: [
-      {
-        value: "nom2e",
-        label: "Techo o entrepiso",
-        children: [
-          { value: "aa", label: "Derrumbe parcial" },
-          { value: "ab", label: "Filtración" },
-          { value: "ac", label: "Humedad" },
-          { value: "ad", label: "Abofado o desconchado" },
-          { value: "ae", label: "Grieta" },
-          { value: "af", label: "Acero expuesto" },
-          { value: "ag", label: "Madera podrida en soportería" },
-          { value: "ah", label: "Está apuntalada" },
-          { value: "ai", label: "Ninguna" },
-        ],
-      },
-      {
-        value: "nom7e",
-        label: "Columna, viga y soportería",
-        children: [
-          { value: "aj", label: "Grieta o rajadura " },
-          { value: "ak", label: "Acero expuesto" },
-          { value: "al", label: "No tiene estos elementos" },
-          { value: "am", label: "Ninguna" },
-        ],
-      },
-      {
-        value: "nom8e",
-        label: "Paredes y pisos",
-        children: [
-          { value: "an", label: "Grietas" },
-          { value: "ao", label: " Desplomes " },
-          { value: "ap", label: "Abofados o desconchados " },
-          { value: "aq", label: "Filtraciones " },
-          { value: "ar", label: " Hundimiento del piso" },
-          { value: "as", label: "Ninguna " },
-        ],
-      },
-    ],
-  },
-];

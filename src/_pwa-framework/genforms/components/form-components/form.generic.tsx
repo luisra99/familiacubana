@@ -6,7 +6,7 @@ import {
   DialogContentText,
   DialogTitle,
 } from "@mui/material";
-import { Formik, FormikProps } from "formik";
+import { Formik, FormikErrors, FormikProps } from "formik";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { FormContainer } from "../auxiliar-components/form-container.auxiliar";
@@ -14,46 +14,65 @@ import { GForm } from "../auxiliar-components/control-item.auxiliar";
 import { GridContainer } from "../auxiliar-components/grid-container.auxiliar";
 import { IGForm } from "../../types/forms.types";
 import Loading from "@/_pwa-framework/components/Loading";
-import { initializeForm } from "@/_pwa-framework/hooks/state/actions/form-data.actions";
+import NotificationProvider from "@/_pwa-framework/sections/Notifications/provider";
+import { initializeForm } from "../../functions/init.controls";
+import { mode } from "@/_pwa-framework/config";
+import { normalize } from "../../functions/utils";
 import { object } from "yup";
 import { submitValues } from "../../functions/service.form";
 import useModalState from "@/_pwa-framework/hooks/form/use-form-manager";
 
-const GenericForm = ({
-  title,
-  name,
-  endpointPath,
-  controls,
-  description,
-  modalType,
-  showSpecificDescription,
-  descriptionOnCreate,
-  descriptionOnEdit,
-  idForEdit,
-  connectionMode,
-  hideButtons,
-  setIdFunction,
-  submitFunction,
-  getByIdFunction,
-  nextButton,
-  prevButton,
-  saveOnDirty,
-  saveButton,
-  updateButton,
-  dataAction,
-}: IGForm) => {
+const GenericForm = (props: IGForm) => {
+  const {
+    title,
+    editTitle,
+    createTitle,
+    name,
+    endpointPath,
+    controls,
+    description,
+    modalType,
+    showSpecificDescription,
+    descriptionOnCreate,
+    descriptionOnEdit,
+    idForEdit,
+    connectionMode,
+    hideButtons,
+    setIdFunction,
+    submitFunction,
+    getByIdFunction,
+    nextButton,
+    prevButton,
+    applyButton,
+    saveOnDirty,
+    saveButton,
+    updateButton,
+    dataAction,
+    notifyValidation,
+    sx,
+    gridContainerSx,
+    acceptDisabledFunction,
+    applyDisabledFunction,
+    nextDisabledFunction,
+    prevDisabledFunction,
+    submitDisabledFunction,
+    setExternalErrors,
+  } = props;
   const formReference = useRef<any>();
+  const notificar = NotificationProvider();
   const [initialFormData, setInitialFormData] = useState({});
   const [validationSchema, setValidationSchema] = useState(null);
   const [dataSource, setDataSource] = useState<any>({});
+  const [editMode, setEditMode] = useState<any>(false);
   const { modalActions } = useModalState();
   const submit = useCallback(
-    (values: any) => {
-      if (submitFunction) submitFunction(values, name, idForEdit);
-      else submitValues(values, name, idForEdit, endpointPath);
-    },
-    [idForEdit]
+    (values: any, event: any) =>
+      submitFunction
+        ? submitFunction({ ...values, editMode }, name, idForEdit, event)
+        : submitValues({ ...values, editMode }, name, idForEdit, endpointPath),
+    [idForEdit, editMode, submitFunction]
   );
+
   useEffect(() => {
     initializeForm(
       controls,
@@ -61,70 +80,113 @@ const GenericForm = ({
       idForEdit,
       connectionMode,
       getByIdFunction
-    ).then(({ initialFormData, validationSchema, dataSource }) => {
-      // console.log(Date.now(), {
-      //   initialFormData,
-      //   validationSchema,
-      //   dataSource,
-      // });
+    ).then(({ initialFormData, validationSchema, dataSource, editMode }) => {
+      console.log("initialFormData", initialFormData);
       setInitialFormData(initialFormData);
       setValidationSchema(validationSchema);
       setDataSource(dataSource);
+      setEditMode(editMode);
     });
   }, [idForEdit]);
   const handleClose = () => {
     modalActions.close;
     setIdFunction?.(null);
   };
+  const customDescription = showSpecificDescription
+    ? editMode || idForEdit
+      ? descriptionOnEdit ?? description
+      : descriptionOnCreate ?? description
+    : description;
+  const customTitle =
+    editTitle || createTitle ? (editMode ? editTitle : createTitle) : title;
+
   return initialFormData && validationSchema && formReference ? (
     <FormContainer
       modalType={modalType}
       name={name}
       setIdFunction={setIdFunction}
     >
-      <DialogTitle>{title}</DialogTitle>
-      <DialogContentText mx={3}>
-        {showSpecificDescription
-          ? idForEdit
-            ? descriptionOnEdit ?? description
-            : descriptionOnCreate ?? description
-          : description}
-      </DialogContentText>
+      {customTitle && <DialogTitle>{customTitle}</DialogTitle>}
+      {customDescription && (
+        <DialogContentText mx={3}>{customDescription}</DialogContentText>
+      )}
       <Formik
         className={"formik-object"}
-        validateOnChange
+        validateOnChange={true}
         initialValues={initialFormData}
         validationSchema={object().shape(validationSchema)}
         onSubmit={(values: any) => console.log(Date.now(), values)}
         innerRef={formReference}
+        validateOnMount={false}
+        validateOnBlur={false}
       >
-        {({ errors, values, isValid, dirty }: FormikProps<any>) => {
-          // console.log(values);
+        {(props: FormikProps<any>) => {
+          const {
+            values,
+            validateForm,
+            setErrors,
+            errors,
+            resetForm,
+            setFieldTouched,
+            isValid,
+            touched,
+          } = props;
+          mode && console.log(values, errors, touched);
+          const formButtonAction = async (event?: any) => {
+            const message = await notifyValidation?.({
+              ...formReference?.current.values,
+              editMode,
+            });
+            if (message) {
+              notificar({
+                type: "warning",
+                title: message,
+              });
+            } else {
+              const error: FormikErrors<any> = await validateForm();
+              const errors = Object.keys(error);
+              setExternalErrors?.((prev: any) => {
+                const old = prev ? prev : {};
+                return { ...old, ...errors };
+              });
+              mode && console.log("Errors", error);
+              mode && console.log("Values", formReference?.current.values);
+
+              if (errors.length) {
+                errors.forEach((key) => setFieldTouched(key));
+                setErrors(error);
+              } else {
+                const response = await submit(
+                  normalize(formReference?.current.values),
+                  event
+                );
+                if (response !== false) {
+                  if (event?.target?.id === "acceptButton") {
+                    modalActions.close();
+                    modalType && setIdFunction?.(null);
+                    !modalType && setEditMode(true);
+                  }
+                  if (event?.target?.id === "applyButton") {
+                    resetForm();
+                  }
+                }
+              }
+            }
+          };
           return (
             <>
-              <DialogContent dividers={!!modalType}>
-                <GridContainer>
+              <DialogContent dividers={!!modalType} sx={sx}>
+                <GridContainer hideButtons={hideButtons} sx={gridContainerSx}>
                   <GForm
                     controlArray={controls}
                     dataSource={dataSource}
-                    errors={errors}
-                    values={values}
-                    initialFormData={initialFormData}
+                    editMode={editMode}
+                    initialValue={initialFormData}
                   />
                 </GridContainer>
               </DialogContent>
 
               <Box sx={{ flexGrow: 1 }} />
-
-              {/* <Button
-                    onClick={() => {
-                      formReference.current.resetForm();
-                      formReference.current.setValues(initialFormData);
-                    }}
-                    color="info"
-                  >
-                    {idForEdit ? "Deshacer" : "Limpiar"}
-                  </Button> */}
 
               {!hideButtons && (
                 <DialogActions sx={{ justifyContent: " " }}>
@@ -135,6 +197,7 @@ const GenericForm = ({
                       }}
                       color="primary"
                       variant="contained"
+                      disabled={prevDisabledFunction?.(values)}
                     >
                       {prevButton?.text}
                     </Button>
@@ -142,7 +205,8 @@ const GenericForm = ({
                   {modalType && (
                     <Button
                       onClick={() => {
-                        modalActions.close(), setIdFunction?.(null);
+                        modalActions.close();
+                        setIdFunction?.(null);
                       }}
                       color="primary"
                       variant="contained"
@@ -150,8 +214,9 @@ const GenericForm = ({
                       Cancelar
                     </Button>
                   )}
-                  {dataAction?.map((action: any) => (
+                  {dataAction?.map((action: any, index: number) => (
                     <Button
+                      key={index}
                       onClick={() => {
                         action.action();
                       }}
@@ -161,54 +226,50 @@ const GenericForm = ({
                       {action.label}
                     </Button>
                   ))}
-
-                  {/* <Button
-                    onClick={() => {
-                      console.log(Date.now(), formReference?.current);
-                      submit(formReference?.current.values);
-                    }}
-                    color={idForEdit ? "success" : "primary"}
-                    variant="contained"
-                    disabled={!isValid}
-                  >
-                    Crear hogar en la misma dirección
-                  </Button>*/}
-                  {/* <Button
-                    onClick={() => {
-                      console.log(Date.now(), formReference?.current);
-                      submit(formReference?.current.values);
-                    }}
-                    color={idForEdit ? "success" : "primary"}
-                    variant="contained"
-                    disabled={!isValid}
-                  >
-                    Aplicar
-                  </Button> */}
-
                   {nextButton && (
                     <Button
                       onClick={() => {
-                        nextButton?.action(values);
+                        nextButton?.submitOnAction &&
+                          formButtonAction().finally(
+                            () => nextButton?.action(values)
+                          );
+                        !nextButton?.submitOnAction &&
+                          nextButton?.action(values);
                       }}
+                      disabled={nextDisabledFunction?.(values)}
                       color="primary"
                       variant="contained"
                     >
                       {nextButton?.text}
                     </Button>
                   )}
+                  {!editMode && (applyButton === undefined || applyButton) && (
+                    <Button
+                      onClick={formButtonAction}
+                      disabled={
+                        applyDisabledFunction?.(values) ||
+                        submitDisabledFunction?.(values) ||
+                        !isValid
+                      }
+                      color={"primary"}
+                      variant="contained"
+                      id="applyButton"
+                    >
+                      Aplicar
+                    </Button>
+                  )}
                   <Button
-                    onClick={() => {
-                      // console.log(Date.now(), formReference?.current);
-                      submit(formReference?.current.values);
-                      modalActions.close();
-                    }}
+                    onClick={formButtonAction}
+                    disabled={
+                      acceptDisabledFunction?.(values) ||
+                      submitDisabledFunction?.(values) ||
+                      !isValid
+                    }
                     color={"primary"}
                     variant="contained"
-                    disabled={!isValid || (!dirty && saveOnDirty)}
+                    id="acceptButton"
                   >
-                    {idForEdit
-                      ? updateButton ?? "Aceptar"
-                      : saveButton ?? "Aceptar"}
+                    Aceptar
                   </Button>
                 </DialogActions>
               )}

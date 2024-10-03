@@ -162,20 +162,27 @@ export default function Footer() {
       <Box
         sx={{
           display: "flex",
+          flexDirection:"column",
           justifyContent: "space-between",
           width: "100%",
           borderColor: "divider",
         }}
       >
+        <Typography variant="h6">XETID © 2024. Todos los derechos reservados.</Typography><br/>
         <div>
           <Link color="text.secondary" href="#">
-            Política de privacidad
+            Documentación
           </Link>
           <Typography display="inline" sx={{ mx: 0.5, opacity: 0.5 }}>
             &nbsp;•&nbsp;
           </Typography>
           <Link color="text.secondary" href="#">
             Terminos y condiciones
+          </Link> <Typography display="inline" sx={{ mx: 0.5, opacity: 0.5 }}>
+            &nbsp;•&nbsp;
+          </Typography>
+          <Link color="text.secondary" href="#">
+            Política de uso
           </Link>
           {/* <Copyright /> */}
         </div>

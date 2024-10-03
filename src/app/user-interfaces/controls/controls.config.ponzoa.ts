@@ -8,7 +8,7 @@ export const GradoDeautonomia: IGenericControls = {
   gridValues: { xs: 12, lg: 12, md: 12, sm: 12, xl: 12 },
   label: "Grado de autonomía",
   url: "9369",
-  disabled: (values) => values.idmiembro == "",
+  hidden: (values: any) => values.idmiembro == "",
 };
 export const Miembro: IGenericControls = {
   type: "select",
@@ -24,13 +24,14 @@ export const Miembro: IGenericControls = {
 
 //Falta nomenclador
 export const TiposdeAyuda: IGenericControls = {
-  type: "select",
+  type: "multiselect",
   name: "idtiposayuda",
   gridValues: { xs: 12, lg: 12, md: 12, sm: 12, xl: 12 },
   label: "Tipo de ayuda",
   multiple: "check",
-  url:"9373",
-  disabled: (values) => values.idmiembro == "" || values.idautonomia != "9371",
+  url: "9373",
+  hidden: (values: any) =>
+    values.idmiembro == "" || values.idautonomia != "9371",
   // options: [
   //   { idconcepto: "opt1", denominacion: "ABVD" },
   //   { idconcepto: "opt2", denominacion: "AIVD" },
@@ -42,41 +43,40 @@ export const Presentaalgunadiscapacidad: IGenericControls = {
   label: "¿Presenta alguna discapacidad?",
   name: "iddiscapacidad",
   url: "9376",
- 
+
   direction: "row",
   labelPlacement: "top",
-  disabled: (values) => values.idmiembro == "",
+  hidden: (values: any) => values.idmiembro == "",
 };
 
 export const Discapacidad: IGenericControls = {
-  type: "select",
+  type: "multiselect",
   name: "Discapacidad",
   label: "iddiscapacidad",
   multiple: "check",
   url: "9376",
-  disabled: (values) => values.idmiembro == "",
-
+  hidden: (values: any) => values.idmiembro == "",
 };
 
 //en el nomenclador debe salir las enfermedades corespondientes al tipo
 export const Enfermedades: IGenericControls = {
-  type: "select",
+  type: "multiselect",
   name: "idenfermedad",
   label: "Enfermedades de baja prevalencia",
   gridValues: { xs: 6, lg: 6, md: 6, sm: 6, xl: 6 },
   url: "9390",
   multiple: "check",
-  disabled: (values) => values.idmiembrohogar == "",
+  hidden: (values: any) => values.idmiembrohogar == "",
 };
 //en el nomenclador debe salir las enfermedades corespondientes al tipo
 export const Beneficios: IGenericControls = {
-  type: "select",
+  type: "multiselect",
   name: "idbeneficio",
   label: "Beneficios focalizados de salud",
   url: "9802",
   multiple: "check",
   gridValues: { xs: 6, lg: 6, md: 6, sm: 6, xl: 6 },
-  disabled: (values) => values.idmiembrohogar == "",
+  hidden: (values: any) => values.idmiembrohogar == "",
 };
 
 export const BeneficiosProgramasalimentarios: IGenericControls = {
@@ -156,15 +156,15 @@ export const Nucleo: IGenericControls = {
 export const SituacionLegal: IGenericControls = {
   type: "select",
   name: "idsituacionalegal",
-  label: "Situacion legal de la vivienda",
+  label: "Situación legal de la vivienda",
   url: "9299",
-  
+
   gridValues: { xs: 12, lg: 12, md: 12, sm: 12, xl: 12 },
 };
 
 export const PiezasdeTipoDormitorio: IGenericControls = {
   type: "text",
-  label: "Piezas de tipo dormitorios",
+  label: "Piezas utilizadas para dormir",
   name: "cantudormir",
   pattern: /[0-9]/,
   validations: { length: { value: 1, message: "Cantidad de Cuartos" } },
@@ -200,17 +200,15 @@ export const cantidadSegunCocina: IGenericControls = {
   gridValues: { xs: 2, lg: 2, md: 2, sm: 2, xl: 2 },
 
   format: "units",
-  disabled: (values) => values.tipousococina != "opt1",
+  hidden: (values: any) => values.tipousococina != "opt1",
 };
 export const LocalparaCocinar: IGenericControls = {
-  type: "select",
+  type: "multiselect",
   name: "cantidadcocina",
   label: "Local para cocinar",
   multiple: "check",
   url: "9752",
   gridValues: { xs: 12, lg: 6, md: 6, sm: 6, xl: 6 },
-
- 
 };
 
 export const Combustible: IGenericControls = {
@@ -252,11 +250,11 @@ export const Uso: IGenericControls = {
 //     { idconcepto: "2", denominacion: "Letrina" },
 //   ],
 //   gridValues: { xs: 2, lg: 2, md: 2, sm: 2, xl: 2 },
-//   disabled: (values) => values.tienesanitario !=="1",
+//   hidden: (values:any) => values.tienesanitario !=="1",
 // };
 
 export const letrina: IGenericControls = {
-  type: "select",
+  type: "multiselect",
   label: "Letrina",
   name: "idletrina",
   multiple: "check",
@@ -265,12 +263,11 @@ export const letrina: IGenericControls = {
     { idconcepto: "2", denominacion: "Fuera de la vivienda" },
   ],
   gridValues: { xs: 2, lg: 2, md: 2, sm: 2, xl: 2 },
-  disabled: (values) => values.tienesanitario !=="1",
+  hidden: (values: any) => values.tienesanitario !== "1",
 };
 
-
 export const seEncunetra: IGenericControls = {
-  type: "select",
+  type: "multiselect",
   label: "Inodoro",
   name: "idlocalesvivienda",
   multiple: "check",
@@ -279,22 +276,23 @@ export const seEncunetra: IGenericControls = {
     { idconcepto: "2", denominacion: "Fuera de la vivienda" },
   ],
   gridValues: { xs: 2, lg: 2, md: 2, sm: 2, xl: 2 },
-  disabled: (values) => values.tienesanitario !=="1",
+  hidden: (values: any) => values.tienesanitario !== "1",
 };
 
 // formulario 6 //
 
 export const entrevistafecha: IGenericControls = {
   type: "date",
-  gridValues: { xs: 3, lg: 3, md: 3, sm: 3, xl: 3 },
-
+  gridValues: { xs: 4, lg: 3, md: 3, sm: 2, xl: 3 },
+  validations: { required: { message: "Este campo es obligatorio" } },
   label: "Fecha",
   name: "fechaentrev",
 };
 export const horainicial: IGenericControls = {
   type: "time",
   label: "Hora inicial",
-  gridValues: { xs: 3, lg: 3, md: 3, sm: 3, xl: 3 },
+  gridValues: { xs: 4, lg: 3, md: 3, sm: 2, xl: 3 },
+  validations: { required: { message: "Este campo es obligatorio" } },
 
   name: "hinicio",
 };
@@ -302,7 +300,9 @@ export const horainicial: IGenericControls = {
 export const horafinal: IGenericControls = {
   type: "time",
   label: "Hora fin",
-  gridValues: { xs: 3, lg: 3, md: 3, sm: 3, xl: 3 },
+  gridValues: { xs: 4, lg: 3, md: 3, sm: 2, xl: 3 },
+  validations: { required: { message: "Este campo es obligatorio" } },
+
   name: "hfin",
 };
 
@@ -319,6 +319,7 @@ export const Observaciones: IGenericControls = {
   label: "Observaciones E/R y del trabajador social a cargo",
   name: "observaciones",
   gridValues: { xs: 12, lg: 12, md: 12, sm: 12, xl: 12 },
+  validations: { required: { message: "Este campo es obligatorio" } },
   multiline: { minRows: 6 },
 };
 
@@ -334,7 +335,7 @@ export const escojaMiembro1: IGenericControls = {
     { idconcepto: "opt2", denominacion: "Alberto Rodriguez" },
     { idconcepto: "opt3", denominacion: "José Alejandro" },
   ],
-  disabled: (values) => values.problemasalud != "opt2",
+  hidden: (values: any) => values.problemasalud != "opt2",
 };
 
 export const problemasdeSalud: IGenericControls = {
@@ -343,8 +344,7 @@ export const problemasdeSalud: IGenericControls = {
     "¿En los últimos 30 días algún miembro del hogar ha presentado algún problema de salud?",
   name: "problemasalud",
   gridValues: { xs: 12, lg: 12, md: 12, sm: 12, xl: 12 },
-  url:"9831",
-
+  url: "9831",
 };
 
 export const fueAtendido: IGenericControls = {
@@ -352,17 +352,16 @@ export const fueAtendido: IGenericControls = {
   gridValues: { xs: 6, lg: 6, md: 6, sm: 6, xl: 6 },
   label: "¿Fue atendido?",
   name: "atendido",
-  url:"9831",
- };
+  url: "9831",
+};
 
 export const lugarDeAtencion: IGenericControls = {
   type: "select",
   label: "",
   // label: "El lugar de atención está lejos",
-  url:"9831",
+  url: "9831",
   gridValues: { md: 6 },
   name: "atendido",
-
 };
 
 export const dineroparaTransporte: IGenericControls = {
@@ -371,8 +370,7 @@ export const dineroparaTransporte: IGenericControls = {
   // label: "Falta de dinero para el transporte hacia el centro de salud",
   name: "idmotivo",
   gridValues: { md: 6 },
-  url:"9831",
-  
+  url: "9831",
 };
 
 export const medioTransporte: IGenericControls = {
@@ -381,8 +379,7 @@ export const medioTransporte: IGenericControls = {
   // label: "No había medio de transporte",
   gridValues: { md: 6 },
   name: "idmotivo",
-  url:"9831",
- 
+  url: "9831",
 };
 
 export const medicoEnfermera: IGenericControls = {
@@ -390,9 +387,8 @@ export const medicoEnfermera: IGenericControls = {
   label: "",
   // label: "No había un médico o enfermero/a",
   gridValues: { md: 6 },
-  url:"9831",
+  url: "9831",
   name: "idmotivo",
-
 };
 
 export const centroDeSalud: IGenericControls = {
@@ -401,8 +397,7 @@ export const centroDeSalud: IGenericControls = {
   // label: "Demasiado tiempo de espera en el centro de salud",
   gridValues: { md: 6 },
   name: "idmotivo",
-  url:"9831",
- 
+  url: "9831",
 };
 
 export const recursoNecesario: IGenericControls = {
@@ -411,8 +406,7 @@ export const recursoNecesario: IGenericControls = {
   // label: "Falta del medicamento o recurso necesario",
   gridValues: { md: 6 },
   name: "idmotivo",
-  url:"9831",
- 
+  url: "9831",
 };
 
 export const considerograve: IGenericControls = {
@@ -421,8 +415,7 @@ export const considerograve: IGenericControls = {
   // label: "No lo considero grave o necesario",
   gridValues: { md: 6 },
   name: "idmotivo",
-  url:"9831",
- 
+  url: "9831",
 };
 
 export const otrosMotivos: IGenericControls = {
@@ -431,8 +424,7 @@ export const otrosMotivos: IGenericControls = {
   // label: "Otros Motivos",
   gridValues: { md: 6 },
   name: "idmotivo",
-  url:"9831",
- 
+  url: "9831",
 };
 
 // dat_miembrohogar //
@@ -443,7 +435,7 @@ export const nombre: IGenericControls = {
   name: "pnombre",
   pattern: /[A-z]/,
   gridValues: { xs: 6, lg: 6, md: 6, sm: 6, xl: 6 },
-  validations: { required:{message: 'Nombre'} }
+  validations: { required: { message: "Nombre" } },
 };
 
 export const primerApellido: IGenericControls = {
@@ -478,7 +470,6 @@ export const CI: IGenericControls = {
   gridValues: { xs: 6, lg: 6, md: 6, sm: 6, xl: 6 },
   pattern: /[0-9]/,
   //validations: { required:{message: 'Carnet de identidad '} }
- 
 };
 
 export const Edad: IGenericControls = {
@@ -496,7 +487,6 @@ export const colorDePiel: IGenericControls = {
   name: "idcolorpiel",
   gridValues: { xs: 6, lg: 6, md: 6, sm: 6, xl: 6 },
   url: "9280",
-  
 };
 
 export const EscanerCI: IGenericControls = {
@@ -519,7 +509,6 @@ export const Sexo: IGenericControls = {
   name: "idsexo",
   gridValues: { xs: 6, lg: 6, md: 6, sm: 6, xl: 6 },
   url: "9284",
- 
 };
 
 export const parentesco: IGenericControls = {
@@ -528,7 +517,6 @@ export const parentesco: IGenericControls = {
   gridValues: { xs: 12, lg: 6, md: 12, sm: 12, xl: 12 },
   name: "idparentesco",
   url: "9269",
- 
 };
 //Falta  nomencaldro en BD
 export const orientacionSexual: IGenericControls = {
@@ -536,7 +524,7 @@ export const orientacionSexual: IGenericControls = {
   label: "Orientación sexual",
   gridValues: { xs: 6, lg: 6, md: 6, sm: 6, xl: 6 },
   name: "idorientacionsex",
-  url:""
+  url: "",
 
   // options: [
   //   { idconcepto: "opt1", denominacion: "Otro" },
@@ -545,23 +533,21 @@ export const orientacionSexual: IGenericControls = {
 };
 
 export const nivelDeEstudio: IGenericControls = {
-  type: "select",
+  type: "multiselect",
   label: "¿Cuál es el nivel de estudio más alto que terminó?",
   gridValues: { md: 6 },
   name: "idnivelescolar",
   url: "9287",
   multiple: "check",
-
 };
 
 export const gradoDeEstudio: IGenericControls = {
-  type: "select",
+  type: "multiselect",
   label: "¿Cual es el grado de estudio más alto que aprobó?",
   gridValues: { md: 6 },
   name: "idgradovencido",
   url: "9287",
   multiple: "check",
- 
 };
 //Busscar nomneclador falta en BD
 export const grado: IGenericControls = {
@@ -569,7 +555,7 @@ export const grado: IGenericControls = {
   label: "Grado",
   gridValues: { md: 6 },
   name: "idgradovencido",
-  url:""
+  url: "",
 };
 
 export const registroDeConsumidores: IGenericControls = {
@@ -599,7 +585,7 @@ export const embarazada: IGenericControls = {
   label: "Se encuentra embarazada",
   gridValues: { xs: 3, lg: 3, md: 3, sm: 3, xl: 3 },
   name: "estaembarazada",
-  disabled: (values) => values.idsexo != "9285",
+  hidden: (values: any) => values.idsexo != "9285",
   options: [
     { idconcepto: "opt1", denominacion: "Si" },
     { idconcepto: "opt2", denominacion: "No" },
@@ -615,7 +601,7 @@ export const lactando: IGenericControls = {
     { idconcepto: "opt1", denominacion: "Si" },
     { idconcepto: "opt2", denominacion: "No" },
   ],
-  disabled: (values) => values.idsexo != "9285",
+  hidden: (values: any) => values.idsexo != "9285",
 };
 
 export const madreantes: IGenericControls = {
@@ -627,20 +613,20 @@ export const madreantes: IGenericControls = {
     { idconcepto: "opt1", denominacion: "Si" },
     { idconcepto: "opt2", denominacion: "No" },
   ],
-  disabled: (values) => values.idsexo != "9285",
+  hidden: (values: any) => values.idsexo != "9285",
 };
 
 export const cantidadHijos: IGenericControls = {
   type: "text",
   label: "Cantidad de hijos",
-  pattern:/[0-9]/,
+  pattern: /[0-9]/,
   gridValues: { xs: 3, lg: 3, md: 3, sm: 3, xl: 3 },
   name: "cantidadHijos",
   validations: {
     length: { value: 2, message: "Cantidad de Hijos" },
   },
-  
-  disabled: (values) => values.idsexo != "9285",
+
+  hidden: (values: any) => values.idsexo != "9285",
 };
 
 //Formulario 9
@@ -699,7 +685,13 @@ export const carnetdeIdentidad: IGenericControls = {
   label: "Carnet de identidad",
   name: "cidentidad",
   pattern: /[0-9]/,
-  validations: { length: { value: 11, message: "Complete el campo de Carné de Identidad como esta en su identificación" } },
+  validations: {
+    length: {
+      value: 11,
+      message:
+        "Complete el campo de Carné de Identidad como esta en su identificación",
+    },
+  },
 };
 
 export const nombreyApellido: IGenericControls = {
@@ -720,7 +712,6 @@ export const Parentezco: IGenericControls = {
   label: "Parentesco",
   name: "parentezco",
   url: "9269",
- 
 };
 
 export const colorDeLaPiel: IGenericControls = {
@@ -735,7 +726,6 @@ export const nivelEstudio: IGenericControls = {
   gridValues: { md: 6 },
   name: "idnivelescolar",
   url: "9287",
- 
 };
 export const gradoEstudio: IGenericControls = {
   type: "select",
@@ -743,7 +733,6 @@ export const gradoEstudio: IGenericControls = {
   gridValues: { md: 6 },
   name: "idgradovencido",
   url: "9287",
-
 };
 
 export const Grado: IGenericControls = {
@@ -778,7 +767,6 @@ export const escojaMiembro: IGenericControls = {
     { idconcepto: "opt3", denominacion: "José Alejandro" },
   ],
   gridValues: { md: 12, lg: 12, sm: 12, xl: 12, xs: 12 },
-  
 };
 
 export const enfermedadesCronicas: IGenericControls = {
@@ -790,7 +778,7 @@ export const enfermedadesCronicas: IGenericControls = {
     { idconcepto: "1", denominacion: "Si" },
     { idconcepto: "2", denominacion: "No" },
   ],
-  disabled: (values) => values.idmiembro == 0,
+  hidden: (values: any) => values.idmiembro == 0,
 
   direction: "row",
   labelPlacement: "end",
@@ -818,7 +806,7 @@ export const accedeMedicamentos: IGenericControls = {
   gridValues: { md: 4, lg: 4, sm: 4, xl: 4, xs: 4 },
 };
 export const viaDeAcceso: IGenericControls = {
-  type: "select",
+  type: "multiselect",
   name: "idtipoviaacceso",
   label: "Vía de acceso",
   url: "9416",
@@ -837,7 +825,7 @@ export const ecojaLaOpcion: IGenericControls = {
     { idconcepto: "2", denominacion: "Común" },
   ],
   gridValues: { xs: 2, lg: 2, md: 2, sm: 2, xl: 2 },
-  disabled: (values) => values.tienesanitario !=="1",
+  hidden: (values: any) => values.tienesanitario !== "1",
 };
 
 export const cantidad: IGenericControls = {
@@ -855,7 +843,6 @@ export const intalacionDeAcueducto: IGenericControls = {
   label: "Intalación por red de acueducto",
   name: "idserviciosvivienda",
   url: "9644",
- 
 };
 
 export const frecuenciaDeAgua: IGenericControls = {
@@ -863,7 +850,6 @@ export const frecuenciaDeAgua: IGenericControls = {
   label: "Frecuencia del suminstro de agua",
   name: "idserviciosvivienda",
   url: "9644",
- 
 };
 
 export const procedenciaDelAgua: IGenericControls = {
@@ -871,7 +857,6 @@ export const procedenciaDelAgua: IGenericControls = {
   label: "Procedencia principal de agua",
   name: "idserviciosvivienda",
   url: "9644",
-  
 };
 
 export const sistemaDeDesagüe: IGenericControls = {
@@ -888,12 +873,11 @@ export const sistemaDeDesagüe: IGenericControls = {
 };
 
 export const manejoDeDesechos: IGenericControls = {
-  type: "select",
+  type: "multiselect",
   label: "Manejos de desechos",
   name: "idserviciosvivienda",
   url: "9644",
   multiple: "check",
-
 };
 
 export const electricidad: IGenericControls = {
@@ -901,7 +885,6 @@ export const electricidad: IGenericControls = {
   label: "Electricidad",
   name: "idserviciosvivienda",
   url: "9644",
- 
 };
 
 //Formulario Otros Datos//
@@ -915,7 +898,7 @@ export const escojaMiembro2: IGenericControls = {
     { idconcepto: "opt2", denominacion: "Alberto Rodriguez" },
     { idconcepto: "opt3", denominacion: "José Alejandro" },
   ],
-  gridValues: { xs: 2, lg: 2, md:2, sm: 2, xl: 2 },
+  gridValues: { xs: 2, lg: 2, md: 2, sm: 2, xl: 2 },
 };
 
 export const ayudaFamiliarAmigo: IGenericControls = {
@@ -923,49 +906,46 @@ export const ayudaFamiliarAmigo: IGenericControls = {
   label:
     "Si alguien en el hogar requiere apoyo con labores domésticas y de cuidado, por enfermedades u otra razón",
   name: "idtiposayuda",
-  disabled: (values) => values.idmiembro == "",
+  hidden: (values: any) => values.idmiembro == "",
   gridValues: { xs: 12, lg: 12, md: 12, sm: 12, xl: 12 },
 };
 export const ayudaFamiliarAmigo2: IGenericControls = {
   type: "check",
   label: "Ante un problema económico",
   name: "idtiposayuda",
-  disabled: (values) => values.idmiembro == "",
+  hidden: (values: any) => values.idmiembro == "",
   gridValues: { xs: 12, lg: 12, md: 12, sm: 12, xl: 12 },
 };
 
 export const Programasalimentarios: IGenericControls = {
-  type: "select",
+  type: "multiselect",
   name: "idtiposayuda",
   label: "Programas alimentarios",
   multiple: "check",
   url: "9610",
-  disabled: (values) => values.idmiembro == "",
+  hidden: (values: any) => values.idmiembro == "",
   gridValues: { xs: 12, lg: 12, md: 12, sm: 12, xl: 12 },
-
-
 };
 
 export const SituacionSocial: IGenericControls = {
-  type: "select",
+  type: "multiselect",
   name: "idsituacionsocial",
   label: "Situación social",
   url: "9593",
-  disabled: (values) => values.idmiembro == "",
+  hidden: (values: any) => values.idmiembro == "",
   multiple: "check",
   gridValues: { xs: 12, lg: 6, md: 6, sm: 6, xl: 6 },
-  
 };
 
 //Buscar el nomenclador
 export const Organismo: IGenericControls = {
-  type: "select",
+  type: "multiselect",
   name: "idocupacion",
   label: "Organismo",
   multiple: "check",
   gridValues: { xs: 12, lg: 6, md: 6, sm: 6, xl: 6 },
-  url:"",
-  disabled: (values) => values.idmiembro == "",
+  url: "",
+  hidden: (values: any) => values.idmiembro == "",
   options: [
     { idconcepto: "opt1", denominacion: "MINSAP" },
     { idconcepto: "opt2", denominacion: "FAR" },
@@ -1028,7 +1008,7 @@ export const jefeDelHogar1: IGenericControls = {
 // estado de carecterización
 
 export const caracterizacion: IGenericControls = {
-  type: "select",
+  type: "multiselect",
   name: "idcaracterizacion",
   label: "Estado de la caracterización",
   multiple: "check",
@@ -1054,7 +1034,7 @@ export const caracterizacion: IGenericControls = {
     { idconcepto: "opt10", denominacion: "Otros datos" },
     {
       idconcepto: "opt11",
-      denominacion: "Situacion de niños y niñas y adolecentes (NNA)",
+      denominacion: "Situación de niños y niñas y adolecentes (NNA)",
     },
     {
       idconcepto: "opt12",
@@ -1083,4 +1063,3 @@ export const caracterizacion: IGenericControls = {
     { idconcepto: "opt20", denominacion: "Datos de la entrevista" },
   ],
 };
-

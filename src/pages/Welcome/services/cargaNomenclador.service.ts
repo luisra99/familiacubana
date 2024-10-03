@@ -6,7 +6,7 @@ export const getNomenclador = async (nomenclador: string): Promise<any> => {
     const { data } = await axios.get(
       `${
         import.meta.env.ENV_SERVER_URL
-      }/gw/buscarconceptoxid?idconcepto=${nomenclador}`
+      }/gw/external/nomencladores/buscarconceptoxid?idconcepto=${nomenclador}`
     );
     if (Object.keys(data).length) setItem(nomenclador, Object.values(data)[0]);
     return Object.keys(data).length;

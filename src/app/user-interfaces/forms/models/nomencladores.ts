@@ -1,54 +1,40 @@
-import { AbstractEntity } from "@/app/models/model";
-
-export class nom_tipoconcepto extends AbstractEntity {
+export class nom_tipoconcepto {
   constructor(
     public idtipoconcepto: number,
     public denominacion: string,
     public descripcion: number,
     public fhasta: string,
-    public idtipo: number,
-    public idgeneral?: string
-  ) {
-    super(idgeneral);
-  }
+    public idtipo: number
+  ) {}
 }
 
-export class dat_atributo extends AbstractEntity {
+export class dat_atributo {
   constructor(
     public idatributo: number,
     public denomicacion: string,
     public tipo: number,
-    public idtipoconcepto?: number,
-    public idgeneral?: string
-  ) {
-    super(idgeneral);
-  }
+    public idtipoconcepto?: number
+  ) {}
 }
 
-export class dat_detallesconcepto extends AbstractEntity {
+export class dat_detallesconcepto {
   constructor(
     public iddetalles: number,
     public dato: string,
     public idtipoconcepto?: number,
-    public idatributo?: number,
-    public idgeneral?: string
-  ) {
-    super(idgeneral);
-  }
+    public idatributo?: number
+  ) {}
 }
 
-export class dat_rolconcepto extends AbstractEntity {
+export class dat_rolconcepto {
   constructor(
     public idrolconcepto: number,
     public rol: string,
-    public idtipoconcepto?: number,
-    public idgeneral?: string
-  ) {
-    super(idgeneral);
-  }
+    public idtipoconcepto?: number
+  ) {}
 }
 
-export class nom_concepto extends AbstractEntity {
+export class nom_concepto {
   constructor(
     public idconcepto: number,
     public idpadre: number,
@@ -59,14 +45,11 @@ export class nom_concepto extends AbstractEntity {
     public visible: number,
     public idestructura: string,
     public orden: string,
-    public idtipoconcepto?: number,
-    public idgeneral?: string
-  ) {
-    super(idgeneral);
-  }
+    public idtipoconcepto?: number
+  ) {}
 }
 
-export class dat_matrizrelacional extends AbstractEntity {
+export class dat_matrizrelacional {
   constructor(
     public idrelacion: number,
     public fechafin: string,
@@ -74,9 +57,6 @@ export class dat_matrizrelacional extends AbstractEntity {
     public idconceptorelacionado?: number,
     public idconceptopadre?: number,
     public idconceptopadrerel?: number,
-    public idtipoconcepto?: number,
-    public idgeneral?: string
-  ) {
-    super(idgeneral);
-  }
+    public idtipoconcepto?: number
+  ) {}
 }

@@ -102,7 +102,12 @@ export default function AccountPopover() {
         <Divider sx={{ borderStyle: "dashed" }} />
 
         {MENU_OPTIONS.map((option) => (
-          <Link component={RouterLink} href={option.path} display={"contents"}>
+          <Link
+            component={RouterLink}
+            href={option.path}
+            display={"contents"}
+            key={option.path}
+          >
             <MenuItem key={option.label} onClick={handleClose}>
               {option.label}
             </MenuItem>

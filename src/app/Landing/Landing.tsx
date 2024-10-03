@@ -32,7 +32,7 @@ export function LandingPage() {
         {/* <Divider />
         <Pricing />
         <Divider /> */}
-        <FAQ />
+        {/* <FAQ /> */}
         <Divider />
         <Footer />
       </Box>

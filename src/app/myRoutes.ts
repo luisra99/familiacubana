@@ -9,7 +9,6 @@ import ConfiguracionDispositivo from "@/pages/Configuracion";
 import DatosDeEntrevista from "@/pages/DatosDeEntrevista";
 import Datos_del_Hogar from "@/pages/DatosHogar";
 import Enfermedades from "@/pages/Enfermedades";
-import { FolderSpecialTwoTone } from "@mui/icons-material";
 import Gastos from "@/pages/Gastos";
 import HdrAutoIcon from "@mui/icons-material/HdrAuto";
 import HomeIcon from "@mui/icons-material/Home";
@@ -19,6 +18,7 @@ import MapsHomeWorkIcon from "@mui/icons-material/MapsHomeWork";
 import Materiales from "@/pages/Materiales";
 import MobiliarioBasico from "@/pages/MobiliarioBasico";
 import NoVinculado from "@/pages/NoVinculado";
+import Nomencladores from "@/pages/Nomencladores/Nomencladores";
 import NucleoInfo from "@/pages/NucleoInfo";
 import Ocupacion from "@/pages/Ocupacion";
 import Otros_Datos from "@/pages/Otros_Datos";
@@ -35,7 +35,8 @@ import Vehiculos from "@/pages/Vehiculos";
 import WcIcon from "@mui/icons-material/Wc";
 import Welcome from "@/pages/Welcome";
 import WorkOutlineIcon from "@mui/icons-material/WorkOutline";
-import Nomencladores from "@/pages/Nomencladores/Nomencladores";
+import SubirDatos from "@/pages/SubirDatos";
+import ZonasVulnerables from "@/pages/ZonasVulnerables";
 
 const myRoutes: Routes = {
   [Pages.Welcome]: {
@@ -129,7 +130,7 @@ const myRoutes: Routes = {
   [Pages.SituacionNiñosAdolecentes]: {
     component: SITUACIÓN_DE_NIÑOS_Y_NIÑAS_Y_ADOLESCENTES,
     path: "/adolecentes",
-    title: "Situacion de niños, niñas y adolescentes",
+    title: "Situación de niños, niñas y adolescentes",
     icon: WcIcon,
   },
   [Pages.ServiciosEquipamiento]: {
@@ -191,23 +192,33 @@ const myRoutes: Routes = {
       [Pages.SeguridadAlimentaria]: {
         component: Seguridad_Alimentaria,
         path: "/alimentos",
+        title: "Grupos de alimentos y estrategias de afrontamiento en el hogar",
+        icon: AdminPanelSettingsIcon,
+      },
+      [Pages.OtrosDatos]: {
+        component: Otros_Datos,
+        path: "/otros",
         title:
-          "Seguridad alimentaria y estrategias de afrontamiento en el hogar",
+          "Estrategias de solución de problemas, redes de apoyo y programas alimentarios. Situación social",
         icon: AdminPanelSettingsIcon,
       },
     },
-  },
-  [Pages.OtrosDatos]: {
-    component: Otros_Datos,
-    path: "/otros",
-    title: "Otros datos",
-    icon: FolderSpecialTwoTone,
   },
   [Pages.DatosEntrevista]: {
     component: DatosDeEntrevista,
     path: "/datos",
     title: "Datos de la entrevista",
     icon: AssignmentIcon,
+  },
+  [Pages.SubirDatos]: {
+    component: SubirDatos,
+    path: "/subirdatos",
+    icon: SettingsRoundedIcon,
+  },
+  [Pages.ZonasVulnerables]: {
+    component: ZonasVulnerables,
+    path: "/zonas-vulnerables",
+    icon: SettingsRoundedIcon,
   },
 };
 

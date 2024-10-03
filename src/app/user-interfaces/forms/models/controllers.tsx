@@ -1,14 +1,24 @@
-import { getHogar } from "@/app/hogarController/hogar.controller";
 import { FamiliaCubana, datico } from "./model";
+
+import { getHogar } from "@/app/hogarController/hogar.controller";
+import { mode } from "@/_pwa-framework/config";
 
 export async function obtenerDatosPorLlave(
   tabla: keyof FamiliaCubana,
   llave: string,
-  id: string
+  id: any
 ): Promise<any[]> {
   await datico.open();
   const data = await (datico as any)[tabla].where(llave).equals(id).toArray();
-  // console.log("obtenerDatosPorLlave", data);
+  mode && console.log("obtenerDatosPorLlave", data);
+  return data;
+}
+export async function obtener(
+  tabla: keyof FamiliaCubana,
+  args: any
+): Promise<any> {
+  await datico.open();
+  const data = await (datico as any)[tabla].where(args).first();
   return data;
 }
 export async function obtenerDatosPorLlaveEnHogarActual(
@@ -23,7 +33,6 @@ export async function obtenerDatosPorLlaveEnHogarActual(
     .equals(id)
     .toArray()
     .filter((dato: any) => dato[hogarKey] == getHogar());
-  console.log("obtenerDatosPorLlaveEnHogarActual", data);
   return data;
 }
 export async function obtenerPrimeroPorLlaveEnHogarActual(
@@ -33,39 +42,133 @@ export async function obtenerPrimeroPorLlaveEnHogarActual(
   hogarKey: string
 ): Promise<any> {
   await datico.open();
-  const data = await (datico as any)[tabla].where(llave).equals(id).toArray();
-  return {};
+  mode && console.log("obtenerPrimeroPorLlaveEnHogarActual");
+  mode && console.table({ tabla, llave, id, hogarKey });
+  const data = await (datico as any)[tabla].where({ [llave]: id }).toArray();
+  mode && console.log("obtenerPrimeroPorLlaveEnHogarActual", data);
   return data.filter((item: any) => item[hogarKey] == getHogar()) ?? {};
 }
 
 export async function crear(
   tabla: keyof FamiliaCubana,
   data: any
-): Promise<string> {
-  return await datico.open().then(() => {
-    return (datico as any)[tabla].put(data);
-  });
+): Promise<any> {
+  try {
+    const tx = await datico.transaction("rw", tabla, async () => {
+      return await (datico as any)[tabla].put(data);
+    });
+    await tx.complete;
+    return tx;
+  } catch (error) {
+    console.error("Error en crear", error);
+  }
 }
 export async function eliminar(
   tabla: keyof FamiliaCubana,
   idKey: string,
-  id: string
-): Promise<string> {
-  return await datico
-    .open()
-    .then(() => (datico as any)[tabla].where(idKey).equals(id).delete());
+  id: any
+): Promise<any> {
+  try {
+    const tx = await datico.transaction("rw", tabla, async () => {
+      return await (datico as any)[tabla].where(idKey).equals(id).delete();
+    });
+    await tx.complete;
+    console.info("Eliminado correctamente", tabla);
+    return tx;
+  } catch (error) {
+    console.error("Error en eliminar en", tabla, error);
+  }
 }
+
 export async function modificar(
   tabla: keyof FamiliaCubana,
   idKey: string,
-  id: string,
+  id: string | number,
   values: any
-): Promise<string> {
-  return await datico
-    .open()
-    .then(() => (datico as any)[tabla].where(idKey).equals(id).modify(values));
-  // .finally(() => datico.close());
+): Promise<any> {
+  try {
+    const tx = await datico.transaction("rw", tabla, async () => {
+      return await (datico as any)[tabla]
+        .where(idKey)
+        .equals(id)
+        .modify(values);
+    });
+    await tx.complete;
+    return tx;
+  } catch (error) {
+    console.error("Error en modificar", error);
+  }
 }
+export async function CreateOrModify(
+  tabla: keyof FamiliaCubana,
+  params: Record<string, any>,
+  values: any,
+  idKey: string
+) {
+  try {
+    const tx = await datico.transaction("rw", tabla, async () => {
+      const data = await (datico as any)[tabla].where(params).first();
+      if (data) {
+        return await (datico as any)[tabla]
+          .where(idKey)
+          .equals(data[idKey])
+          .modify(values);
+      } else {
+        return await (datico as any)[tabla].put(values);
+      }
+    });
+    await tx.complete;
+    return tx;
+  } catch (error) {
+    console.error("Error en crear o modificar", error);
+  }
+}
+
+export async function deleteIfExist(
+  tabla: keyof FamiliaCubana,
+  params: Record<string, any>,
+  idKey: string
+) {
+  try {
+    const data = await (datico as any)[tabla].where(params).first();
+    if (data) {
+      const tx = await datico.transaction("rw", tabla, async () => {
+        return await (datico as any)[tabla]
+          .where(idKey)
+          .equals(data[idKey])
+          .delete();
+      });
+      await tx.complete;
+      return tx;
+    }
+  } catch (error) {
+    console.error("Error en delete if exist", error);
+  }
+}
+export async function deleteRowsIfExist(
+  tabla: keyof FamiliaCubana,
+  params: Record<string, any>,
+  idKey: string
+) {
+  try {
+    const data = await (datico as any)[tabla].where(params).toArray();
+    if (data) {
+      data.forEach(async (element: any) => {
+        const tx = await datico.transaction("rw", tabla, async () => {
+          return await (datico as any)[tabla]
+            .where(idKey)
+            .equals(element[idKey])
+            .delete();
+        });
+        await tx.complete;
+        return tx;
+      });
+    }
+  } catch (error) {
+    console.error("Error en delete if exist", error);
+  }
+}
+
 export async function vistaMobiliarioBasicoEquipo() {
   datico.open().then(function () {
     return datico.transaction(
@@ -76,8 +179,6 @@ export async function vistaMobiliarioBasicoEquipo() {
         const bandsWithDetails: any[] = [];
 
         let hogar = await tx.table("dat_hogar").toArray();
-        console.log("RAULotravezmasaun", hogar);
-
         for (let casa of await tx
           .table("dat_hogarmobiliarioequipos")
           .toArray()) {
@@ -100,7 +201,6 @@ export async function vistaMobiliarioBasicoEquipo() {
           } catch (error: any) {
             console.error(error);
           }
-          console.log("RAUL8", bandsWithDetails);
         }
       }
     );
@@ -117,8 +217,6 @@ export async function vistaHogarAfectacionVivienda() {
         const bandsWithDetails: any[] = [];
 
         let hogar = await tx.table("dat_hogar").toArray();
-        console.log("RAULotravezmasaun", hogar);
-
         for (let casa of await tx
           .table("dat_afectacionmatvivienda")
           .toArray()) {
@@ -140,7 +238,6 @@ export async function vistaHogarAfectacionVivienda() {
           } catch (error: any) {
             console.error(error);
           }
-          console.log("RAUL6", bandsWithDetails);
         }
       }
     );
@@ -157,8 +254,6 @@ export async function vistaSeguridadAlimentaria() {
         const bandsWithDetails: any[] = [];
 
         let hogar = await tx.table("dat_hogar").toArray();
-        console.log("RAULotravezmasaun", hogar);
-
         for (let casa of await tx
           .table("dat_hogardiversidadalimentaria")
           .toArray()) {
@@ -181,7 +276,6 @@ export async function vistaSeguridadAlimentaria() {
           } catch (error: any) {
             console.error(error);
           }
-          console.log("RAUL5", bandsWithDetails);
         }
       }
     );
@@ -198,8 +292,6 @@ export async function vistaLocalesVivienda() {
         const bandsWithDetails: any[] = [];
 
         let hogar = await tx.table("dat_hogar").toArray();
-        console.log("RAULotravezmas", hogar);
-
         for (let casa of await tx.table("dat_localesvivienda").toArray()) {
           const home = hogar.find((g) => g.id === casa.idcodigohogar);
           try {
@@ -224,7 +316,6 @@ export async function vistaLocalesVivienda() {
           } catch (error: any) {
             console.error(error);
           }
-          console.log("RAUL4", bandsWithDetails);
         }
       }
     );
@@ -241,8 +332,6 @@ export async function vistaDatosEntrevista() {
         const bandsWithDetails: any[] = [];
 
         let hogar = await tx.table("dat_hogar").toArray();
-        console.log("RAULotravez", hogar);
-
         for (let casa of await tx.table("dat_caracterizacion").toArray()) {
           const home = hogar.find((g) => g.id === casa.idcodigohogar);
           try {
@@ -265,7 +354,6 @@ export async function vistaDatosEntrevista() {
           } catch (error: any) {
             console.error(error);
           }
-          console.log("RAUL3", bandsWithDetails);
         }
       }
     );
@@ -282,8 +370,6 @@ export async function vistaDatosDelHogar() {
         const bandsWithDetails: any[] = [];
 
         let alojamiento = await tx.table("dat_unidaddealojamiento").toArray();
-        console.log("RAUL", alojamiento);
-
         for (let casa of await tx.table("dat_hogar").toArray()) {
           const aloja = alojamiento.find(
             (g) => g.id === casa.idunidaddealojamiento
@@ -304,7 +390,6 @@ export async function vistaDatosDelHogar() {
             ...house,
           });
         }
-        console.log("RAUL2", bandsWithDetails);
       }
     );
   });
@@ -313,38 +398,26 @@ export async function vistaDatosDelHogar() {
 export async function crearNomenclador(
   idpadre: any,
   idconcepto: any,
-  denominacion: any
+  denominacion: any,
+  hijos?: any
 ): Promise<void> {
   try {
     await datico
       .open()
       .then(() =>
         (datico as any).nom_concepto.put(
-          { idpadre, idconcepto, denominacion },
+          { idpadre, idconcepto, denominacion, hijos },
           idconcepto
         )
       );
-    console.log("Nomenclador guardado exitosamente");
   } catch (error) {
     console.error("Error al guardar el nomenclador:", error);
   }
 }
 
-//  export async function crearNomenclador(idPadre: any, idConcepto: any, denominacion: any): Promise<void> {
-//   try {
-//     await datico.open();
-//     await (datico as any).nom_concepto.put({ idPadre, idConcepto, denominacion }, idConcepto);
-//     console.log('Nomenclador guardado exitosamente');
-//   } catch (error) {
-//     console.error('Error al guardar el nomenclador:', error);
-//   }
-//}
-
 export async function vistaIngresos(): Promise<[]> {
   const casa = await (datico as any)["dat_miembrofuentesingresos"].toArray();
-  // console.log("casas", casa);
   let conceptos = await (datico as any)["nom_concepto"].toArray();
-  // console.log("conceptos", conceptos);
   casa.map((casa: any) =>
     conceptos.map((concepto: any) => {
       if (Number(casa.idmoneda[0]) === concepto.idconcepto) {
@@ -355,77 +428,76 @@ export async function vistaIngresos(): Promise<[]> {
       }
     })
   );
-
   return casa;
-  // for (let casa of await tx
-  //     .table("dat_miembrofuentesingresos")
-  //     .toArray()) {
-  //     console.log("raulito9", casa);
-  //     try {
-  //       const place = tx
-  //         .table("dat_miembrofuentesingresos")
-  //         .where("idmiembrofuentesingresos")
-  //         .anyOf(casa.idpadre)
-  //         .toArray();
-  //       bandsWithDetails.push({
-  //         denominacion:  hogar?.filter(
-  //           (elemento: any) => elemento.idconcepto === Number(casa.idmoneda[0])
-  //         )[0]['denominacion'],
-  //         Moneda: casa.idmoneda,
-  //         MontoMensual: casa.moneda,
-  //         FuenteProcedencia: casa.idfuente,
-  //         Cual: casa.esotrafuente,
-  //         ...place,
-  //       });
+}
 
-  //     } catch (error: any) {
-  //       console.error(error);
-  //     }
-  //     return bandsWithDetails;
-  //     // console.log('raulito9', home);
-  //     console.log("RAUL9", bandsWithDetails);
-  //   }
-  // console.log('prueba',prueba)
-
-  // return datico.transaction(
-  //   "rw",
-  //   datico.nom_concepto,
-  //   datico.dat_miembrofuentesingresos,
-  //   async function (tx) {
-  //     const bandsWithDetails: any[] = [];
-  //     let hogar = await tx.table("nom_concepto").toArray();
-  //     console.log("RAULotravezmasaununavezmas", hogar);
-
-  //     for (let casa of await tx
-  //       .table("dat_miembrofuentesingresos")
-  //       .toArray()) {
-  //       console.log("raulito9", casa);
-  //       try {
-  //         const place = tx
-  //           .table("dat_miembrofuentesingresos")
-  //           .where("idmiembrofuentesingresos")
-  //           .anyOf(casa.idpadre)
-  //           .toArray();
-  //         bandsWithDetails.push({
-  //           denominacion:  hogar?.filter(
-  //             (elemento: any) => elemento.idconcepto === Number(casa.idmoneda[0])
-  //           )[0]['denominacion'],
-  //           Moneda: casa.idmoneda,
-  //           MontoMensual: casa.moneda,
-  //           FuenteProcedencia: casa.idfuente,
-  //           Cual: casa.esotrafuente,
-  //           ...place,
-  //         });
-
-  //       } catch (error: any) {
-  //         console.error(error);
-  //       }
-  //       return bandsWithDetails;
-  //       // console.log('raulito9', home);
-  //       console.log("RAUL9", bandsWithDetails);
-  //     }
-
-  //   }
-  // );
-  // });
+export async function descartarHogares(idhogar: any) {
+  console.log("Descartar hogares", idhogar);
+  eliminar("dat_afectacionmatvivienda", "idcodigohogar", idhogar.toString());
+  eliminar("dat_caracterizacion", "idcodigohogar", idhogar.toString());
+  eliminar("dat_estadoconstvivienda", "idcodigohogar", idhogar.toString());
+  eliminar("dat_hogar", "idcodigohogar", idhogar);
+  eliminar(
+    "dat_hogardiversidadalimentaria",
+    "idcodigohogar",
+    idhogar.toString()
+  );
+  eliminar("dat_hogarestrategias", "idcodigohogar", idhogar.toString());
+  eliminar("dat_hogargastos", "idcodigohogar", idhogar.toString());
+  eliminar("dat_hogarmobiliarioequipos", "idcodigohogar", idhogar.toString());
+  eliminar("dat_localesvivienda", "idcodigohogar", idhogar.toString());
+  eliminar("dat_manejosdesechos", "idcodigohogar", idhogar);
+  eliminar("dat_miebrobeneficioprogalim", "idmiembrohogar", idhogar);
+  eliminar("dat_miembroaditamentos", "idmiembrohogar", idhogar);
+  eliminar("dat_miembrobeneficios", "idmiembrohogar", idhogar);
+  eliminar("dat_miembrodiscapacidad", "idcodigohogar", idhogar);
+  eliminar("dat_miembroencuesta", "idcodigohogar", idhogar);
+  eliminar("dat_miembroenfbajaprev", "idcodigohogar", idhogar);
+  eliminar("dat_miembroenfcronicas", "idcodigohogar", idhogar);
+  eliminar("dat_miembroestrategias", "idcodigohogar", idhogar);
+  eliminar("dat_miembrofuentesingresos", "idcodigohogar", idhogar);
+  eliminar("dat_miembrogradoautonomia", "idcodigohogar", idhogar);
+  eliminar("dat_miembrohogar", "idcodigohogar", idhogar);
+  eliminar("dat_miembroocupacion", "idcodigohogar", idhogar);
+  eliminar("dat_miembropogramas", "idcodigohogar", idhogar);
+  eliminar("dat_miembrosituacionsocial", "idcodigohogar", idhogar);
+  eliminar("dat_motivonoatencion", "idcodigohogar", idhogar);
+  eliminar("dat_nnaocupacion", "idcodigohogar", idhogar);
+  eliminar("dat_nvinculacionmiembro", "idcodigohogar", idhogar);
+  eliminar("dat_polprogsoc", "idmiembrohogar", idhogar);
+  eliminar("dat_quiencuida", "idcodigohogar", idhogar);
+  eliminar("dat_remuneraciones", "idcodigohogar", idhogar);
+  eliminar("dat_seviciosvivienda", "idcodigohogar", [idhogar.toString()]);
+  eliminar("dat_situacnnaj", "idcodigohogar", idhogar);
+  eliminar("dat_ubicacionlocales", "idcodigohogar", idhogar.toString());
+  eliminar("dat_ubicacionsanitaria", "idcodigohogar", idhogar.toString());
+  eliminar("dat_unidaddealojamiento", "idunidaddealojamiento", idhogar);
+  //eliminar("dat_estadonoacceso","idhogar",idhogar)
+  //eliminar("dat_detallesconcepto","idhogar",idhogar)
+  //eliminar("dat_causadesvnnaj","idhogar",idhogar)
+  //eliminar("dat_estructura","idhogar",idhogar)
+  //eliminar("dat_matrizrelacional","idhogar",idhogar)
+  //eliminar("dat_nnasitdelictiva","idhogar",idhogar)
+  //eliminar("dat_rolconcepto","idhogar",idhogar)
+  //eliminar("dat_situacionsocialorg","idhogar",idhogar)
+  //eliminar("dat_tiposayuda","idhogar",idhogar)
+  //eliminar("dat_viasacceso","idhogar",idhogar)
+  //eliminar("dat_zonavulnerable","idhogar",idhogar)
+}
+export async function descartarMiembro(idMiembro: any) {
+  console.log("Descartar miembro", idMiembro);
+  eliminar("dat_miembroaditamentos", "idmiembrohogar", idMiembro);
+  eliminar("dat_miembrobeneficios", "idmiembrohogar", idMiembro.toString());
+  eliminar("dat_miembrogradoautonomia", "idmiembrohogar", idMiembro.toString());
+  eliminar("dat_miembroencuesta", "idmiembrohogar", idMiembro.toString());
+  eliminar("dat_miembroenfbajaprev", "idmiembrohogar", idMiembro.toString());
+  eliminar("dat_miembroenfcronicas", "idmiembrohogar", idMiembro.toString());
+  eliminar("dat_miembroestrategias", "idmiembrohogar", idMiembro.toString());
+  eliminar("dat_miembrofuentesingresos", "idmiembrohogar", idMiembro.toString());
+  eliminar("dat_miembrohogar", "idmiembrohogar", idMiembro);
+  eliminar("dat_miembroocupacion", "idmiembrohogar", [idMiembro.toString()]);
+  eliminar("dat_miembrosituacionsocial", "idmiembrohogar", idMiembro.toString());
+  // eliminar("dat_miembrodiscapacidad", "idmiembro", idMiembro);
+  // eliminar("dat_miembrodiscapacidad", "idmiembrohogar", idMiembro);
+  // eliminar("dat_miembropogramas", "idmiembrohogar", idMiembro);  ver este cual es 
 }

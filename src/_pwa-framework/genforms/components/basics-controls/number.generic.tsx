@@ -1,16 +1,19 @@
+import { Grid, TextField } from "@mui/material";
 import { useCallback, useEffect, useMemo } from "react";
 
 import { NumericControl } from "../auxiliar-components/numeric.auxiliar";
-import { Grid, TextField } from "@mui/material";
 import { useFormikContext } from "formik";
 
 export const BasicNumberFields = ({
   id,
+  gridSx,
+  initialValue,
   gridValues,
   name,
   label,
   color,
   disabled,
+  hidden,
   focused,
   placeholder,
   sx,
@@ -19,12 +22,12 @@ export const BasicNumberFields = ({
   format,
   avoidSeparator,
   fixDecimalSeparator,
-  initialValue,
   mask,
   validations,
-  formValue,
   onChange,
-  error,
+  negativeValues,
+  disabledOnEdit,
+  editMode,
 }: any) => {
   const fieldProps = useMemo(() => {
     return {
@@ -35,44 +38,66 @@ export const BasicNumberFields = ({
           prefix,
           format,
           avoidseparator: avoidSeparator,
+          allowNegative: negativeValues,
           fixdecimalseparator: fixDecimalSeparator,
         },
       },
     };
-  }, [decimalScale, prefix, format, avoidSeparator, fixDecimalSeparator]);
-  const { setFieldValue, values } = useFormikContext();
+  }, [
+    decimalScale,
+    prefix,
+    format,
+    avoidSeparator,
+    fixDecimalSeparator,
+    negativeValues,
+  ]);
+
+  const { setFieldValue, setFieldTouched, values, touched, errors } =
+    useFormikContext();
+
+  const error = (touched as any)[name] && (errors as any)[name];
+  const value = (values as any)[name];
+
   const handleChange = useCallback((e: any) => {
     onChange?.(e);
-    setFieldValue(name, e.value, !!validations);
+    setFieldValue(name, e.value, true);
+    setFieldTouched(name);
   }, []);
+
   useEffect(() => {
-    setFieldValue(name, initialValue ?? "", !!validations);
+    setFieldValue(name, initialValue ?? "", false);
   }, [initialValue]);
 
   return (
     <Grid
       item
-      display={disabled?.(values) ? "none" : "unset"}
+      display={hidden?.(values) ? "none" : "unset"}
       xs={gridValues?.xs}
       sm={gridValues?.sm}
       md={gridValues?.md}
       lg={gridValues?.lg}
       xl={gridValues?.xl}
+      sx={gridSx}
     >
       <TextField
         fullWidth
         id={id ?? name}
         name={name}
-        label={label}
+        label={
+          <label>
+            {label}
+            {validations?.required && <b style={{ color: "red" }}> * </b>}
+          </label>
+        }
         color={color}
-        disabled={disabled?.(values)}
+        disabled={(editMode && disabledOnEdit) || disabled?.(values)}
         focused={focused}
         placeholder={placeholder}
         sx={sx}
-        error={!!error}
+        value={value ?? ""}
         helperText={error}
+        error={error}
         onChange={handleChange}
-        value={formValue ?? ""}
         {...fieldProps}
         variant="outlined"
       />

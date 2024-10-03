@@ -22,7 +22,10 @@ export default ({ mode }) => {
     // switch to "true" to enable sw on development
     devOptions:{
       enabled:true
-    }
+    },
+    workbox: {
+      globPatterns: ["**/*.{js,css,html}", "**/*.{svg,png,jpg,gif}"],
+    },
   };
   return defineConfig({
     base:process.env.ENV_URL,

@@ -1,13 +1,12 @@
 import {
   Actividad,
-  Aditamientos,
   ApoyoLaboresDomesticas,
   Causas,
   CausasRemuneracion,
   Cual,
   Delincuencia,
   Discapacidad,
-  Disponibilad,
+  Disponibilidad,
   EmbarazoAdolescente,
   EscogerOpcion,
   EstrategiasAlimentarias,
@@ -49,8 +48,6 @@ import {
   denominacion,
   escojaElMiembro,
   escojaElMiembro2,
-  escojaElMiembro3,
-  escojaElMiembro5,
   escojaLaOpción1,
   escojaLaOpción2,
   escojaMiembro4,
@@ -82,7 +79,6 @@ import {
   Miembro,
   Nombre,
   NombredelaMadre,
-  NombreyApellido,
   NucleoFamiliar,
   Observaciones,
   Organismo,
@@ -94,7 +90,6 @@ import {
   Sanitario,
   SegundoApellido,
   SegundoNombre,
-  //Serviciossanitario,
   Sexo,
   SituacionLegal,
   SituacionSocial,
@@ -104,6 +99,7 @@ import {
   ayudaFamiliarAmigo2,
   cantidad,
   cantidadDeMiembros,
+  cantidadHijos,
   caracterizacion,
   carnetdeIdentidad,
   centroDeSalud,
@@ -120,13 +116,10 @@ import {
   enfermedadesCronicas,
   entrevistafecha,
   escojaMiembro,
-  escojaMiembro1,
   escojaMiembro2,
   estado,
   frecuenciaDeAgua,
   fueAtendido,
-  grado,
-  gradoDeEstudio,
   gradoEstudio,
   horafinal,
   horainicial,
@@ -160,23 +153,6 @@ import {
   segundoNombre,
   sistemaDeDesagüe,
   viaDeAcceso,
-  // gradoPrimaria,
-  // gradoSecundaria,
-  // gradoDeEstudio1,
-  cantidadHijos,
-
-  //  gradoDeEstudio7,
-  //  gradoDeEstudio5,
-  //  gradoDeEstudio4,
-
-  //  gradoDeEstudio8,
-  //  gradoDeEstudio6,
-
-  //  gradoObreroCalificado,
-  //  gradoPreuniversitario,
-  //  gradoPedagogiaNivelMedio,
-  //  gradoTecnicoMedio,
-  //  gradoUniversitario,
 } from "../controls/controls.config.ponzoa";
 import { Divider, Typography } from "@mui/material";
 
@@ -209,17 +185,17 @@ export const formulario4: IGenericControls[] = [
 export const formulario5: IGenericControls[] = [SituacionLegal];
 
 export const FormularioEviel1: IGenericControls[] = [
-  Aditamientos,
-  Disponibilad,
+  // Aditamentos,
+  Disponibilidad,
 ];
 
-// dat_miembrogradodeautonomia / dat_tiposdeayuda /dat_miembrodiscapacidad / dat_miembroaditamientos //
+// dat_miembrogradodeautonomia / dat_tiposdeayuda /dat_miembrodiscapacidad / dat_miembroAditamentos //
 export const FormularioEviel: IGenericControls[] = [
   //escojaElMiembro3,
   GradoDeautonomia,
   {
     type: "component",
-    disabled: (values) =>
+    hidden: (values: any) =>
       values.idmiembro == "" || values.idautonomia != "9371",
     component: () => (
       <Typography>
@@ -235,7 +211,7 @@ export const FormularioEviel: IGenericControls[] = [
   TiposdeAyuda,
   {
     type: "component",
-    disabled: (values) =>
+    hidden: (values: any) =>
       values.idmiembro == "" || values.idautonomia != "9371",
     component: () => (
       <Typography>
@@ -427,7 +403,7 @@ export const FormNiñasNiños: IGenericControls[] = [
 
 // dat_caracterizacion //
 export const formulario6: IGenericControls[] = [
-  NombreyApellido,
+  //  NombreyApellido,
   entrevistafecha,
   horainicial,
   horafinal,
@@ -447,7 +423,7 @@ export const formulario7: IGenericControls[] = [
     label: "",
     name: "",
     gridValues: { xs: 12, lg: 7, md: 6, sm: 6, xl: 6 },
-    //disabled: (values) => values.atendido != "opt2",
+    //hidden: (values:any) => values.atendido != "opt2",
   },
   problemasdeSalud,
   // escojaMiembro1,
@@ -457,7 +433,7 @@ export const formulario7: IGenericControls[] = [
     label: "",
     name: "",
     gridValues: { xs: 12, lg: 7, md: 6, sm: 6, xl: 6 },
-    //disabled: (values) => values.atendido != "opt2",
+    //hidden: (values:any) => values.atendido != "opt2",
   },
   fueAtendido,
   {
@@ -468,7 +444,7 @@ export const formulario7: IGenericControls[] = [
     label: "",
     name: "",
     gridValues: { xs: 12, lg: 7, md: 6, sm: 6, xl: 6 },
-    //disabled: (values) => values.atendido != "opt2",
+    //hidden: (values:any) => values.atendido != "opt2",
   },
   lugarDeAtencion,
   {
@@ -481,7 +457,7 @@ export const formulario7: IGenericControls[] = [
     label: "",
     name: "",
     gridValues: { xs: 12, lg: 7, md: 6, sm: 6, xl: 6 },
-    //disabled: (values) => values.atendido != "opt2",
+    //hidden: (values:any) => values.atendido != "opt2",
   },
   dineroparaTransporte,
   {
@@ -492,7 +468,7 @@ export const formulario7: IGenericControls[] = [
     label: "",
     name: "",
     gridValues: { xs: 12, lg: 7, md: 6, sm: 6, xl: 6 },
-    //disabled: (values) => values.atendido != "opt2",
+    //hidden: (values:any) => values.atendido != "opt2",
   },
   medioTransporte,
   {
@@ -503,7 +479,7 @@ export const formulario7: IGenericControls[] = [
     label: "",
     name: "",
     gridValues: { xs: 12, lg: 7, md: 6, sm: 6, xl: 6 },
-    // disabled: (values) => values.atendido != "opt2",
+    // hidden: (values:any) => values.atendido != "opt2",
   },
   medicoEnfermera,
   {
@@ -516,7 +492,7 @@ export const formulario7: IGenericControls[] = [
     label: "",
     name: "",
     gridValues: { xs: 12, lg: 7, md: 6, sm: 6, xl: 6 },
-    //disabled: (values) => values.atendido != "opt2",
+    //hidden: (values:any) => values.atendido != "opt2",
   },
   centroDeSalud,
   {
@@ -529,7 +505,7 @@ export const formulario7: IGenericControls[] = [
     label: "",
     name: "",
     gridValues: { xs: 12, lg: 7, md: 6, sm: 6, xl: 6 },
-    //disabled: (values) => values.atendido != "opt2",
+    //hidden: (values:any) => values.atendido != "opt2",
   },
   recursoNecesario,
   {
@@ -540,7 +516,7 @@ export const formulario7: IGenericControls[] = [
     label: "",
     name: "",
     gridValues: { xs: 12, lg: 7, md: 6, sm: 6, xl: 6 },
-    // disabled: (values) => values.atendido != "opt2",
+    // hidden: (values:any) => values.atendido != "opt2",
   },
   considerograve,
   {
@@ -549,7 +525,7 @@ export const formulario7: IGenericControls[] = [
     label: "",
     name: "",
     gridValues: { xs: 12, lg: 7, md: 6, sm: 6, xl: 6 },
-    //disabled: (values) => values.atendido != "opt2",
+    //hidden: (values:any) => values.atendido != "opt2",
   },
   otrosMotivos,
 ];
@@ -772,14 +748,7 @@ export const OtrosDatos: IGenericControls[] = [
         ]}
         headers={[{ name: "pat", label: "Estrategias" }]}
         idKey="idcodigohogar"
-        title=""
         multiSelect={true}
-        /*rowActions={[
-          {
-            label: "Exportar fila",
-            action: (values: any) => console.log(values),
-          },
-        ]}*/
       />
     ),
     label: "",
@@ -903,10 +872,4 @@ export const gastosmensualesdelhogar: IGenericControls[] = [
 
 export const estadoCaracterizacion: IGenericControls[] = [caracterizacion];
 
-export const ocupacionNNA: IGenericControls[] = [
-  Actividad,
-  cantidadHoras,
-  horarios,
-  autorizacion,
-];
 export { caracterizacion };

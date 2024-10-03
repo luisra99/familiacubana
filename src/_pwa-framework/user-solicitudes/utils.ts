@@ -35,7 +35,12 @@ export function getComparator(order: any, orderBy: any) {
     : (a: any, b: any) => -descendingComparator(a, b, orderBy);
 }
 
-export function applyFilter({ inputData, comparator, filterName, name }: any) {
+export function applyFilter({
+  inputData,
+  comparator,
+  filterName,
+  headers,
+}: any) {
   const stabilizedThis = inputData.map((el: any, index: any) => [el, index]);
 
   stabilizedThis.sort((a: any, b: any) => {
@@ -47,10 +52,22 @@ export function applyFilter({ inputData, comparator, filterName, name }: any) {
   inputData = stabilizedThis.map((el: any) => el[0]);
 
   if (filterName) {
-    inputData = inputData.filter(
-      (user: any) =>
-        user[name].toLowerCase().indexOf(filterName.toLowerCase()) !== -1
-    );
+    inputData = inputData.filter((user: any) => {
+      let filtro = false;
+
+      headers.forEach(({ name }: any) => {
+        if (
+          typeof user[name] !== "object" &&
+          user[name]
+            .toString()
+            .toLowerCase()
+            .indexOf(filterName.toLowerCase()) !== -1
+        ) {
+          filtro = true;
+        }
+      });
+      return filtro;
+    });
   }
 
   return inputData;

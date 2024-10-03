@@ -1,7 +1,7 @@
 export enum Pages {
   NotFound,
   Page2,
-  DatosHogar,  
+  DatosHogar,
   DatosMiembrosNucleo,
   DatosMiembros,
   Ingresos,
@@ -27,6 +27,9 @@ export enum Pages {
   DatosEntrevista,
   Welcome,
   Configuracion,
-  Usuario, 
-  Nomencladores
+  Usuario,
+  Nomencladores,
+  ComunidadesVulnerables,
+  SubirDatos,
+  ZonasVulnerables,
 }

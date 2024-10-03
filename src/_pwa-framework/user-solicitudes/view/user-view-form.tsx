@@ -3,7 +3,7 @@ import { applyFilter, emptyRows, getComparator } from "../utils";
 
 import Card from "@mui/material/Card";
 import Container from "@mui/material/Container";
-import { FC, useEffect } from "react";
+import { FC } from "react";
 import Scrollbar from "../scrollbar";
 import Stack from "@mui/material/Stack";
 import type { SvgIconProps } from "@mui/material/SvgIcon";
@@ -16,8 +16,8 @@ import TablePagination from "@mui/material/TablePagination";
 import Typography from "@mui/material/Typography";
 import UserTableHead from "../user-table-head";
 import UserTableRow from "../user-table-row";
-import { useState } from "react";
 import { useFormikContext } from "formik";
+import { useState } from "react";
 
 // ----------------------------------------------------------------------
 
@@ -31,6 +31,7 @@ export function TableViewForm({
   dataActions,
   rowActions,
   disabled,
+  hidden,
   setState,
   name,
   defaultValues,
@@ -54,6 +55,7 @@ export function TableViewForm({
   }[];
   disabled?: boolean;
   setState?: any;
+  hidden?: any;
   defaultValues?: any;
 }) {
   const [page, setPage] = useState(0);
@@ -68,8 +70,6 @@ export function TableViewForm({
   const [filterName, setFilterName] = useState("");
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
-
-  console.log("Selected", selected);
 
   const handleSort = (event: any, id: any) => {
     const isAsc = orderBy === id && order === "asc";
@@ -90,7 +90,7 @@ export function TableViewForm({
   };
 
   const handleClick = (event: any, name: any) => {
-    // console.log(name, idKey);
+    // ;
     const selectedIndex = selected.indexOf(name);
 
     let newSelected: any[] = [];
@@ -110,7 +110,7 @@ export function TableViewForm({
         selected.slice(selectedIndex + 1)
       );
     }
-    setFieldValue(name, newSelected);
+    setFieldValue(name, newSelected, false);
     setSelected(newSelected);
     setState?.(newSelected);
   };
@@ -175,7 +175,6 @@ export function TableViewForm({
                 {dataFiltered
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   ?.map((row: any) => {
-                    // console.log(row);
                     return (
                       <UserTableRow
                         key={row?.[idKey]}

@@ -1,20 +1,18 @@
 import "../../components/backdrop/backdrop.css";
 
-import { Fragment } from "react";
 import { Navigate, Outlet, Route, Routes } from "react-router-dom";
 
 import AnonymousGuard from "../anonymous-guard";
+import AuthGuard from "../auth-guard";
 import Box from "@mui/material/Box";
 import CallBackUrlController from "../callback-url-controller";
 import DashboardLayout from "@/_pwa-framework/layouts/dashboard";
-import RestoreSessionController from "../restore-session-controller";
+import LandingPage from "@/app/Landing";
+import LoginPage from "@/_pwa-framework/sections/login";
+import NotFoundView from "@/_pwa-framework/layouts/error";
+import SignUp from "@/_pwa-framework/sections/SignUp/SignUp";
 import { getPageHeight } from "./utils";
 import routes from "..";
-import AuthGuard from "../auth-guard";
-import LoginPage from "@/_pwa-framework/sections/login";
-import SignUp from "@/_pwa-framework/sections/SignUp/SignUp";
-import LandingPage from "@/app/Landing";
-import NotFoundView from "@/_pwa-framework/layouts/error";
 
 function Pages() {
   return (
@@ -53,17 +51,15 @@ function Pages() {
                     if (ChildComponent && path && childPath) {
                       const completePath = `${path}${childPath}`;
                       return (
-                        <Fragment key={completePath}>
-                          <Route
-                            key={completePath}
-                            path={completePath}
-                            element={
-                              <AuthGuard>
-                                <ChildComponent />
-                              </AuthGuard>
-                            }
-                          />
-                        </Fragment>
+                        <Route
+                          key={completePath}
+                          path={completePath}
+                          element={
+                            <AuthGuard>
+                              <ChildComponent />
+                            </AuthGuard>
+                          }
+                        />
                       );
                     }
                     return null;
@@ -101,7 +97,6 @@ function Pages() {
           }
         />
         <Route path="/create-session" element={<CallBackUrlController />} />
-        <Route path="/restore-session" element={<RestoreSessionController />} />
         <Route path="404" element={<NotFoundView />} />
         <Route path="*" element={<Navigate to="/404" replace />} />
       </Routes>

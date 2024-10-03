@@ -1,11 +1,8 @@
-import IconButton from "@mui/material/IconButton";
 import Iconify from "./iconify";
 import InputAdornment from "@mui/material/InputAdornment";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import PropTypes from "prop-types";
 import Toolbar from "@mui/material/Toolbar";
-import Tooltip from "@mui/material/Tooltip";
-import Typography from "@mui/material/Typography";
 
 // ----------------------------------------------------------------------
 
@@ -14,7 +11,6 @@ export default function UserTableToolbar({
   filterName,
   onFilterName,
   placeholder,
-  filterBy,
 }: any) {
   return (
     <Toolbar
@@ -29,41 +25,19 @@ export default function UserTableToolbar({
         }),
       }}
     >
-      {numSelected > 0 ? (
-        <Typography component="div" variant="subtitle1">
-          {numSelected} {`seleccionado${numSelected > 1 ? "s" : ""}`}
-        </Typography>
-      ) : (
-        filterBy && (
-          <OutlinedInput
-            value={filterName}
-            onChange={onFilterName}
-            placeholder={placeholder ?? "Buscar..."}
-            startAdornment={
-              <InputAdornment position="start">
-                <Iconify
-                  icon="eva:search-fill"
-                  sx={{ color: "text.disabled", width: 20, height: 20 }}
-                />
-              </InputAdornment>
-            }
-          />
-        )
-      )}
-
-      {numSelected > 0 ? (
-        <Tooltip title="Delete">
-          <IconButton>
-            <Iconify icon="eva:trash-2-fill" />
-          </IconButton>
-        </Tooltip>
-      ) : (
-        <Tooltip title="Filter list">
-          <IconButton>
-            <Iconify icon="ic:round-filter-list" />
-          </IconButton>
-        </Tooltip>
-      )}
+      <OutlinedInput
+        value={filterName}
+        onChange={onFilterName}
+        placeholder={placeholder ?? "Buscar..."}
+        startAdornment={
+          <InputAdornment position="start">
+            <Iconify
+              icon="eva:search-fill"
+              sx={{ color: "text.disabled", width: 20, height: 20 }}
+            />
+          </InputAdornment>
+        }
+      />
     </Toolbar>
   );
 }

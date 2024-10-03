@@ -58,9 +58,10 @@ export default function Hero() {
             color="text.secondary"
             sx={{ alignSelf: "center", width: { sm: "100%", md: "80%" } }}
           >
-            Descripción del uso de la aplicación.
+            Aplicación web para la caracterización social de personas, hogares y comunidades en situación de vulnerabilidad.
           </Typography>
         </Stack>
+        <img src="landing.png"/>
       </Container>
     </Box>
   );

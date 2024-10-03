@@ -1,20 +1,10 @@
-import {
-  Box,
-  Button,
-  Grid,
-  IconButton,
-  InputAdornment,
-  OutlinedInput,
-  Typography,
-} from "@mui/material";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { Box, Grid, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 
 import DoneRoundedIcon from "@mui/icons-material/DoneRounded";
 import DownloadingRoundedIcon from "@mui/icons-material/DownloadingRounded";
 import { LoadingButton } from "@mui/lab";
 import Meta from "@/_pwa-framework/components/Meta";
-import { Stack } from "@mui/system";
 import { getCargaInicial } from "../Welcome/services/cargaInical.service";
 import { getNomenclador } from "../Welcome/services/cargaNomenclador.service";
 import { useSession } from "@/_pwa-framework/session/state";
@@ -107,46 +97,6 @@ function Nomencladores() {
             </LoadingButton>
           </Grid>
         ))}
-        {/* <Grid item xs={12}>
-          <Stack>
-            <Typography variant="h5">Credenciales fuera de línea</Typography>
-            <Typography>
-              <b>Usuario:</b> {userData?.PI?.idpi}
-            </Typography> */}
-
-            {/* <OutlinedInput
-              id="outlined-adornment-password"
-              type={showPassword ? "text" : "password"}
-              value={password}
-              onChange={handleChange}
-              endAdornment={
-                <InputAdornment position="end">
-                  <IconButton
-                    aria-label="toggle password visibility"
-                    onClick={handleClickShowPassword}
-                    onMouseDown={handleMouseDownPassword}
-                    edge="end"
-                  >
-                    {showPassword ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                </InputAdornment>
-              }
-            />
-            <Button
-              variant="contained"
-              sx={{ mt: 1 }}
-              onClick={() => {
-                const code = `${userData?.PI?.idpi}:${password}`;
-                localStorage.setItem("offlineMode", code);
-                localStorage.setItem("userData", JSON.stringify(userData));
-                localStorage.setItem("offlineSession", "true");
-              }}
-              disabled={!password}
-            >
-              Guardar
-            </Button> */}
-          {/* </Stack>
-        </Grid> */}
       </Grid>
     </>
   );
@@ -169,23 +119,24 @@ const nomencladores = {
   9354: "Causas de no vinculación al trabajo remunerado de los miembros aptos",
   9360: "Motivo de decisión de cuidado de un familiar",
   9363: "Remuneración de los miembros no vinculados, no aptos y fuera de edad laboral",
-  9369: "Tipos de grados de autonomia",
+  9369: "Tipos de grados de autonomía",
   9373: "Tipos de ayuda",
   9376: "Tipos de discapacidad",
   9383: "Tipos de aditamentos de ayuda a la discapacidad",
   9395: "Estados de los aditamentos",
   9409: "Tipos de enfermedades",
   9416: "Vías de acceso",
-  9421: "Situacion de NNA que cometen hechos delictivos",
+  9421: "Situación de NNA que cometen hechos delictivos",
   9433: "Motivos de no atención médica",
   9442: "Beneficios de políticas y programas sociales",
   9457: "Tipos de acceso a beneficios de políticas y programas sociales",
   9461: "Tipos de combustible más usados para cocinar",
-  9472: "Tipos de situacion educativa de NNA",
+  9472: "Tipos de situación educativa de NNA",
   9501: "Tipos de ocupación de NNA",
   9505: "Tipos de materiales predominantes y afectaciones que presenta la vivienda",
   9555: "Estrategias del hogar ",
   9556: "Estrategias de solución de problemas que afectan el hogar",
+  9598: "Organismos",
   9610: "Tipos de programas alimentarios que reciben los miembros del hogar",
   9619: "Frecuencia semanal de consumo de alimentos del hogar",
   9628: "Grupos de alimentos",
@@ -195,7 +146,7 @@ const nomencladores = {
   9649: "Instalación por red de acueducto",
   9650: "Frecuencia del suministro de agua",
   9651: "Procedencia principal del agua que se consume en la vivienda",
-  9646: "Sistema de desague",
+  9646: "Sistema de desagüe",
   9647: "Manejo de desechos sólidos (basura)",
   9648: "Electricidad",
   // 9795: "Acceso a redes",
@@ -214,7 +165,7 @@ const nomencladores = {
   9697: "Primaria",
   9698: "Secundaria Básica",
   9699: "Obrero calificado",
-  9700: "Preuniversitario",
+  9700: "Pre-universitario",
   9701: "Pedagogía nivel medio",
   9702: "Técnico medio",
   9704: "Técnico superior",
@@ -223,10 +174,17 @@ const nomencladores = {
   9784: "Vehículos",
   10210: "Orientación Sexual",
   10136: "Cantidad de horas de actividades de NNA",
-  10140: "Horario de actividad de NNA",   
+  10140: "Horario de actividad de NNA",
   9475: "Causas de desvinculación NNA a SNE",
   9478: "Educación Cuidado en el hogar",
-  9486: "Ensenñanza Técnico-Profesional",   
+  9486: "Enseñanza Técnico-Profesional",
   9473: "Educación cuidado de la primera infancia",
-  9474: "Vinculación Sistema Nacional de Ensenñanza SNE",
+  9474: "Vinculación Sistema Nacional de Enseñanza SNE",
+  10229: "Tipos de cocina",
+  10226: " tipo de uso de servicio sanitario",
+  10223: "ubicación de los servicios sanitario",
+  9507: "Afectaciones vivienda",
+  9506: "Materiales predominantes",
+  9999999: "Zonas vulnerables",
+  123456789: "Asentamientos",
 };

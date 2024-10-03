@@ -1,5 +1,34 @@
+import { EControlsForValidate } from "./common.types";
 import { Schema } from "yup";
-import { EControls } from "./common.types";
+
+export interface ITestFunction {
+  /**
+   * @param values Valore del formulario.
+   * @returns Define si la validación se cumple o no.
+   */
+  (values?: any): boolean | void;
+}
+/**
+ * Prueba para validar el campo
+ */
+export type ITest = {
+  /**
+   * Mensaje que se mostrará en el error.
+   *
+   * @type {string}
+   */
+  message: string;
+
+  /**
+   * Función que valida el campo.
+   *
+   * @type {ITestFunction}
+   */
+  test: ITestFunction;
+};
+export type ICustomValidation = {
+  tests?: ITest[];
+};
 
 export type ITextValidation = {
   required?: IRequiredValidation;
@@ -10,13 +39,18 @@ export type ITextValidation = {
   uppercase?: IUppercaseValidation;
   trim?: ITrimValidation;
   length?: ILimitsProps;
-} & ILimitsValidation;
+} & ILimitsValidation &
+  ICustomValidation;
 
 export type IPhoneOrEmail = {
   required?: IRequiredValidation;
   regex?: IRegexValidation;
   email?: IEmailValidation;
 } & ILimitsValidation;
+
+export type IWhenValidation = {
+  when?: { name: string; expression: (value: any) => boolean };
+};
 
 export type INumberValidation = {
   required?: IRequiredValidation;
@@ -25,20 +59,33 @@ export type INumberValidation = {
   negative?: INegativeValidation;
   integer?: IIntegerValidation;
 } & IComparativeValidations &
-  ILimitsValidation;
+  ILimitsValidation &
+  ICustomValidation;
 
-export type IDateValidation = {} & ILimitsValidation;
+export type IDateValidation = {
+  required?: IRequiredValidation;
+} & ILimitsValidation &
+  ICustomValidation;
 
 export type IRadioValidations = {
   required?: IRequiredValidation;
-};
+} & ICustomValidation;
 
 export type ISelectValidation = {
-  length?: IArrayLengthValidation;
-} & ILimitsValidation;
+  required?: IRequiredValidation;
+} & ILimitsValidation &
+  ICustomValidation;
 
-export type IRatingValidations = ILimitsValidation & IComparativeValidations;
-export type ISliderValidations = IRatingValidations;
+export type IMultiSelectValidation = {
+  length?: IArrayLengthValidation;
+  required?: IRequiredValidation;
+} & ILimitsValidation &
+  ICustomValidation;
+
+export type IRatingValidations = ILimitsValidation &
+  IComparativeValidations &
+  ICustomValidation;
+export type ISliderValidations = IRatingValidations & ICustomValidation;
 
 type IRequiredValidation = ICommonValidationsProps;
 type IEmailValidation = ICommonValidationsProps;
@@ -51,26 +98,31 @@ type IPositiveValidation = ICommonValidationsProps;
 type IIntegerValidation = ICommonValidationsProps;
 
 type IRegexValidation = {
+  reference?: string;
   value: RegExp;
 } & ICommonValidationsProps;
 
 type IArrayLengthValidation = {
+  reference?: string;
   value: number;
 } & ICommonValidationsProps;
 
 type ICommonValidationsProps = {
   message: string;
-};
+} & IWhenValidation;
 
 type ILimitsProps = {
+  reference?: string;
   value: number;
 } & ICommonValidationsProps;
 
 type ILessThanValidations = {
+  reference?: string;
   value: number;
 } & ICommonValidationsProps;
 
 type IMoreThanValidations = {
+  reference?: string;
   value: number;
 } & ICommonValidationsProps;
 
@@ -83,7 +135,7 @@ type IComparativeValidations = {
   lessThan?: ILessThanValidations;
   moreThan?: IMoreThanValidations;
 };
-export type IValidationMap = Record<EControls, Schema>;
+export type IValidationMap = Record<EControlsForValidate, Schema>;
 export type IValidationSchemaMap = {
   required: IRequiredSchema;
   length: ILengthSchema;
@@ -98,6 +150,7 @@ export type IValidationSchemaMap = {
   email: IEmailSchema;
   url: IUrlSchema;
   oneOf: IOneOfSchema;
+  tests: ITestsSchema;
 };
 
 export type EValidations =
@@ -113,6 +166,7 @@ export type EValidations =
   | "lessThan"
   | "positive"
   | "negative"
+  | "tests"
   | "oneOf";
 export type IValidationFunctions = Record<
   string,
@@ -122,15 +176,19 @@ export type IRequiredSchema = {
   required: (schema: any, { message }: any) => any;
 };
 export type ILengthSchema = {
-  length: (schema: any, { message, value }: any) => any;
+  length: (schema: any, { message, value, ref }: any) => any;
 };
-export type IMinSchema = { min: (schema: any, { message, value }: any) => any };
-export type IMaxSchema = { max: (schema: any, { message, value }: any) => any };
+export type IMinSchema = {
+  min: (schema: any, { message, value, ref }: any) => any;
+};
+export type IMaxSchema = {
+  max: (schema: any, { message, value, ref }: any) => any;
+};
 export type IMoreThanSchema = {
-  moreThan: (schema: any, { message, value }: any) => any;
+  moreThan: (schema: any, { message, value, ref }: any) => any;
 };
 export type ILessThanSchema = {
-  lessThan: (schema: any, { message, value }: any) => any;
+  lessThan: (schema: any, { message, value, ref }: any) => any;
 };
 export type IIntegerSchema = {
   integer: (schema: any, { message }: any) => any;
@@ -142,10 +200,13 @@ export type INegativeSchema = {
   negative: (schema: any, { message }: any) => any;
 };
 export type IRegExpSchema = {
-  regular_expression: (schema: any, { message, value }: any) => any;
+  regular_expression: (schema: any, { message, value, ref }: any) => any;
 };
 export type IEmailSchema = { email: (schema: any, { message }: any) => any };
 export type IUrlSchema = { url: (schema: any, { message }: any) => any };
 export type IOneOfSchema = {
-  oneOf: (schema: any, { message, value }: any) => any;
+  oneOf: (schema: any, { message, value, ref }: any) => any;
+};
+export type ITestsSchema = {
+  tests: (schema: any, tests: ITest[]) => any;
 };
