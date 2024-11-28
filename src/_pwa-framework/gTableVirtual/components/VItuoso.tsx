@@ -8,6 +8,6 @@ import {
 } from "@mui/material";
 import { forwardRef } from "react";
 
-export const VirtuosoTableComponents: TableComponents<any> = {
+export const VirtuosoTableComponents = {
   
 };
