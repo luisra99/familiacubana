@@ -2,15 +2,575 @@
   "PI": {
     "idpi": "aperez",
     "username": "aperez",
-    "ci": null,
+    "ci": "89072529986",
     "direccion": null,
     "telefono": null,
-    "nombre": null,
-    "apellidos": null,
-    "correo": null,
+    "nombre": "Aciel",
+    "apellidos": "Pérez Cabrera",
+    "correo": "aperez@xutil.cu",
     "tomo": null,
     "folio": null,
     "sexo": null,
     "foto_p": null
+  },
+  "APP": {
+    "metadata": null,
+    "registrado": "2024-07-15",
+    "actualizado": "2024-10-07",
+    "activo": true
+  },
+  "ESTRUCTURA": {
+    "idestructura": 119,
+    "DPA": "9057",
+    "denominacion_estructura": "DPT MAYABEQUE",
+    "dependencias_estructura": [
+      {
+        "id": 177,
+        "codigo": "2411",
+        "denominacion": "DMT QUIVICAN",
+        "forma_organizativa": "9837",
+        "DPA": "9995",
+        "children": []
+      },
+      {
+        "id": 176,
+        "codigo": "2410",
+        "denominacion": "DMT BATABANO",
+        "forma_organizativa": "9837",
+        "DPA": "9993",
+        "children": []
+      },
+      {
+        "id": 175,
+        "codigo": "2409",
+        "denominacion": "DMT MELENA DEL SUR",
+        "forma_organizativa": "9837",
+        "DPA": "9992",
+        "children": []
+      },
+      {
+        "id": 174,
+        "codigo": "2408",
+        "denominacion": "DMT GUINES",
+        "forma_organizativa": "9837",
+        "DPA": "9991",
+        "children": []
+      },
+      {
+        "id": 173,
+        "codigo": "2407",
+        "denominacion": "DMT SAN NICOLAS",
+        "forma_organizativa": "9837",
+        "DPA": "9990",
+        "children": []
+      },
+      {
+        "id": 172,
+        "codigo": "2406",
+        "denominacion": "DMT NUEVA PAZ",
+        "forma_organizativa": "9837",
+        "DPA": "9989",
+        "children": []
+      },
+      {
+        "id": 171,
+        "codigo": "2405",
+        "denominacion": "DMT MADRUGA",
+        "forma_organizativa": "9837",
+        "DPA": "9988",
+        "children": []
+      },
+      {
+        "id": 170,
+        "codigo": "2404",
+        "denominacion": "DMT SANTA CRUZ DEL NORTE",
+        "forma_organizativa": "9837",
+        "DPA": "9987",
+        "children": []
+      },
+      {
+        "id": 169,
+        "codigo": "2403",
+        "denominacion": "DMT JARUCO",
+        "forma_organizativa": "9837",
+        "DPA": "9986",
+        "children": []
+      },
+      {
+        "id": 168,
+        "codigo": "2402",
+        "denominacion": "DMT SAN JOSE DE LAS LAJAS",
+        "forma_organizativa": "9837",
+        "DPA": "9985",
+        "children": []
+      },
+      {
+        "id": 167,
+        "codigo": "2401",
+        "denominacion": "DMT BEJUCAL",
+        "forma_organizativa": "9837",
+        "DPA": "9982",
+        "children": [
+          {
+            "id": 181,
+            "codigo": "2401.04",
+            "denominacion": "Los Malayos",
+            "forma_organizativa": "9884",
+            "DPA": "10147",
+            "children": []
+          },
+          {
+            "id": 180,
+            "codigo": "2401.03",
+            "denominacion": "La Musicanga",
+            "forma_organizativa": "9884",
+            "DPA": "10146",
+            "children": []
+          },
+          {
+            "id": 179,
+            "codigo": "2401.02",
+            "denominacion": "Buenaventura-Cuatro Camino",
+            "forma_organizativa": "9884",
+            "DPA": "10145",
+            "children": []
+          },
+          {
+            "id": 178,
+            "codigo": "0401.01",
+            "denominacion": "Rio  Hondo",
+            "forma_organizativa": "9884",
+            "DPA": "10144",
+            "children": []
+          }
+        ]
+      }
+    ],
+    "subordinacion_estructural": [
+      {
+        "id": 167,
+        "denominacion": "DMT BEJUCAL",
+        "codigoEstructura": "2401",
+        "codigoDPA": "2401"
+      },
+      {
+        "id": 178,
+        "denominacion": "Rio  Hondo",
+        "codigoEstructura": "0401.01",
+        "codigoDPA": "2401.01"
+      },
+      {
+        "id": 179,
+        "denominacion": "Buenaventura-Cuatro Camino",
+        "codigoEstructura": "2401.02",
+        "codigoDPA": "2401.02"
+      },
+      {
+        "id": 180,
+        "denominacion": "La Musicanga",
+        "codigoEstructura": "2401.03",
+        "codigoDPA": "2401.03"
+      },
+      {
+        "id": 181,
+        "denominacion": "Los Malayos",
+        "codigoEstructura": "2401.04",
+        "codigoDPA": "2401.04"
+      },
+      {
+        "id": 168,
+        "denominacion": "DMT SAN JOSE DE LAS LAJAS",
+        "codigoEstructura": "2402",
+        "codigoDPA": "2402"
+      },
+      {
+        "id": 169,
+        "denominacion": "DMT JARUCO",
+        "codigoEstructura": "2403",
+        "codigoDPA": "2403"
+      },
+      {
+        "id": 170,
+        "denominacion": "DMT SANTA CRUZ DEL NORTE",
+        "codigoEstructura": "2404",
+        "codigoDPA": "2404"
+      },
+      {
+        "id": 171,
+        "denominacion": "DMT MADRUGA",
+        "codigoEstructura": "2405",
+        "codigoDPA": "2405"
+      },
+      {
+        "id": 172,
+        "denominacion": "DMT NUEVA PAZ",
+        "codigoEstructura": "2406",
+        "codigoDPA": "2406"
+      },
+      {
+        "id": 173,
+        "denominacion": "DMT SAN NICOLAS",
+        "codigoEstructura": "2407",
+        "codigoDPA": "2407"
+      },
+      {
+        "id": 174,
+        "denominacion": "DMT GUINES",
+        "codigoEstructura": "2408",
+        "codigoDPA": "2408"
+      },
+      {
+        "id": 175,
+        "denominacion": "DMT MELENA DEL SUR",
+        "codigoEstructura": "2409",
+        "codigoDPA": "2409"
+      },
+      {
+        "id": 176,
+        "denominacion": "DMT BATABANO",
+        "codigoEstructura": "2410",
+        "codigoDPA": "2410"
+      },
+      {
+        "id": 177,
+        "denominacion": "DMT QUIVICAN",
+        "codigoEstructura": "2411",
+        "codigoDPA": "2411"
+      }
+    ]
+  },
+  "MENU": {
+    "ROL": "Administrador",
+    "PERMISOS": [
+      {
+        "id": 44,
+        "denominacion": "Información general de los miembros del hogar",
+        "titulo": "",
+        "img": "",
+        "url": "/nucleo-info",
+        "concepto_id": 2,
+        "visible": true,
+        "activo": true,
+        "imageCssClass": "fa fa-gear",
+        "children": []
+      },
+      {
+        "id": 46,
+        "denominacion": "Ocupación ",
+        "titulo": "",
+        "img": "",
+        "url": "/Ocupacion",
+        "concepto_id": 2,
+        "visible": true,
+        "activo": true,
+        "imageCssClass": "fa fa-gear",
+        "children": [
+          {
+            "id": 47,
+            "denominacion": "Ocupación ",
+            "titulo": "",
+            "img": "",
+            "url": "/ocupacion/principal",
+            "concepto_id": 2,
+            "visible": true,
+            "activo": true,
+            "imageCssClass": "fa fa-gear",
+            "children": []
+          },
+          {
+            "id": 48,
+            "denominacion": "Miembros adultos no vinculados al trabajo remunerado",
+            "titulo": "",
+            "img": "",
+            "url": "/ocupacion/no-vinculado/no-vinculado",
+            "concepto_id": 2,
+            "visible": true,
+            "activo": true,
+            "imageCssClass": "fa fa-gear",
+            "children": []
+          }
+        ]
+      },
+      {
+        "id": 49,
+        "denominacion": "Autonomía y necesidades especiales",
+        "titulo": "",
+        "img": "",
+        "url": "/AUTONOMÍA_Y_NECESIDADES_ESPECIALES",
+        "concepto_id": 2,
+        "visible": true,
+        "activo": true,
+        "imageCssClass": "fa fa-gear",
+        "children": [
+          {
+            "id": 50,
+            "denominacion": " Grado de autonomía y situación de discapacidad",
+            "titulo": "",
+            "img": "",
+            "url": "/autonomia/discapacidad",
+            "concepto_id": 2,
+            "visible": true,
+            "activo": true,
+            "imageCssClass": "fa fa-gear",
+            "children": []
+          },
+          {
+            "id": 51,
+            "denominacion": "Enfermedades",
+            "titulo": "",
+            "img": "",
+            "url": "/autonomia/enfermedades",
+            "concepto_id": 2,
+            "visible": true,
+            "activo": true,
+            "imageCssClass": "fa fa-gear",
+            "children": []
+          },
+          {
+            "id": 52,
+            "denominacion": "Uso de servicios de salud",
+            "titulo": "",
+            "img": "",
+            "url": "/autonomia/servicios",
+            "concepto_id": 2,
+            "visible": true,
+            "activo": true,
+            "imageCssClass": "fa fa-gear",
+            "children": []
+          }
+        ]
+      },
+      {
+        "id": 55,
+        "denominacion": "Condiciones de la vivienda, acceso a servicios y equipamiento del hogar",
+        "titulo": "",
+        "img": "",
+        "url": "/CONDICIONES_DE_LA_VIVIENDA_ACCESO_A_SERVICIOS_Y_EQUIPAMIENTO_DEL_HOGAR",
+        "concepto_id": 2,
+        "visible": true,
+        "activo": true,
+        "imageCssClass": "fa fa-gear",
+        "children": [
+          {
+            "id": 56,
+            "denominacion": "Materiales predominates de la vivienda",
+            "titulo": "",
+            "img": "",
+            "url": "/servicios-equipamientos/materiales",
+            "concepto_id": 2,
+            "visible": true,
+            "activo": true,
+            "imageCssClass": "fa fa-gear",
+            "children": []
+          },
+          {
+            "id": 57,
+            "denominacion": "Afectaciones que presenta la vivienda",
+            "titulo": "",
+            "img": "",
+            "url": "/servicios-equipamientos/afectaciones",
+            "concepto_id": 2,
+            "visible": true,
+            "activo": true,
+            "imageCssClass": "fa fa-gear",
+            "children": []
+          },
+          {
+            "id": 58,
+            "denominacion": "Locales de la vivienda",
+            "titulo": "",
+            "img": "",
+            "url": "/servicios-equipamientos/locales",
+            "concepto_id": 2,
+            "visible": true,
+            "activo": true,
+            "imageCssClass": "fa fa-gear",
+            "children": []
+          },
+          {
+            "id": 59,
+            "denominacion": "Servicios de la vivienda",
+            "titulo": "",
+            "img": "",
+            "url": "/servicios-equipamientos/servicios",
+            "concepto_id": 2,
+            "visible": true,
+            "activo": true,
+            "imageCssClass": "fa fa-gear",
+            "children": []
+          },
+          {
+            "id": 60,
+            "denominacion": "Mobiliario básico y equipos funcionando",
+            "titulo": "",
+            "img": "",
+            "url": "/servicios-equipamientos/mobiliario",
+            "concepto_id": 2,
+            "visible": true,
+            "activo": true,
+            "imageCssClass": "fa fa-gear",
+            "children": []
+          },
+          {
+            "id": 61,
+            "denominacion": "Vehículos y equipos de que dispone el hogar",
+            "titulo": "",
+            "img": "",
+            "url": "/servicios-equipamientos/vehiculos",
+            "concepto_id": 2,
+            "visible": true,
+            "activo": true,
+            "imageCssClass": "fa fa-gear",
+            "children": []
+          }
+        ]
+      },
+      {
+        "id": 62,
+        "denominacion": "Seguridad alimentaria y estrategias de afrontamiento en el hogar",
+        "titulo": "",
+        "img": "",
+        "url": "/SEGURIDAD_ALIMENTARIA_Y_ESTRATEGIAS_DE_AFRONTAMIENTO_EN_EL_HOGAR",
+        "concepto_id": 2,
+        "visible": true,
+        "activo": true,
+        "imageCssClass": "fa fa-gear",
+        "children": [
+          {
+            "id": 63,
+            "denominacion": "Gastos mensuales del hogar",
+            "titulo": "",
+            "img": "",
+            "url": "/estrategia/gastos",
+            "concepto_id": 2,
+            "visible": true,
+            "activo": true,
+            "imageCssClass": "fa fa-gear",
+            "children": []
+          },
+          {
+            "id": 64,
+            "denominacion": "Seguridad alimentaria y estrategias de afrontamiento en el hogar",
+            "titulo": "",
+            "img": "",
+            "url": "/estrategia/alimentos",
+            "concepto_id": 2,
+            "visible": true,
+            "activo": true,
+            "imageCssClass": "fa fa-gear",
+            "children": []
+          },
+          {
+            "id": 65,
+            "denominacion": "Otros Datos",
+            "titulo": "",
+            "img": "",
+            "url": "/otros",
+            "concepto_id": 2,
+            "visible": true,
+            "activo": true,
+            "imageCssClass": "fa fa-gear",
+            "children": []
+          }
+        ]
+      },
+      {
+        "id": 67,
+        "denominacion": "Configuración",
+        "titulo": "",
+        "img": "",
+        "url": "/configuracion",
+        "concepto_id": 2,
+        "visible": true,
+        "activo": true,
+        "imageCssClass": "fa fa-gear",
+        "children": [
+          {
+            "id": 68,
+            "denominacion": "Configuarción de la carga inicial",
+            "titulo": "",
+            "img": "",
+            "url": "/carga_inicial",
+            "concepto_id": 2,
+            "visible": true,
+            "activo": true,
+            "imageCssClass": "fa fa-gear",
+            "children": []
+          }
+        ]
+      },
+      {
+        "id": 69,
+        "denominacion": "Sincronización de Datos",
+        "titulo": "",
+        "img": "",
+        "url": "/sincronizacion_datos",
+        "concepto_id": 2,
+        "visible": true,
+        "activo": true,
+        "imageCssClass": "fa fa-gear",
+        "children": []
+      },
+      {
+        "id": 43,
+        "denominacion": "Información general de la vivienda",
+        "titulo": "",
+        "img": "",
+        "url": "/datos-hogar",
+        "concepto_id": 2,
+        "visible": true,
+        "activo": true,
+        "imageCssClass": "fa fa-gear",
+        "children": []
+      },
+      {
+        "id": 45,
+        "denominacion": "Ingresos",
+        "titulo": "",
+        "img": "",
+        "url": "/ingresos",
+        "concepto_id": 2,
+        "visible": true,
+        "activo": true,
+        "imageCssClass": "fa fa-gear",
+        "children": []
+      },
+      {
+        "id": 53,
+        "denominacion": "Acceso a programas de protección social y cuidados",
+        "titulo": "",
+        "img": "",
+        "url": "/proteccion",
+        "concepto_id": 2,
+        "visible": true,
+        "activo": true,
+        "imageCssClass": "fa fa-gear",
+        "children": []
+      },
+      {
+        "id": 54,
+        "denominacion": "Situación de niños, niñas y adolescentes",
+        "titulo": "",
+        "img": "",
+        "url": "/adolecentes",
+        "concepto_id": 2,
+        "visible": true,
+        "activo": true,
+        "imageCssClass": "fa fa-gear",
+        "children": []
+      },
+      {
+        "id": 66,
+        "denominacion": "Datos de la entrevista",
+        "titulo": "",
+        "img": "",
+        "url": "/datos",
+        "concepto_id": 2,
+        "visible": true,
+        "activo": true,
+        "imageCssClass": "fa fa-gear",
+        "children": []
+      }
+    ]
   }
 }

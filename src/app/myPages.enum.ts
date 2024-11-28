@@ -1,4 +1,5 @@
 export enum Pages {
+  Test,
   NotFound,
   Page2,
   DatosHogar,

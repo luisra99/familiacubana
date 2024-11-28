@@ -10,7 +10,7 @@ export type IGForm = {
   endpointPath: string;
   controls: IGenericControls[];
   showSpecificDescription?: boolean;
-  idForEdit?: string | number | null;
+  idForEdit?: string | number |any| null;
   modalType?: "xs" | "sm" | "md" | "lg" | "xl" | "fullWith";
   description?: string;
   descriptionOnCreate?: string;

@@ -4,7 +4,7 @@ import {
   eliminar,
   modificar,
 } from "@/app/user-interfaces/forms/models/controllers";
-import { useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
@@ -21,6 +21,7 @@ import { useConfirm } from "material-ui-confirm";
 import { useLiveQuery } from "dexie-react-hooks";
 import useModalState from "@/_pwa-framework/hooks/form/use-form-manager";
 import { useNavigate } from "react-router-dom";
+import { IGenericControls } from "@/_pwa-framework/genforms/types/controls/controls.types";
 
 function SITUACIÓN_DE_NIÑOS_Y_NIÑAS_Y_ADOLESCENTES() {
   const idhogar = getHogar() ?? 0;
@@ -36,7 +37,6 @@ function SITUACIÓN_DE_NIÑOS_Y_NIÑAS_Y_ADOLESCENTES() {
   const [id, setid] = useState<any>(null);
   const [idnna, setidnna] = useState<any>(null);
   const confirm = useConfirm();
-  const [titleForm, setTitleForm] = useState<any>("");
 
   const actividades = async () => {
     const datos = await datico.nom_concepto
@@ -101,7 +101,7 @@ function SITUACIÓN_DE_NIÑOS_Y_NIÑAS_Y_ADOLESCENTES() {
         const datonna = await datico.dat_nnaocupacion
           .where({ idmiembrohogar: [obj.idconcepto.toString()] })
           .count();
-        if (dato > 0 || datonna > 0) {
+        if (dato > 0) {
           return obj.idconcepto.toString();
         } else {
           return 0;
@@ -134,6 +134,12 @@ function SITUACIÓN_DE_NIÑOS_Y_NIÑAS_Y_ADOLESCENTES() {
 
     return elementos;
   };
+  const setIdFunction = (id: any) => {
+    actividades().then((elementofiltrados) => {
+      setActividadFiltradas(elementofiltrados);
+    });
+    setidnna(id);
+  };
 
   /*llenar el combo d elos miembros*/
   useLiveQuery(async () => {
@@ -143,6 +149,7 @@ function SITUACIÓN_DE_NIÑOS_Y_NIÑAS_Y_ADOLESCENTES() {
     const menor16 = data.filter((item) => item.edad < 16);
     setMiembrosmenor16(menor16);
     setMiembros(miembros);
+    console.log("menores", menor16, miembros);
     const datos = await tieneDatos(miembros);
     setMiembrosConDatos(datos);
   });
@@ -151,596 +158,611 @@ function SITUACIÓN_DE_NIÑOS_Y_NIÑAS_Y_ADOLESCENTES() {
     setMiembrosConDatos(_datos);
     const datos = await obtenerDatos(id);
     setDatatable(datos);
+
     const check_datos = await tieneDatos(miembros);
-  }
-  useEffect(() => {
-    // alert('entre')
     actividades().then((elementofiltrados) => {
       setActividadFiltradas(elementofiltrados);
     });
-  }, [id, datatable]);
+  }
 
   const notificar = NotificationProvider();
   const navegar = useNavigate();
   const siguiente = () => navegar("/servicios-equipamientos/materiales");
   const anterior = () => navegar("/proteccion");
-
-  function getFormPage() {
-    return miembros?.length || miembrosmenor16?.length ? (
-      <GenericForm
-        name="test"
-        controls={[
-          {
-            type: "select",
-            label: "Miembro del hogar",
-            name: "idmiembrohogar",
-            gridValues: { xs: 12, lg: 8, md: 8, sm: 8, xl: 8 },
-            options: miembros,
-            onChange: (e, ref) => {
-              const { value } = e.target;
-              setIdMiembroHogar(value);
-              setid(value);
-              onChangeMiembro(value);
-            },
-            validations: {
-              required: { message: "Este campo es obligatorio" },
-            },
-            checkValues: miembrosConDatos,
+  const formControls = useCallback(
+    (): IGenericControls[] => [
+      {
+        type: "select",
+        label: "Miembro del hogar",
+        name: "idmiembrohogar",
+        gridValues: { xs: 12, lg: 8, md: 8, sm: 8, xl: 8 },
+        options: miembros,
+        onChange: (e: any, ref: any) => {
+          const { value } = e.target;
+          setIdMiembroHogar(value);
+          setid(value);
+          onChangeMiembro(value);
+        },
+        validations: {
+          required: { message: "Este campo es obligatorio" },
+        },
+        checkValues: miembrosConDatos,
+      },
+      {
+        type: "select",
+        label:
+          "Situación educativa de niños, niñas, adolecentes y jóvenes del hogar",
+        name: "idsituacioneduc",
+        gridValues: { md: 12, lg: 12, sm: 12, xl: 12, xs: 12 },
+        url: "9472",
+        validations: {
+          required: {
+            message: "Este campo es obligatorio",
           },
-          {
-            type: "select",
-            label:
-              "Situación educativa de niños, niñas, adolecentes y jóvenes del hogar",
-            name: "idsituacioneduc",
-            gridValues: { md: 12, lg: 12, sm: 12, xl: 12, xs: 12 },
-            url: "9472",
-            validations: {
-              required: {
-                message: "Este campo es obligatorio",
+        },
+      },
+      {
+        type: "select",
+        label: "Escoja la opción", //Educacion y cuidado en la primera infancia
+        name: "idcuidadoprimerainf",
+        url: "9473",
+        gridValues: { xl: 12, lg: 12, md: 12, sm: 12, xs: 12 },
+        validations: {
+          required: {
+            message: "Este campo es obligatorio",
+            when: {
+              name: "idsituacioneduc",
+              expression: (value: any) => {
+                return value[0] === "9473";
               },
             },
           },
-          {
-            type: "select",
-            label: "Escoja la opción", //Educacion y cuidado en la primera infancia
-            name: "idcuidadoprimerainf",
-            url: "9473",
-            gridValues: { xl: 12, lg: 12, md: 12, sm: 12, xs: 12 },
-            validations: {
-              required: {
-                message: "Este campo es obligatorio",
-                when: {
-                  name: "idsituacioneduc",
-                  expression: (value: any) => {
-                    return value[0] === "9473";
-                  },
-                },
-              },
-            },
-            hidden: (values: any) => values.idsituacioneduc[0] != "9473",
-            // onChange: (value, ref) => {
-            //   ref.setFieldValue("idcuidadohogar", [], false);
-            // },
-          },
-          {
-            type: "select",
-            label: "Escoja la opción",
-            name: "idsne",
-            gridValues: { xl: 12, lg: 12, md: 12, sm: 12, xs: 12 },
-            hidden: (values: any) => values.idsituacioneduc[0] != "9474",
-            url: "9474",
-            // onChange: (value, ref) =>
-            //   ref.setFieldValue("idcuidadohogar", [], false),
-            validations: {
-              required: {
-                message: "Este campo es obligatorio",
-                when: {
-                  name: "idsituacioneduc",
-                  expression: (value) => value[0] == "9474",
-                },
-              },
+        },
+        hidden: (values: any) => values.idsituacioneduc[0] != "9473",
+        // onChange: (value, ref) => {
+        //   ref.setFieldValue("idcuidadohogar", [], false);
+        // },
+      },
+      {
+        type: "select",
+        label: "Escoja la opción",
+        name: "idsne",
+        gridValues: { xl: 12, lg: 12, md: 12, sm: 12, xs: 12 },
+        hidden: (values: any) => values.idsituacioneduc[0] != "9474",
+        url: "9474",
+        validations: {
+          required: {
+            message: "Este campo es obligatorio",
+            when: {
+              name: "idsituacioneduc",
+              expression: (value: any) => value[0] == "9474",
             },
           },
-          {
-            type: "select",
-            label: "Escoja la opción", // Educacion y cuidado en el hogar
-            name: "idcuidadohogar",
-            gridValues: { xl: 12, lg: 12, md: 12, sm: 12, xs: 12 },
-            validations: {
-              tests: [
+        },
+      },
+      {
+        type: "select",
+        label: "Escoja la opción", // Educacion y cuidado en el hogar
+        name: "idcuidadohogar",
+        gridValues: { xl: 12, lg: 12, md: 12, sm: 12, xs: 12 },
+        validations: {
+          tests: [
+            {
+              test: (values: any) => {
+                return (
+                  values.idcuidadoprimerainf[0] == "9478" &&
+                  values.idcuidadohogar?.length == 0
+                );
+              },
+              message: "Este campo es obligatorio",
+            },
+            {
+              test: (values: any) => {
+                return (
+                  values.idcuidadoprimerainf[0] == "9473" &&
+                  values.idcuidadohogar?.length == 0
+                );
+              },
+              message: "Este campo es obligatorio",
+            },
+          ],
+        },
+        hidden: (values: any) => {
+          return (
+            values.idcuidadoprimerainf[0] != "9478" ||
+            values.idsituacioneduc[0] != "9473"
+          );
+        },
+        url: "9478",
+        onChange: (value: any, ref: any) => {
+          ref.setFieldValue("idetp", [], false);
+        },
+      },
+      {
+        type: "select",
+        label: "Escoja la opción",
+        name: "idetp",
+        gridValues: { xl: 12, lg: 12, md: 12, sm: 12, xs: 12 },
+        validations: {
+          tests: [
+            {
+              test: (values: any) => {
+                return (
+                  values.idsne[0] == "9486" &&
+                  values.idsituacioneduc[0] == "9474" &&
+                  values.idetp?.length == 0
+                );
+              },
+              message: "Este campo es obligatorio",
+            },
+          ],
+        },
+        hidden: (values: any) =>
+          values.idsne[0] != "9486" || values.idsituacioneduc[0] != "9474",
+        url: "9486",
+      },
+      {
+        type: "multiselect",
+        label: "Causas",
+        name: "idcausadesv",
+        url: "9475",
+        multiple: "check",
+        gridValues: { xs: 12, lg: 12, md: 12, sm: 12, xl: 12 },
+        validations: {
+          required: {
+            message: "Este campo es obligatorio",
+            when: {
+              name: "idsituacioneduc",
+              expression: (value: any) => {
+                return value[0] == "10134";
+              },
+            },
+          },
+        },
+        hidden: (values: any) => values.idsituacioneduc[0] != "10134",
+        // onChange: (value, ref) =>
+        //   ref.setFieldValue("otrascausas", "", false),
+      },
+      {
+        type: "text",
+        label: "Explicite otras razones",
+        name: "otrascausas",
+        multiline: { minRows: 2 },
+        gridValues: { xs: 12, lg: 12, md: 12, sm: 12, xl: 12 },
+        validations: {
+          tests: [
+            {
+              message: "Este campo es requerido",
+              test: (values: any) =>
+                Array.isArray(values.idcausadesv)
+                  ? values.idcausadesv?.findIndex(
+                      (causa: any) => causa === "9500"
+                    ) != -1
+                  : values.idsituacioneduc == "10134",
+            },
+          ],
+        },
+        hidden: (values: any) =>
+          Array.isArray(values.idcausadesv)
+            ? values.idcausadesv?.findIndex((causa: any) => causa === "9500") ==
+              -1
+            : values.idsituacioneduc[0] != "10134",
+      },
+      {
+        type: "component",
+        component: () => <Divider sx={{ my: 1 }} />,
+        label: "",
+        name: "",
+        gridValues: { xs: 12, lg: 12, md: 12, sm: 12, xl: 12 },
+        // hidden: () => idmiembrohogar == 0,
+      },
+      {
+        type: "component",
+        component: () => (
+          <>
+            <Typography variant="subtitle2" marginX={""} mt={5}>
+              Niños, niñas y adolescentes ocupados/as
+            </Typography>
+            <Stack
+              spacing={2}
+              direction="row"
+              my={2}
+              textAlign={"left"}
+              // px={5}
+              display={"inline-list-item"}
+            >
+              <Button
+                disabled={!actividadfiltradas?.length}
+                onClick={async () => {
+                  modalActions.open("formulario");
+                }}
+                variant="contained"
+              >
+                Adicionar
+              </Button>{" "}
+            </Stack>
+            <TableView
+              values={id ? datatable : []}
+              headers={[
                 {
-                  test: (values) => {
-                    return (
-                      values.idcuidadoprimerainf[0] == "9478" &&
-                      values.idcuidadohogar?.length == 0
+                  name: "actividad",
+                  align: "left",
+                  label: "Actividad",
+                },
+                {
+                  name: "horas",
+                  align: "left",
+                  label: "Cantidad de horas",
+                },
+                { name: "horarios", align: "left", label: "Horarios" },
+                {
+                  name: "autorizacion",
+                  align: "center",
+                  label: "Autorización  el MTSS",
+                },
+              ]}
+              idKey="idnnaocupacion"
+              multiSelect={false}
+              useCheckBox={false}
+              rowActions={[
+                {
+                  label: "Modificar",
+                  action: (values: any) => {
+                    setActividadFiltradas(allActividades);
+                    setidnna(values.idnnaocupacion);
+                    modalActions.open("formulario");
+                    // setid(values.idnnaocupacion);
+                    // modalActions.open("1");
+                  },
+                  icon: EditIcon,
+                },
+                {
+                  icon: DeleteIcon,
+                  label: "Eliminar",
+                  action: (values: any) => {
+                    confirm({
+                      title: "Eliminar",
+                      confirmationText: "Aceptar",
+                      cancellationText: "Cancelar",
+                      description: `¿Está seguro que desea eliminar lo seleccionado?`,
+                    }).then(() =>
+                      eliminar(
+                        "dat_nnaocupacion",
+                        "idnnaocupacion",
+                        values.idnnaocupacion
+                      ).then(() => {
+                        notificar({
+                          type: "success",
+                          title: "Eliminado correctamente",
+                          content: "",
+                        });
+                        onChangeMiembro(idmiembrohogar);
+                      })
                     );
                   },
-                  message: "Este campo es obligatorio",
                 },
-                {
-                  test: (values) => {
-                    return (
-                      values.idcuidadoprimerainf[0] == "9473" &&
-                      values.idcuidadohogar?.length == 0
-                    );
-                  },
-                  message: "Este campo es obligatorio",
-                },
-              ],
-            },
-            hidden: (values: any) => {
-              return (
-                values.idcuidadoprimerainf[0] != "9478" ||
-                values.idsituacioneduc[0] != "9473"
-              );
-            },
-            url: "9478",
-            onChange: (value, ref) => {
-              ref.setFieldValue("idetp", [], false);
-            },
+              ]}
+            />
+          </>
+        ),
+        label: "",
+        name: "",
+        gridValues: { xs: 12, lg: 12, md: 12, sm: 12, xl: 12 },
+        // hidden: () => idmiembrohogar == 0,
+      },
+      {
+        type: "component",
+        component: () => (
+          <Typography variant="subtitle2" marginX={""} mt={5}>
+            Situación de NNA que cometen hechos que la ley tipifica como delito,
+            con comportamiento social inadecuado y/o víctimas de violencia.
+          </Typography>
+        ),
+        label: "",
+        name: "",
+        gridValues: { xs: 12, lg: 12, md: 12, sm: 12, xl: 12 },
+        // disabled: () => idmiembrohogar == 0,
+      },
+      {
+        type: "component",
+        component: () => <Divider sx={{ m: 2 }} />,
+        label: "",
+        name: "",
+        gridValues: { xs: 12, lg: 12, md: 12, sm: 12, xl: 12 },
+        // disabled: () => idmiembrohogar == 0,
+      },
+      {
+        type: "component",
+        component: () => (
+          <Typography>
+            <b>Nota aclaratoria: </b> Esta información no se pregunta se
+            completa con información previa.
+          </Typography>
+        ),
+        label: "",
+        name: "",
+        gridValues: { xs: 12, lg: 12, md: 12, sm: 12, xl: 12 },
+        // disabled: () => idmiembrohogar == 0,
+      },
+      {
+        type: "multiselect",
+        label:
+          "Situación de NNA que cometen hechos que la ley tipifica como delito",
+        name: "idtiposituacion",
+        multiple: "check",
+        gridValues: { xs: 12, lg: 12, md: 12, sm: 12, xl: 12 },
+        url: "9421",
+      },
+    ],
+    [
+      idmiembrohogar,
+      allActividades,
+      id,
+      datatable,
+      actividadfiltradas,
+      miembrosConDatos,
+      miembros,
+    ]
+  );
+  const modalControls = useCallback(
+    (): IGenericControls[] => [
+      {
+        type: "select",
+        label: "Actividad",
+        name: "idtipoactividad",
+        gridValues: { xs: 12, sm: 6, lg: 6, md: 6, xl: 6 },
+        options: actividadfiltradas ? actividadfiltradas : [],
+        validations: {
+          required: { message: "Este campo es obligatorio" },
+        },
+        disabledOnEdit: true,
+      },
+      {
+        type: "select",
+        label: "Cantidad de horas",
+        name: "idcanthoras",
+        gridValues: { xs: 12, sm: 6, lg: 6, md: 6, xl: 6 },
+        url: "10136",
+        validations: {
+          required: { message: "Este campo es obligatorio" },
+        },
+      },
+      {
+        type: "select",
+        label: "Horarios",
+        name: "idhorario",
+        gridValues: { xs: 12, sm: 6, lg: 6, md: 6, xl: 6 },
+        url: "10140",
+        validations: {
+          required: { message: "Este campo es obligatorio" },
+        },
+      },
+      {
+        type: "select",
+        label: "Autorización del MTSS",
+        name: "autorizadomtss",
+        gridValues: { xs: 12, sm: 6, lg: 6, md: 6, xl: 6 },
+        options: [
+          { idconcepto: "1", denominacion: "Si" },
+          { idconcepto: "0", denominacion: "No" },
+        ],
+        defaultValue: ["0"],
+        disabled: () =>
+          miembrosmenor16.findIndex(
+            (item: any) => item.idmiembrohogar === id
+          ) == -1,
+        validations: {
+          required: {
+            message: "Este campo es obligatorio",
           },
-          {
-            type: "select",
-            label: "Escoja la opción",
-            name: "idetp",
-            gridValues: { xl: 12, lg: 12, md: 12, sm: 12, xs: 12 },
-            validations: {
-              tests: [
-                {
-                  test: (values) => {
-                    return (
-                      values.idsne[0] == "9486" &&
-                      values.idsituacioneduc[0] == "9474" &&
-                      values.idetp?.length == 0
-                    );
-                  },
-                  message: "Este campo es obligatorio",
-                },
-              ],
-            },
-            hidden: (values: any) =>
-              values.idsne[0] != "9486" || values.idsituacioneduc[0] != "9474",
-            url: "9486",
-          },
-          {
-            type: "multiselect",
-            label: "Causas",
-            name: "idcausadesv",
-            url: "9475",
-            multiple: "check",
-            gridValues: { xs: 12, lg: 12, md: 12, sm: 12, xl: 12 },
-            validations: {
-              required: {
-                message: "Este campo es obligatorio",
-                when: {
-                  name: "idsituacioneduc",
-                  expression: (value: any) => {
-                    return value[0] == "10134";
-                  },
-                },
-              },
-            },
-            hidden: (values: any) => values.idsituacioneduc[0] != "10134",
-            // onChange: (value, ref) =>
-            //   ref.setFieldValue("otrascausas", "", false),
-          },
-          {
-            type: "text",
-            label: "Explicite otras razones",
-            name: "otrascausas",
-            multiline: { minRows: 2 },
-            gridValues: { xs: 12, lg: 12, md: 12, sm: 12, xl: 12 },
-            validations: {
-              tests: [
-                {
-                  message: "Este campo es requerido",
-                  test: (values) =>
-                    Array.isArray(values.idcausadesv)
-                      ? values.idcausadesv?.findIndex(
-                          (causa: any) => causa === "9500"
-                        ) != -1
-                      : values.idsituacioneduc == "10134",
-                },
-              ],
-            },
-            hidden: (values: any) =>
-              Array.isArray(values.idcausadesv)
-                ? values.idcausadesv?.findIndex(
-                    (causa: any) => causa === "9500"
-                  ) == -1
-                : values.idsituacioneduc[0] != "10134",
-          },
-          {
-            type: "component",
-            component: () => <Divider sx={{ my: 1 }} />,
-            label: "",
-            name: "",
-            gridValues: { xs: 12, lg: 12, md: 12, sm: 12, xl: 12 },
-            // hidden: () => idmiembrohogar == 0,
-          },
-          {
-            type: "component",
-            component: () => (
-              <>
-                <Typography variant="subtitle2" marginX={""} mt={5}>
-                  Niños, niñas y adolescentes ocupados/as
-                </Typography>
-                <Stack
-                  spacing={2}
-                  direction="row"
-                  my={2}
-                  textAlign={"left"}
-                  // px={5}
-                  display={"inline-list-item"}
-                >
-                  <Button
-                    disabled={!id || !actividadfiltradas?.length}
-                    onClick={async () => {
-                      let actividadselected = await actividades();
-                      setActividadFiltradas(actividadselected);
-                      setTitleForm(
-                        "Adicionar situación de niños ,niñas y adolecentes ocupados"
-                      );
-                      modalActions.open("formulario");
-                    }}
-                    variant="contained"
-                  >
-                    Adicionar
-                  </Button>{" "}
-                </Stack>
-                <TableView
-                  values={id ? datatable : []}
-                  headers={[
-                    {
-                      name: "actividad",
-                      align: "left",
-                      label: "Actividad",
-                    },
-                    {
-                      name: "horas",
-                      align: "left",
-                      label: "Cantidad de horas",
-                    },
-                    { name: "horarios", align: "left", label: "Horarios" },
-                    {
-                      name: "autorizacion",
-                      align: "center",
-                      label: "Autorización  el MTSS",
-                    },
-                  ]}
-                  idKey="idnnaocupacion"
-                  multiSelect={false}
-                  useCheckBox={false}
-                  rowActions={[
-                    {
-                      label: "Modificar",
-                      action: (values: any) => {
-                        setActividadFiltradas(allActividades);
-                        setTitleForm(
-                          "Modificar situación de niños ,niñas y adolecentes ocupados "
-                        );
-                        setidnna(values.idnnaocupacion);
-                        modalActions.open("formulario");
-                        // setid(values.idnnaocupacion);
-                        // modalActions.open("1");
-                      },
-                      icon: EditIcon,
-                    },
-                    {
-                      icon: DeleteIcon,
-                      label: "Eliminar",
-                      action: (values: any) => {
-                        confirm({
-                          title: "Eliminar",
-                          confirmationText: "Aceptar",
-                          cancellationText: "Cancelar",
-                          description: `¿Está seguro que desea eliminar lo seleccionado?`,
-                        }).then(() =>
-                          eliminar(
-                            "dat_nnaocupacion",
-                            "idnnaocupacion",
-                            values.idnnaocupacion
-                          ).then(() => {
-                            notificar({
-                              type: "success",
-                              title: "Eliminado correctamente",
-                              content: "",
-                            });
-                            onChangeMiembro(idmiembrohogar);
-                          })
-                        );
-                      },
-                    },
-                  ]}
-                />
-              </>
-            ),
-            label: "",
-            name: "",
-            gridValues: { xs: 12, lg: 12, md: 12, sm: 12, xl: 12 },
-            // hidden: () => idmiembrohogar == 0,
-          },
-          {
-            type: "component",
-            component: () => (
-              <Typography variant="subtitle2" marginX={""} mt={5}>
-                Situación de NNA que cometen hechos que la ley tipifica como
-                delito, con comportamiento social inadecuado y/o víctimas de
-                violencia.
-              </Typography>
-            ),
-            label: "",
-            name: "",
-            gridValues: { xs: 12, lg: 12, md: 12, sm: 12, xl: 12 },
-            // disabled: () => idmiembrohogar == 0,
-          },
-          {
-            type: "component",
-            component: () => <Divider sx={{ m: 2 }} />,
-            label: "",
-            name: "",
-            gridValues: { xs: 12, lg: 12, md: 12, sm: 12, xl: 12 },
-            // disabled: () => idmiembrohogar == 0,
-          },
-          {
-            type: "component",
-            component: () => (
-              <Typography>
-                <b>Nota aclaratoria: </b> Esta información no se pregunta se
-                completa con información previa.
-              </Typography>
-            ),
-            label: "",
-            name: "",
-            gridValues: { xs: 12, lg: 12, md: 12, sm: 12, xl: 12 },
-            // disabled: () => idmiembrohogar == 0,
-          },
-          {
-            type: "multiselect",
-            label:
-              "Situación de NNA que cometen hechos que la ley tipifica como delito",
-            name: "idtiposituacion",
-            multiple: "check",
-            gridValues: { xs: 12, lg: 12, md: 12, sm: 12, xl: 12 },
-            url: "9421",
-          },
-        ]}
-        // Niños, niñas y adolescentes ocupados/as
-        title="Situación de niños, niñas y adolescentes"
-        description=""
-        endpointPath="persona"
-        showSpecificDescription={false}
-        nextButton={{ text: "Siguiente", action: siguiente }}
-        prevButton={{ text: "Anterior", action: anterior }}
-        idForEdit={id}
-        saveButton="Guardar"
-        setIdFunction={setid}
-        submitFunction={async (values) => {
-          const {
-            idsituacioneduc,
-            idmiembrohogar,
-            idcuidadoprimerainf,
-            idsne,
-            idetp,
-            idcausadesv,
-            idcuidadohogar,
-            idtiposituacion,
-            otrascausas,
-          } = values;
-          const existesituacnnaj = await datico.dat_situacnnaj
-            .where({ idmiembrohogar: [id.toString()] })
-            .toArray();
-          const existesitdelictiva = existesituacnnaj[0]?.idsituacnnaj
-            ? await datico.dat_nnasitdelictiva
-                .where({ idsituacnnaj: existesituacnnaj[0].idsituacnnaj })
-                .toArray()
-            : "";
-          const existencausas = existesituacnnaj[0]?.idsituacnnaj
-            ? await datico.dat_causadesvnnaj
-                .where({ idsituacnnaj: existesituacnnaj[0].idsituacnnaj })
-                .toArray()
-            : "";
-          const existennaocupacion = await datico.dat_nnaocupacion
-            .where({ idmiembrohogar: [id.toString()] })
-            .toArray();
+        },
+      },
+    ],
+    [miembrosmenor16, actividadfiltradas]
+  );
+  const nextDisabledFunction = useCallback(() => {
+    const miembrosCheck = miembrosConDatos.includes(",")
+      ? miembrosConDatos?.split?.(",")?.length
+      : miembrosConDatos.length > 0
+        ? 1
+        : 0;
+    return miembros?.length !== miembrosCheck;
+  }, [miembrosConDatos, miembros]);
 
-          existennaocupacion?.length &&
-            existesituacnnaj?.length &&
-            (await (datico as any)["dat_nnaocupacion"]
-              .where("idmiembrohogar")
-              .equals([id.toString()])
-              .modify({ idsituacnnaj: existesituacnnaj[0].idsituacnnaj }));
-
-          existesituacnnaj?.length
-            ? modificar(
-                "dat_situacnnaj",
-                "idsituacnnaj",
-                existesituacnnaj[0].idsituacnnaj,
-                values
-              ).then((idsituacnnaj: any) => {
-                existesitdelictiva?.length
-                  ? modificar(
-                      "dat_nnasitdelictiva",
-                      "idsituacnnaj",
-                      idsituacnnaj,
-                      {
-                        idtiposituacion,
-                        idcodigohogar: idhogar,
-                      }
-                    )
-                  : crear("dat_nnasitdelictiva", {
-                      idtiposituacion,
-                      idsituacnnaj: idsituacnnaj,
-                      idcodigohogar: idhogar,
+  const ModalForm = useCallback(
+    () => (
+      <>
+        {id && idmiembrohogar && (
+          <GenericForm
+            name="formulario"
+            controls={modalControls()}
+            createTitle="Adicionar situación de niños ,niñas y adolecentes ocupados"
+            editTitle="Modificar situación de niños ,niñas y adolecentes ocupados"
+            endpointPath="persona"
+            showSpecificDescription={true}
+            idForEdit={idnna}
+            setIdFunction={setIdFunction}
+            modalType="fullWith"
+            getByIdFunction={() => obtenerDatosNNAOcupacion(idnna, id)}
+            submitFunction={(values: any) => {
+              let edit = values.editMode;
+              delete values.editMode;
+              edit
+                ? modificar("dat_nnaocupacion", "idnnaocupacion", idnna, {
+                    ...values,
+                    idmiembrohogar: [id.toString()],
+                    idcodigohogar: getHogar(),
+                  }).then(() => {
+                    notificar({
+                      type: "success",
+                      title:
+                        "La ocupación de niños, niñas y adolescentes ha sido modificada satisfactoriamente",
+                      content: "",
                     });
-                existencausas?.length
-                  ? modificar(
-                      "dat_causadesvnnaj",
-                      "idsituacnnaj",
-                      idsituacnnaj,
-                      {
-                        otrascausas,
-                        idcausadesv,
-                      }
-                    )
-                  : crear("dat_causadesvnnaj", {
-                      otrascausas,
-                      idcausadesv,
-                      idsituacnnaj: idsituacnnaj,
+                    onChangeMiembro(id);
+                  })
+                : crear("dat_nnaocupacion", {
+                    ...values,
+                    idmiembrohogar: [id.toString()],
+                    idcodigohogar: getHogar(),
+                  }).then(() => {
+                    notificar({
+                      type: "success",
+                      title:
+                        "La ocupación de niños, niñas y adolescentes ha sido adicionada satisfactoriamente ",
+                      content: "",
                     });
-
-                notificar({
-                  type: "success",
-                  title: "Situación de niños adicionado correctamente",
-                  content: "",
-                });
-              })
-            : await crear("dat_situacnnaj", {
-                idsituacioneduc,
-                idcodigohogar: idhogar,
-                idmiembrohogar,
-                idcuidadoprimerainf,
-                idcuidadohogar,
-                idsne,
-                idetp,
-              }).then((id_situacnnaj: any) => {
-                idtiposituacion.length &&
-                  crear("dat_nnasitdelictiva", {
-                    idtiposituacion,
-                    idsituacnnaj: id_situacnnaj,
-                    idcodigohogar: idhogar,
+                    onChangeMiembro(id);
                   });
-                idcausadesv.length &&
-                  crear("dat_causadesvnnaj", {
-                    otrascausas,
-                    idcausadesv,
-                    idsituacnnaj: id_situacnnaj,
-                  });
-                notificar({
-                  type: "success",
-                  title: "Situación de niños adicionado correctamente",
-                  content: "",
-                });
-              });
-        }}
-        getByIdFunction={() => obtenerDatosByMiembro(id)}
-        applyButton={false}
-      />
-    ) : (
-      <Typography variant="h6" p={2}>
-        {idhogar
-          ? "No existen miembros menores de edad"
-          : "No existe un hogar seleccionado"}
-      </Typography>
-    );
-  }
-  const getFormModal = () => {
-    if (idmiembrohogar) {
-      return (
-        <GenericForm
-          name="formulario"
-          controls={[
-            {
-              type: "select",
-              label: "Actividad",
-              name: "idtipoactividad",
-              gridValues: { xs: 12, sm: 6, lg: 6, md: 6, xl: 6 },
-              options: actividadfiltradas ? actividadfiltradas : [],
-              validations: {
-                required: { message: "Este campo es obligatorio" },
-              },
-              disabledOnEdit: true,
-            },
-            {
-              type: "select",
-              label: "Cantidad de horas",
-              name: "idcanthoras",
-              gridValues: { xs: 12, sm: 6, lg: 6, md: 6, xl: 6 },
-              url: "10136",
-              validations: {
-                required: { message: "Este campo es obligatorio" },
-              },
-            },
-            {
-              type: "select",
-              label: "Horarios",
-              name: "idhorario",
-              gridValues: { xs: 12, sm: 6, lg: 6, md: 6, xl: 6 },
-              url: "10140",
-              validations: {
-                required: { message: "Este campo es obligatorio" },
-              },
-            },
-            {
-              type: "select",
-              label: "Autorización del MTSS",
-              name: "autorizadomtss",
-              gridValues: { xs: 12, sm: 6, lg: 6, md: 6, xl: 6 },
-              options: [
-                { idconcepto: "1", denominacion: "Si" },
-                { idconcepto: "0", denominacion: "No" },
-              ],
-              defaultValue: ["0"],
-              disabled: () =>
-                miembrosmenor16.findIndex(
-                  (item: any) => item.idmiembrohogar === id
-                ) == -1,
-              validations: {
-                required: {
-                  message: "Este campo es obligatorio",
-                },
-              },
-            },
-          ]}
-          title={titleForm}
-          description=" "
-          endpointPath="persona"
-          showSpecificDescription={true}
-          idForEdit={idnna}
-          setIdFunction={setidnna}
-          modalType="fullWith"
-          getByIdFunction={() => obtenerDatosNNAOcupacion(idnna, id)}
-          submitFunction={(values: any) => {
-            let edit = values.editMode;
-            delete values.editMode;
-
-            edit
-              ? modificar("dat_nnaocupacion", "idnnaocupacion", idnna, {
-                  ...values,
-                  idmiembrohogar: [id.toString()],
-                  idcodigohogar: getHogar(),
-                }).then(() => {
-                  notificar({
-                    type: "success",
-                    title:
-                      "La ocupación de niños, niñas y adolescentes ha sido modificada satisfactoriamente",
-                    content: "",
-                  });
-                  onChangeMiembro(id);
-                })
-              : crear("dat_nnaocupacion", {
-                  ...values,
-                  idmiembrohogar: [id.toString()],
-                  idcodigohogar: getHogar(),
-                }).then(() => {
-                  notificar({
-                    type: "success",
-                    title:
-                      "La ocupación de niños, niñas y adolescentes ha sido adicionada satisfactoriamente ",
-                    content: "",
-                  });
-                  onChangeMiembro(id);
-                });
-          }}
-        />
-      );
-    }
-  };
+            }}
+          />
+        )}
+      </>
+    ),
+    [actividadfiltradas, idnna]
+  );
   return (
     <>
       <Meta title="Controles" />
-      {getFormPage()}
-      {id && getFormModal()}
+      {miembros?.length || miembrosmenor16?.length ? (
+        <GenericForm
+          name="test"
+          controls={formControls()}
+          // Niños, niñas y adolescentes ocupados/as
+          title="Situación de niños, niñas y adolescentes"
+          description=""
+          endpointPath="persona"
+          showSpecificDescription={false}
+          nextButton={{ text: "Siguiente", action: siguiente }}
+          prevButton={{ text: "Anterior", action: anterior }}
+          nextDisabledFunction={nextDisabledFunction}
+          idForEdit={id}
+          saveButton="Guardar"
+          setIdFunction={setid}
+          submitFunction={async (values) => {
+            const {
+              idsituacioneduc,
+              idmiembrohogar,
+              idcuidadoprimerainf,
+              idsne,
+              idetp,
+              idcausadesv,
+              idcuidadohogar,
+              idtiposituacion,
+              otrascausas,
+            } = values;
+            const existesituacnnaj = await datico.dat_situacnnaj
+              .where({ idmiembrohogar: [id.toString()] })
+              .toArray();
+            const existesitdelictiva = existesituacnnaj[0]?.idsituacnnaj
+              ? await datico.dat_nnasitdelictiva
+                  .where({ idsituacnnaj: existesituacnnaj[0].idsituacnnaj })
+                  .toArray()
+              : "";
+            const existencausas = existesituacnnaj[0]?.idsituacnnaj
+              ? await datico.dat_causadesvnnaj
+                  .where({ idsituacnnaj: existesituacnnaj[0].idsituacnnaj })
+                  .toArray()
+              : "";
+            const existennaocupacion = await datico.dat_nnaocupacion
+              .where({ idmiembrohogar: [id.toString()] })
+              .toArray();
+
+            existennaocupacion?.length &&
+              existesituacnnaj?.length &&
+              (await (datico as any)["dat_nnaocupacion"]
+                .where("idmiembrohogar")
+                .equals([id.toString()])
+                .modify({ idsituacnnaj: existesituacnnaj[0].idsituacnnaj }));
+
+            existesituacnnaj?.length
+              ? modificar(
+                  "dat_situacnnaj",
+                  "idsituacnnaj",
+                  existesituacnnaj[0].idsituacnnaj,
+                  values
+                ).then((idsituacnnaj: any) => {
+                  existesitdelictiva?.length
+                    ? modificar(
+                        "dat_nnasitdelictiva",
+                        "idsituacnnaj",
+                        idsituacnnaj,
+                        {
+                          idtiposituacion,
+                          idcodigohogar: idhogar,
+                        }
+                      )
+                    : crear("dat_nnasitdelictiva", {
+                        idtiposituacion,
+                        idsituacnnaj: idsituacnnaj,
+                        idcodigohogar: idhogar,
+                        idmiembrohogar: [id.toString()],
+                      });
+                  existencausas?.length
+                    ? modificar(
+                        "dat_causadesvnnaj",
+                        "idsituacnnaj",
+                        idsituacnnaj,
+                        {
+                          otrascausas,
+                          idcausadesv,
+                        }
+                      )
+                    : crear("dat_causadesvnnaj", {
+                        otrascausas,
+                        idcausadesv,
+                        idsituacnnaj: idsituacnnaj,
+                        idmiembrohogar: [id.toString()],
+                      });
+
+                  notificar({
+                    type: "success",
+                    title:
+                      "Los datos de niños, niñas y adolescentes se han adicionado satisfactoriamente",
+                    content: "",
+                  });
+                })
+              : await crear("dat_situacnnaj", {
+                  idsituacioneduc,
+                  idcodigohogar: idhogar,
+                  idmiembrohogar,
+                  idcuidadoprimerainf,
+                  idcuidadohogar,
+                  idsne,
+                  idetp,
+                }).then((id_situacnnaj: any) => {
+                  idtiposituacion.length &&
+                    crear("dat_nnasitdelictiva", {
+                      idtiposituacion,
+                      idsituacnnaj: id_situacnnaj,
+                      idcodigohogar: idhogar,
+                      idmiembrohogar: [id.toString()],
+                    });
+                  idcausadesv.length &&
+                    crear("dat_causadesvnnaj", {
+                      otrascausas,
+                      idcausadesv,
+                      idsituacnnaj: id_situacnnaj,
+                      idmiembrohogar: [id.toString()],
+                    });
+                  notificar({
+                    type: "success",
+                    title: "Situación de niños adicionado correctamente",
+                    content: "",
+                  });
+                });
+          }}
+          getByIdFunction={() => obtenerDatosByMiembro(id)}
+          applyButton={false}
+        />
+      ) : (
+        <Typography variant="h6" p={2}>
+          {idhogar
+            ? "No existen miembros menores de edad"
+            : "No existe un hogar seleccionado"}
+        </Typography>
+      )}
+      <ModalForm />
     </>
   );
 }

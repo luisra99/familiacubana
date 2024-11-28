@@ -13,6 +13,7 @@ import { getHogar } from "@/app/hogarController/hogar.controller";
 import { obtenerMobiliarios } from "./utils";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 function Condicion_de_vivienda() {
   const [id, setid] = useState<any>(null);
@@ -24,9 +25,29 @@ function Condicion_de_vivienda() {
   const [mobiliarioBasico, setmobiliarioBasico] = useState([]);
   const [configuraciónMobiliarioBasico, setConfiguracionMobiliarioBasico] =
     useState({});
+  const [listo, setListo] = useState<any>(false);
   const findByIdMobiliarioSetConfiguracion = async (id: any) => {
     return await obtenerMobiliarios(id, setConfiguracionMobiliarioBasico);
   };
+
+  const checkListo = async (id: string|number) => {
+
+    const datos: any = await obtenerDatosPorLlave(
+      "dat_hogarmobiliarioequipos",
+      "idhogarmobiliario",
+      id
+    );
+    console.log("sdgfhdgsh",datos)
+    setListo(!!datos?.length);
+  };
+
+  useEffect(() => {
+    console.log("efecto hogar", hogar);
+    if (hogar) {
+      checkListo(parseInt(hogar));
+    }
+  }, [hogar]);
+
   const data = useLiveQuery(async () => {
     const prueba = await (datico as any)["nom_concepto"]
       .where("idpadre")
@@ -137,39 +158,39 @@ function Condicion_de_vivienda() {
                             },
                           },
 
-                          {
-                            type: "select",
-                            label: "Propio/Asignado",
-                            name: "estado",
-                            sx: { mx: 1 },
-                            validations: {
-                              required: {
-                                message: "Debe especificar",
-                                when: {
-                                  name: "cantidad",
-                                  expression: (value) => {
-                                    return value?.length;
-                                  },
-                                },
-                              },
-                            },
-                            options: [
-                              { idconcepto: "0", denominacion: "Propio" },
-                              { idconcepto: "1", denominacion: "Asignado" },
-                            ],
-                            gridValues: { xl: 4, lg: 4, md: 4, sm: 4, xs: 4 },
-                            onChange: (event) => {
-                              setConfiguracionMobiliarioBasico((prev: any) => {
-                                prev[mobiliarioBasico.idconcepto] = {
-                                  ...prev[mobiliarioBasico.idconcepto],
-                                  estado: event.target.value,
-                                  idmobiliarioequipo:
-                                    mobiliarioBasico.idconcepto,
-                                };
-                                return prev;
-                              });
-                            },
-                          },
+                          // {
+                          //   type: "select",
+                          //   label: "Propio/Asignado",
+                          //   name: "estado",
+                          //   sx: { mx: 1 },
+                          //   validations: {
+                          //     required: {
+                          //       message: "Debe especificar",
+                          //       when: {
+                          //         name: "cantidad",
+                          //         expression: (value) => {
+                          //           return value?.length;
+                          //         },
+                          //       },
+                          //     },
+                          //   },
+                          //   options: [
+                          //     { idconcepto: "0", denominacion: "Propio" },
+                          //     { idconcepto: "1", denominacion: "Asignado" },
+                          //   ],
+                          //   gridValues: { xl: 4, lg: 4, md: 4, sm: 4, xs: 4 },
+                          //   onChange: (event) => {
+                          //     setConfiguracionMobiliarioBasico((prev: any) => {
+                          //       prev[mobiliarioBasico.idconcepto] = {
+                          //         ...prev[mobiliarioBasico.idconcepto],
+                          //         estado: event.target.value,
+                          //         idmobiliarioequipo:
+                          //           mobiliarioBasico.idconcepto,
+                          //       };
+                          //       return prev;
+                          //     });
+                          //   },
+                          // },
                         ]}
                         idForEdit={mobiliarioBasico.idconcepto}
                         getByIdFunction={findByIdMobiliarioSetConfiguracion}
@@ -252,14 +273,14 @@ function Condicion_de_vivienda() {
                 return idMobiliarioCheck && estadoCantidadCheck;
               });
 
-              if (validateRequired.length) {
-                return "Hay campos requeridos que no tienen información";
-              }
+              // if (validateRequired.length) {
+              //   return "Hay campos requeridos que no tienen información";
+              // }
               if (Object.values(errors).length) {
                 return "Hay valores incorrectos en las declaraciones de los mobiliarios";
               }
               if (!Object.values(configuraciónMobiliarioBasico).length) {
-                return "Debe introducir datos para guardar la planilla";
+                return "Debe introducir los datos de los muebles y equipos";
               }
             }}
             submitFunction={(values: any) => {
@@ -280,10 +301,10 @@ function Condicion_de_vivienda() {
               );
               notificar({
                 type: "success",
-                title:
-                  "Se han adicionado los datos de la vivienda satisfactoriamente",
+                title: "Los datos  de mobiliario básico y equipos funcionando se han adicionado satisfactoriamente",
                 content: "",
               });
+              setListo(true);
             }}
             getByIdFunction={(id) =>
               obtenerDatosPorLlave(
@@ -294,12 +315,13 @@ function Condicion_de_vivienda() {
             }
             nextButton={{ text: "Siguiente", action: siguiente }}
             prevButton={{ text: "Anterior", action: anterior }}
+            nextDisabledFunction={(values) => !listo}
             applyButton={false}
           />
         )
       ) : (
-        <Typography variant="h4" margin={2}>
-          No hogar seleccionado...
+        <Typography variant="h6" margin={2}>
+          No existe un hogar seleccionado
         </Typography>
       )}
     </>

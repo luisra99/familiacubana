@@ -319,7 +319,7 @@ export const Observaciones: IGenericControls = {
   label: "Observaciones E/R y del trabajador social a cargo",
   name: "observaciones",
   gridValues: { xs: 12, lg: 12, md: 12, sm: 12, xl: 12 },
-  validations: { required: { message: "Este campo es obligatorio" } },
+  // validations: { required: { message: "Este campo es obligatorio" } },
   multiline: { minRows: 6 },
 };
 

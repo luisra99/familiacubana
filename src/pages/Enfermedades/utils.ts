@@ -24,15 +24,10 @@ export async function nomenclarEnfermedades(enfermedadesMiembro: any) {
       const enfermedadMiembro = await datico.nom_concepto.get(
         parseInt(enfermedad?.idtipoenfermedad[0] ?? 0)
       );
-      const viaAccesoMedicamento = await datico.dat_viasacceso
-        .where({
-          idmiembroenfcronica: parseInt(enfermedad?.idmiembroenfcronica),
-        })
-        .toArray();
       const viasConceptos = await datico.nom_concepto
         .where("idconcepto")
         .anyOf(
-          viaAccesoMedicamento[0]?.idtipoviaacceso?.map((idConceptoVia: any) =>
+          enfermedad?.idtipoviaacceso?.map((idConceptoVia: any) =>
             parseInt(idConceptoVia)
           )
         )

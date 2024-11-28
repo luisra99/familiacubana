@@ -2,22 +2,15 @@ import * as React from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
-import Chip from "@mui/material/Chip";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
-import Link from "@mui/material/Link";
-import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
-import DevicesRoundedIcon from "@mui/icons-material/DevicesRounded";
-import EdgesensorHighRoundedIcon from "@mui/icons-material/EdgesensorHighRounded";
 import ViewQuiltRoundedIcon from "@mui/icons-material/ViewQuiltRounded";
-import { borderColor } from "@mui/system";
 
 const items = [
   {
     icon: <ViewQuiltRoundedIcon />,
-    title: "Módulo 1",
+    title: "Componente 1",
     description:
       "Registra información general de los hogares, la vivienda y los miembros que la componen.",
     imageLight:
@@ -27,7 +20,7 @@ const items = [
   },
   {
     icon: <ViewQuiltRoundedIcon />,
-    title: "Módulo 2",
+    title: "Componente 2",
     description:
       "Registra las entradas monetarias que reciben todos los miembros del hogar.",
     imageLight:
@@ -37,7 +30,7 @@ const items = [
   },
   {
     icon: <ViewQuiltRoundedIcon />,
-    title: "Módulo 3",
+    title: "Componente 3",
     description:
       "Registra las actividades laborales, de estudios u otras, habituales de los miembros adultos del hogar.",
     imageLight:
@@ -47,7 +40,7 @@ const items = [
   },
   {
     icon: <ViewQuiltRoundedIcon />,
-    title: "Módulo 4",
+    title: "Componente 4",
     description:
       "Capta la situación de los miembros del hogar en cuanto a sus condiciones de vida, incluyendo la cobertura de sus necesidades.",
     imageLight:
@@ -57,7 +50,7 @@ const items = [
   },
   {
     icon: <ViewQuiltRoundedIcon />,
-    title: "Módulo 5",
+    title: "Componente 5",
     description:
       "Registra los beneficios de programas de protección social y cuidados a los que acceden o necesitan acceder los miembros de la familia.",
     imageLight:
@@ -67,7 +60,7 @@ const items = [
   },
   {
     icon: <ViewQuiltRoundedIcon />,
-    title: "Módulo 6",
+    title: "Componente 6",
     description:
       "Se registra la situación de niños, niñas, adolescentes y jóvenes del hogar.",
     imageLight:
@@ -77,7 +70,7 @@ const items = [
   },
   {
     icon: <ViewQuiltRoundedIcon />,
-    title: "Módulo 7",
+    title: "Componente 7",
     description:
       "Se registran las condiciones de la vivienda, acceso a servicios y equipamiento del hogar.",
     imageLight:
@@ -87,7 +80,7 @@ const items = [
   },
   {
     icon: <ViewQuiltRoundedIcon />,
-    title: "Módulo 8",
+    title: "Componente 8",
     description:
       "Se registran los gastos, consumo y disponibilidad de alimentos y estrategias de solución de problemas en el hogar de conjunto.",
     imageLight:
@@ -97,7 +90,7 @@ const items = [
   },
   {
     icon: <ViewQuiltRoundedIcon />,
-    title: "Módulo 9",
+    title: "Componente 9",
     description:
       "Se consolida la información y se muestra según los modelos aestablecidos.",
     imageLight:

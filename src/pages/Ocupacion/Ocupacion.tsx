@@ -33,7 +33,23 @@ function Ocupacion() {
   });
 
   const navegar = useNavigate();
-  const siguiente = () => navegar("/ocupacion/no-vinculado");
+  const siguiente = async () => {
+    const data = await obtenerMiembros();
+    const data_ocupacion = await datico.dat_miembroocupacion.toArray();
+    const filterdata = data?.filter((ele) => {
+      return data_ocupacion?.some((ocupacion: any) => {
+        console.log("ocupaciopn", ocupacion);
+        return (
+          ele.idconcepto === parseInt(ocupacion.idmiembrohogar[0]) &&
+          (ocupacion?.idtipoocupacion?.includes("9329") ||
+            ocupacion?.idtipoocupacion?.includes(9344) ||
+            ocupacion?.idtipoocupacion?.includes(9346))
+        );
+      });
+    });
+    if (!filterdata.length) navegar("/autonomia/discapacidad");
+    else navegar("/ocupacion/no-vinculado");
+  };
   const anterior = () => navegar("/ingresos");
   const notificar = NotificationProvider();
 
@@ -89,13 +105,13 @@ function Ocupacion() {
             );
           });
     if (values.editMode) {
-      await (datico as any)["dat_miembroocupacion"]
-        .where("idmiembrohogar")
+      await(datico as any)
+        ["dat_miembroocupacion"].where("idmiembrohogar")
         .equals([id.toString()])
         .modify({
           idocupacion: values.idocupacion,
           idtipoocupacion:
-            values.idocupacion == "9350" ? ["9350"] : values.idtipoocupacion,
+            values.idocupacion == "9350" ? ["9329"] : values.idtipoocupacion,
           idmiembrohogar: [values.idmiembrohogar[0]],
           idcodigohogar: getHogar(),
         })
@@ -103,7 +119,7 @@ function Ocupacion() {
           notificar({
             type: "success",
             title:
-              "La ocupaciones del miembro han sido modificadas correctamente",
+              "La(s) ocupación(es) del miembro han sido modificado satisfactoriamente",
             content: "",
           })
         );
@@ -111,13 +127,14 @@ function Ocupacion() {
       crear("dat_miembroocupacion", {
         idocupacion: values.idocupacion,
         idtipoocupacion:
-          values.idocupacion == "9350" ? ["9350"] : values.idtipoocupacion,
+          values.idocupacion == "9350" ? ["9329"] : values.idtipoocupacion,
         idmiembrohogar: [values.idmiembrohogar[0]],
         idcodigohogar: getHogar(),
       });
       notificar({
         type: "success",
-        title: "La ocupaciones del miembro han sido adicionada correctamente",
+        title:
+          "La(s) ocupación(es) del miembro han sido adicionada(s) satisfactoriamente",
         content: "",
       });
     }
@@ -257,9 +274,8 @@ function Ocupacion() {
               labelPlacement: "end",
               gridValues: { xl: 12, lg: 12, md: 12, sm: 12, xs: 12 },
               onChangeCallback: (e, ref) => {
-                 const { value } = e.target;
-                if (value == "9350")
-                  ref.setFieldValue("idtipoocupacion",[]);
+                const { value } = e.target;
+                if (value == "9350") ref.setFieldValue("idtipoocupacion", []);
                 onChangeMiembro();
               },
             },
@@ -302,23 +318,26 @@ function Ocupacion() {
           showSpecificDescription={false}
           idForEdit={id}
           saveButton="Guardar"
-          notifyValidation={(values) => {values.idtipoocupacion =
-            values.idocupacion === "9328"
-              ? values.idtipoocupacion?.filter((tipoOcupacion: any) => {
-                  return trabajando.find(
-                    (concepto: any) => concepto.idconcepto === tipoOcupacion
-                  );
-                })
-              : values.idtipoocupacion?.filter((tipoOcupacion: any) => {
-                  return sintrabajar.find(
-                    (concepto: any) => concepto.idconcepto === tipoOcupacion
-                  );
-              });
-            if (
-              values.idtipoocupacion?.length < 1 &&
-              values.idocupacion != "9350"
-            )
-              return "Debe tener al menos una ocupación seleccionada";
+          notifyValidation={(values) => {
+            if (Array.isArray(values.idtipoocupacion)) {
+              values.idtipoocupacion =
+                values.idocupacion === "9328"
+                  ? values.idtipoocupacion?.filter((tipoOcupacion: any) => {
+                      return trabajando.find(
+                        (concepto: any) => concepto.idconcepto === tipoOcupacion
+                      );
+                    })
+                  : values.idtipoocupacion?.filter((tipoOcupacion: any) => {
+                      return sintrabajar.find(
+                        (concepto: any) => concepto.idconcepto === tipoOcupacion
+                      );
+                    });
+              if (
+                values.idtipoocupacion?.length < 1 &&
+                values.idocupacion != "9350"
+              )
+                return "Debe tener al menos una ocupación seleccionada";
+            }
           }}
           submitFunction={submitMiembroOcupacion}
           getByIdFunction={obtenerMiembroOcupacion}

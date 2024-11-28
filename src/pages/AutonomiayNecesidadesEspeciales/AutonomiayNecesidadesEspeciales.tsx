@@ -2,6 +2,7 @@ import { Button, Stack, Typography } from "@mui/material";
 import { Delete, Edit } from "@mui/icons-material";
 import {
   crear,
+  CreateOrModify,
   eliminar,
   modificar,
   obtenerDatosPorLlave,
@@ -11,7 +12,7 @@ import {
   obtenerGradoAutonomia,
   tieneDiscapacidad,
 } from "./helpers";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { FormularioEviel1 } from "@/app/user-interfaces/forms/forms.config";
 import GenericForm from "@/_pwa-framework/genforms/components/form-components/form.generic";
@@ -27,6 +28,7 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { useLocalStorage } from "@uidotdev/usehooks";
 import useModalState from "@/_pwa-framework/hooks/form/use-form-manager";
 import { useNavigate } from "react-router-dom";
+import { moveMessagePortToContext } from "worker_threads";
 
 function AutonomiayNecesidadesEspeciales() {
   const { modalActions } = useModalState();
@@ -41,7 +43,62 @@ function AutonomiayNecesidadesEspeciales() {
   const [aditamentosFiltrados, setAditamentosFiltrados] = useState<any>([]);
   const confirm = useConfirm();
 
-  const aditamentosControl: IGenericControls = {
+
+  const AditamentosForm = useCallback(() => miembros.map((miembro: { idconcepto: any }) => (
+    <GenericForm
+      name={`aditamento-${miembro.idconcepto}`}
+      controls={aditamentosControl}
+      title="Adicionar aditamento"
+      endpointPath="persona"
+      showSpecificDescription={false}
+      idForEdit={idAditamento}
+      setIdFunction={setIdAditamento}
+      modalType="fullWith"
+      submitFunction={(values: any) => {
+        delete values.editMode;
+        if (idAditamento) {
+          modificar(
+            "dat_miembroaditamentos",
+            "idmiembroaditamentos",
+            idAditamento,
+            values
+          ).then(() => {
+            notificar({
+              type: "success",
+              title:
+                "El aditamento ha sido modificado satisfactoriamente",
+              content: "",
+            });
+            LoadAditamentos(miembro.idconcepto);
+          });
+        } else {
+          crear("dat_miembroaditamentos", {
+            ...values,
+            idcodigohogar: getHogar(),
+            idmiembrohogar: miembro.idconcepto,
+          }).then(() => {
+            notificar({
+              type: "success",
+              title:
+                "El aditamento ha sido adicionado satisfactoriamente",
+              content: "",
+            });
+            LoadAditamentos(miembro.idconcepto);
+          });
+        }
+      }}
+      getByIdFunction={async (id) => {
+        const arr = await obtenerDatosPorLlave(
+          "dat_miembroaditamentos",
+          "idmiembroaditamentos",
+          id
+        );
+
+        return arr[0];
+      }}
+    />
+  )), [aditamentosFiltrados])
+  const aditamentosControl: IGenericControls[] = [{
     type: "select",
     label: "Aditamentos",
     name: "idaditamento",
@@ -51,7 +108,17 @@ function AutonomiayNecesidadesEspeciales() {
     disabledOnEdit: true,
     gridValues: { xs: 12, sm: 6, lg: 6, md: 6, xl: 6 },
     options: aditamentosFiltrados,
-  };
+  }, {
+    type: "select",
+    label: "Disponibilidad",
+    name: "disponeadit",
+    url: "9395",
+    validations: {
+      required: { message: "Debe seleccionar la disponibilidad" },
+    },
+    gridValues: { xs: 12, sm: 6, lg: 6, md: 6, xl: 6 },
+  }]
+
 
   useEffect(() => {
     cargarNomencladores();
@@ -99,19 +166,47 @@ function AutonomiayNecesidadesEspeciales() {
   });
 
   const submitGradoAutonomia = async (values: any) => {
-    delete values.editMode;
-    await crear("dat_miembrogradoautonomia", {
-      ...values,
-      idmiembrohogar: values.idmiembro[0],
-      idcodigohogar: getHogar(),
-    }).then(() => {
+    try {
+      if (values.editMode)
+        delete values.editMode;
+
+      // Crear nuevo registro
+      const newRecord = {
+        ...values,
+        idmiembrohogar: values.idmiembro[0],
+        idcodigohogar: getHogar(),
+      };
+      await CreateOrModify(
+        "dat_miembrogradoautonomia",
+        {
+          idmiembrohogar: values.idmiembro[0],
+          idcodigohogar: getHogar(),
+        },
+        newRecord,
+        "idmiembrogradoautonomia"
+      );
+
+      // Actualizar el estado del formulario
+      setDataTable([]);
+
       notificar({
         type: "success",
         title:
           "Se han adicionado los datos de autonomía y necesidades especiales al miembro satisfactoriamente",
         content: "",
       });
-    });
+
+      // Cargar nuevamente los datos actualizados
+      LoadAditamentos(values.idmiembro[0]);
+    } catch (error) {
+      console.error("Error al guardar:", error);
+      notificar({
+        type: "error",
+        title: "Error al guardar",
+        content:
+          "Ha ocurrido un error al guardar los datos. Por favor, intente nuevamente.",
+      });
+    }
   };
 
   const navegar = useNavigate();
@@ -168,6 +263,11 @@ function AutonomiayNecesidadesEspeciales() {
                   required: { message: "Este campo es obligatorio" },
                 },
                 disabled: (values) => !values.idmiembro.length,
+                onChange: (event, ref) => {
+                  event.target.value == "9372"
+                    ? ref.setFieldValue("idmiembrodiscapacidad", ["1"], false)
+                    : ref.setFieldValue("idmiembrodiscapacidad", [], false);
+                },
               },
               {
                 type: "component",
@@ -241,7 +341,9 @@ function AutonomiayNecesidadesEspeciales() {
                 validations: {
                   required: { message: "Este campo es obligatorio" },
                 },
-                disabled: (values) => !values.idmiembro.length,
+
+                disabled: (values) =>
+                  !values.idmiembro.length || values.idautonomia == "9372",
               },
               {
                 type: "multiselect",
@@ -353,9 +455,12 @@ function AutonomiayNecesidadesEspeciales() {
             endpointPath="persona"
             showSpecificDescription={false}
             nextDisabledFunction={() => {
-              return (
-                miembros?.length !== checkDiscapacidad?.split?.(",")?.length
-              );
+              const miembrosCheck = checkDiscapacidad.includes(",")
+                ? checkDiscapacidad?.split?.(",")?.length
+                : checkDiscapacidad.length > 0
+                  ? 1
+                  : 0;
+              return miembros?.length !== miembrosCheck;
             }}
             nextButton={{ text: "Siguiente", action: siguiente }}
             prevButton={{ text: "Anterior", action: anterior }}
@@ -374,73 +479,19 @@ function AutonomiayNecesidadesEspeciales() {
             getByIdFunction={(id) => obtenerGradoAutonomia(id)}
           />
         ) : (
-          <Typography mx={2} my={2}>
+          <Typography variant="h6" p={2}>
             <b>No existen miembros en el hogar seleccionado </b>
           </Typography>
         )
       ) : (
-        <Typography mx={2} my={2}>
-          <b>No hay un hogar seleccionado </b>
+        <Typography variant="h6" p={2}>
+          <b>No existe un hogar seleccionado </b>
         </Typography>
       )}
 
-      {id &&
-        miembros.map((miembro: { idconcepto: any }) => (
-          <GenericForm
-            name={`aditamento-${miembro.idconcepto}`}
-            controls={[aditamentosControl, ...FormularioEviel1]}
-            title="Adicionar aditamento"
-            endpointPath="persona"
-            showSpecificDescription={false}
-            idForEdit={idAditamento}
-            setIdFunction={setIdAditamento}
-            modalType="fullWith"
-            submitFunction={(values: any) => {
-              delete values.editMode;
-              if (idAditamento) {
-                modificar(
-                  "dat_miembroaditamentos",
-                  "idmiembroaditamentos",
-                  idAditamento,
-                  values
-                ).then(() => {
-                  notificar({
-                    type: "success",
-                    title:
-                      "El aditamento ha sido modificado satisfactoriamente",
-                    content: "",
-                  });
-                  LoadAditamentos(miembro.idconcepto);
-                });
-              } else {
-                crear("dat_miembroaditamentos", {
-                  ...values,
-                  idcodigohogar: getHogar(),
-                  idmiembrohogar: miembro.idconcepto,
-                }).then(() => {
-                  notificar({
-                    type: "success",
-                    title:
-                      "El aditamento ha sido adicionado satisfactoriamente",
-                    content: "",
-                  });
-                  LoadAditamentos(miembro.idconcepto);
-                });
-              }
-            }}
-            getByIdFunction={async (id) => {
-              const arr = await obtenerDatosPorLlave(
-                "dat_miembroaditamentos",
-                "idmiembroaditamentos",
-                id
-              );
-
-              return arr[0];
-            }}
-          />
-        ))}
+      {id && <AditamentosForm/>
+      }
     </>
   );
 }
-
 export default AutonomiayNecesidadesEspeciales;

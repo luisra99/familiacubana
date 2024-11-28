@@ -46,7 +46,7 @@ export default function LanguagePopover() {
 
   return (
     <>
-      <IconButton
+      {/* <IconButton
         onClick={handleOpen}
         sx={{
           width: 40,
@@ -55,7 +55,7 @@ export default function LanguagePopover() {
         }}
       >
         <img src={`/assets/icons/flags/${language}.svg`} alt={LANGS[0].label} />
-      </IconButton>
+      </IconButton> */}
 
       <Popover
         open={!!open}

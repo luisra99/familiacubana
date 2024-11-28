@@ -115,7 +115,7 @@ export const lastControls: IGenericControls[] = [
     label: "Medicamentos",
     name: "proporciongastomedicamento",
     gridValues: { xs: 12, sm: 6, lg: 6, md: 6, xl: 6 },
-    url: "9639",
+    url: "10420",
     validations: {
       required: { message: "Este campo es obligatorio" },
     },

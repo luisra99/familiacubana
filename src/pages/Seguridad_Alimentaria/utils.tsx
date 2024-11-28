@@ -91,7 +91,7 @@ export const topElements: IGenericControls[] = [
     component: () => (
       <>
         <Typography sx={{ mt: 4 }} flex={1} textAlign={"center"}>
-          <b>Frecuencia</b>
+          <b>Frecuencia de consumo</b>
         </Typography>
       </>
     ),
@@ -170,14 +170,8 @@ export const midElements: IGenericControls[] = [
   },
 ];
 export const message = (
-  <Typography
-    variant="h5"
-    p={2}
-    flex={1}
-    flexDirection={"row"}
-    textAlign={"center"}
-  >
-    No hay hogar seleccionado
+  <Typography variant="h6" p={2} flex={1} flexDirection={"row"}>
+    No existe un hogar seleccionado
   </Typography>
 );
 export function useSeguridadAlimentaria(): [
@@ -193,10 +187,13 @@ export function useSeguridadAlimentaria(): [
   anterior: () => void,
   cereales: any[],
   estrategias: any[],
+  setListo: any,
+  listo: boolean,
 ] {
   const notificar = NotificationProvider();
   const [cereales, setCereales] = useState([]);
   const [estrategias, setEstrategias] = useState([]);
+  const [listo, setListo] = useState<any>(false);
   const navegar = useNavigate();
   const siguiente = () => navegar("/estrategia/otros");
   const anterior = () => navegar("/estrategia/gastos");
@@ -253,6 +250,7 @@ export function useSeguridadAlimentaria(): [
       title:
         "Los datos de seguridad alimentaria han sido adicionados satisfactoriamente",
     });
+    setListo(true);
   };
   const getByIdFunction = (id: any) =>
     obtenerDatosPorLlave(
@@ -290,5 +288,7 @@ export function useSeguridadAlimentaria(): [
     anterior,
     cereales,
     estrategias,
+    setListo,
+    listo,
   ];
 }

@@ -122,8 +122,8 @@ function DatosDeEntrevista() {
           getByIdFunction={obtenerObservaciones}
         />
       ) : (
-        <Typography mx={2} my={2}>
-          <b>Debe haber un hogar seleccionado..</b>
+        <Typography variant="h6" p={2}>
+          <b>No existe un hogar seleccionado</b>
         </Typography>
       )}
     </>

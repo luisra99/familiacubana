@@ -13,7 +13,7 @@ export const ScannerGeneric = ({
   parseFunction,
   closeOnScan,
 }: any) => {
-  const { setFieldValue, setFieldTouched, values } = useFormikContext();
+  const { setFieldValue, values } = useFormikContext();
 
   const [open, setOpen] = useState(false);
   const handleClose = () => {
@@ -68,7 +68,6 @@ export const ScannerGeneric = ({
               if (names.length) {
                 names.forEach((key: string) => {
                   setFieldValue(key, values[key]);
-                  setFieldTouched(key);
                 });
               }
             }}

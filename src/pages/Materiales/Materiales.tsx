@@ -16,19 +16,51 @@ import { Typography } from "@mui/material";
 import { datico } from "@/app/user-interfaces/forms/models/model";
 import { getHogar } from "@/app/hogarController/hogar.controller";
 import { useNavigate } from "react-router-dom";
+import { obtenerMiembros } from "@/app/user-interfaces/forms/models/controllers.miembrohogar";
 
 function Materiales() {
   const navegar = useNavigate();
   const idHogar = getHogar();
   const siguiente = () => navegar("/servicios-equipamientos/afectaciones");
   const notificar = NotificationProvider();
-  const anterior = () => navegar("/adolecentes");
+  const anterior = async () => {
+    const data = await obtenerMiembros();
+    const miembros = data.filter((item) => item.edad <= 18);
+    console.log("menores", miembros)
+
+    if (miembros?.length) navegar("/adolecentes");
+    else navegar("/proteccion");
+  };
+
+
+
+
+  const [listo, setListo] = useState<any>(false);
 
   const [treeData, setTreeData] = useState([]);
+  const [isSaved, setIsSaved] = useState(false); // Nuevo estado
+
+  const checkListo = async (id: string) => {
+    const datos: any = await obtenerDatosPorLlave(
+      "dat_afectacionmatvivienda",
+      "idcodigohogar",
+      id
+    );
+    setListo(!!datos?.length);
+  };
+
+  useEffect(() => {
+    console.log("efecto hogar", idHogar);
+    if (idHogar) {
+      checkListo(idHogar);
+    }
+  }, [idHogar]);
+
 
   useEffect(() => {
     cargarArbol();
   }, []);
+
   const cargarArbol = async () => {
     let arbol: any = [];
     await datico.nom_concepto
@@ -52,7 +84,9 @@ function Materiales() {
         setTreeData(arbol);
       });
   };
+
   const [id, setid] = useState<any>(null);
+
   return (
     <>
       <Meta title="Controles" />
@@ -143,6 +177,8 @@ function Materiales() {
               title:
                 "Los materiales predominantes se han guardado satisfactoriamente",
             });
+
+            setListo(true); // Actualizar estado cuando los datos se han guardado
           }}
           getByIdFunction={async (id) => {
             const materiales = await obtenerDatosPorLlave(
@@ -160,11 +196,6 @@ function Materiales() {
               idsituacionalegal: hogar.idsituacionalegal,
             };
           }}
-          // nextButton={{
-          //   text: "Siguiente",
-          //   action: siguiente,
-          //   submitOnAction: true,
-          // }}
           acceptDisabledFunction={(values) => {
             return !(
               values.idsituacionalegal?.length > 0 &&
@@ -173,10 +204,11 @@ function Materiales() {
           }}
           prevButton={{ text: "Anterior", action: anterior }}
           nextButton={{ text: "Siguiente", action: siguiente }}
+          nextDisabledFunction={(values) => !listo}
           applyButton={false}
         />
       ) : (
-        <Typography mx={2} my={2}>
+        <Typography variant="h6" p={2}>
           <b>No existe un hogar seleccionado</b>
         </Typography>
       )}

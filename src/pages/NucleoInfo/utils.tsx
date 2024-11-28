@@ -1,40 +1,72 @@
 import { Divider, Typography } from "@mui/material";
+import { datico as db } from "@/app/user-interfaces/forms/models/model";
 
 import { IGenericControls } from "@/_pwa-framework/genforms/types/controls/controls.types";
 import { parseQrToCi } from "@/utils/parse/qr-to-ci";
-import { calcularEdadByCi } from "./NucleoInfo";
+
+export function calcularEdadByCi(ci: string) {
+  if (ci?.length === 11) {
+    let fechaNacStr = ci.substring(0, 6);
+    // convertir la cadena de fecha en un objeto Date
+    let año = parseInt(fechaNacStr.substring(0, 2)) + 1900;
+    let mes = parseInt(fechaNacStr.substring(2, 4)) - 1;
+    let día = parseInt(fechaNacStr.substring(4, 6));
+    let fechaNac = new Date(año, mes, día);
+    let hoy = new Date();
+    // calcular la diferencia en años
+    let edad = hoy.getFullYear() - fechaNac.getFullYear();
+    // ajustar la edad si aún no ha llegado el cumpleaños del año actual
+    if (
+      hoy.getMonth() < fechaNac.getMonth() ||
+      (hoy.getMonth() === fechaNac.getMonth() &&
+        hoy.getDate() < fechaNac.getDate())
+    ) {
+      edad--;
+    }
+    // siglo XIX  9
+    // siglo XX 0-5
+    // siglo XXI 6-8
+    const siglo = parseInt(ci.at(6) ?? "10");
+    if (edad >= 100 && siglo >= 6 && siglo <= 8) {
+      edad -= 100;
+    }
+    return edad;
+  } else {
+    return 0;
+  }
+}
 
 export const pnombre: IGenericControls = {
   type: "text",
-  label: "Nombre",
+  label: "Nombres",
   name: "pnombre",
-  pattern: /[A-z]/,
+  pattern: /^[A-Za-záéíóúÁÉÍÓÚñÑ\s]+$/,
   gridValues: { xl: 6, lg: 6, md: 6, sm: 12, xs: 12 },
   validations: { required: { message: "Este campo es obligatorio" } },
 };
-export const snombre: IGenericControls = {
-  type: "text",
-  label: "Segundo nombre",
-  name: "snombre",
-  pattern: /[A-z]/,
-  gridValues: { xl: 6, lg: 6, md: 6, sm: 12, xs: 12 },
-};
+// export const snombre: IGenericControls = {
+//   type: "text",
+//   label: "Segundo nombre",
+//   name: "snombre",
+//   pattern: /[A-z]/,
+//   gridValues: { xl: 6, lg: 6, md: 6, sm: 12, xs: 12 },
+// };
 export const papellido: IGenericControls = {
   type: "text",
-  label: "Primer apellido",
+  label: "Apellidos",
   name: "papellido",
-  pattern: /[A-z]/,
+  pattern: /^[A-Za-záéíóúÁÉÍÓÚñÑ\s]+$/,
   gridValues: { xl: 6, lg: 6, md: 6, sm: 12, xs: 12 },
   validations: { required: { message: "Este campo es obligatorio" } },
 };
-export const sapellido: IGenericControls = {
-  type: "text",
-  label: "Segundo apellido",
-  name: "sapellido",
-  pattern: /[A-z]/,
-  gridValues: { xl: 6, lg: 6, md: 6, sm: 12, xs: 12 },
-  validations: { required: { message: "Este campo es obligatorio" } },
-};
+// export const sapellido: IGenericControls = {
+//   type: "text",
+//   label: "Segundo apellido",
+//   name: "sapellido",
+//   pattern: /[A-z]/,
+//   gridValues: { xl: 6, lg: 6, md: 6, sm: 12, xs: 12 },
+//   validations: { required: { message: "Este campo es obligatorio" } },
+// };
 export const cidentidad: IGenericControls = {
   type: "text",
   label: "Carnet de identidad",
@@ -75,7 +107,7 @@ export const nota: IGenericControls = {
       <br></br>. El parentesco se establece con relación al jefe(a) de hogar
       <br></br>. Si al preguntar el sexo la persona no responde femenino o
       masculino selecciona la opción correspondiente en{" "}
-      <i>Orientación sexual</i>
+      <i>Identidad sexual</i>
       <br></br>.  Si es posible, respetuosamente, indagar qué otro elige y  escribir en el campo de las observaciones
     </Typography>
   ),
@@ -171,7 +203,7 @@ export const idsexo: IGenericControls = {
 };
 export const idorientacionsex: IGenericControls = {
   type: "select",
-  label: "Orientación sexual",
+  label: "Identidad sexual",
   gridValues: { xl: 4, lg: 4, md: 4, sm: 12, xs: 12 },
   name: "idorientacionsex",
   url: "10210",
@@ -250,3 +282,52 @@ export const cantidadhijos: IGenericControls = {
   hidden: (values: any) => values.idsexo != "9285",
  // validations: {required:{message:"Este campo es obligatorio", when:{name:"idsexo", expression:(value)=>value[0]=="1"}}}
 };
+export function getAbreviatura(idconcepto?: number, grado?: string) {
+  if (typeof idconcepto === "undefined") {
+    return "";
+  } else {
+    if (grado) {
+      return `${abrevNomenclador[idconcepto.toString()]} (${grado})`;
+    } else {
+      return abrevNomenclador[idconcepto.toString()];
+    }
+  }
+}
+export async function unionNomenclador(arr: any) {
+  const join = await Promise.all(
+    arr.map(async (obj: any) => {
+      // ;
+      const colorpiel = await db.nom_concepto.get(
+        parseInt(obj?.idcolorpiel[0] ?? 0)
+      );
+      const nivelescolar = await db.nom_concepto.get(
+        parseInt(obj.idnivelescolar ? obj.idnivelescolar : 0)
+      );
+      const gradoscolar = await db.nom_concepto.get(
+        parseInt(obj.idnivelescolargrado ? obj.idnivelescolargrado : 0)
+      );
+      const gradovencido = await db.nom_concepto.get(
+        parseInt(obj.idgradovencido ? obj.idgradovencido : 0)
+      );
+      const parentesco = await db.nom_concepto.get(
+        parseInt(obj?.idparentesco[0] ?? 0)
+      );
+      const sexo = await db.nom_concepto.get(parseInt(obj?.idsexo[0] ?? 0));
+      return {
+        ...obj,
+        colorpiel: getAbreviatura(colorpiel?.idconcepto),
+        nivelescolar: getAbreviatura(nivelescolar?.idconcepto),
+        gradoscolar: getAbreviatura(
+          gradoscolar?.idconcepto,
+          gradovencido?.denominacion
+        ),
+        parentesco:
+          parentesco?.idconcepto == 9270
+            ? parentesco?.denominacion
+            : getAbreviatura(parentesco?.idconcepto),
+        sexo: getAbreviatura(sexo?.idconcepto),
+      };
+    })
+  );
+  return join;
+}

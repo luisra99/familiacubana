@@ -16,22 +16,33 @@ export const CustomTree = ({
   name,
   setFieldValue,
   defaultValues,
+  onClick,
+  checkBox = false,
 }: {
   data: any;
   parentIcon: FC<SvgIconProps>;
   childrenIcon: FC<SvgIconProps>;
+  checkBox?: boolean;
   defaultValues?: any[];
   multiSelect?: boolean;
   name?: string;
   setFieldValue?: any;
+  onClick?: any;
 }) => {
-  const [selected, setSelected] = useState<any[]>(defaultValues ?? []);
+  const [selected, setSelected] = useState<any[]>(
+    defaultValues ? [`${defaultValues}`] : []
+  );
 
   useEffect(() => {
+    console.log(defaultValues);
     if (Array.isArray(defaultValues)) setSelected(defaultValues);
   }, [defaultValues]);
+  useEffect(() => {
+    console.log(selected);
+  }, [selected]);
 
   const handleChecked = (e: any) => {
+    console.log(e);
     if (multiSelect) {
       const selectedIndex = selected.indexOf(e.target.name);
       let newSelected: any[] | ((prevState: never[]) => never[]) = [];
@@ -53,6 +64,7 @@ export const CustomTree = ({
       setFieldValue?.(name ?? "tree", e.target.name, false);
       setSelected([e.target.name]);
     }
+    onClick?.(e);
   };
 
   useEffect(() => {}, [selected]);
@@ -77,10 +89,11 @@ export const CustomTree = ({
                 handleChecked({ target: { name: `${node.value}` } });
             }}
           >
-            {multiSelect && !node.children && (
+            {(multiSelect || checkBox) && !node.children && (
               <Checkbox
-                checked={selected.indexOf(`${node.value}`) != -1}
+                checked={selected?.indexOf?.(`${node.value}`) != -1}
                 name={`${node.value}`}
+                id={`${node.label}`}
                 onClick={handleChecked}
               />
             )}

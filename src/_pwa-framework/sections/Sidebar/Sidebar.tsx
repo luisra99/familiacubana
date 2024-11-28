@@ -25,6 +25,7 @@ import { usePathname } from "@/_pwa-framework/routes/hooks";
 import { useResponsive } from "@/_pwa-framework/hooks/use-responsive";
 import { useSession } from "@/_pwa-framework/session/state";
 import useTheme from "@/_pwa-framework/store/theme";
+import { useLocalStorage } from "@uidotdev/usehooks";
 
 // ----------------------------------------------------------------------
 
@@ -33,6 +34,13 @@ export default function Nav({ openNav, onCloseNav }: any) {
   const [theme, themeActions] = useTheme();
   const [state] = useSession();
   const [open, setOpen] = useState<any>({});
+  const [denominacionEstructuraTree] = useLocalStorage<any>(
+    "denominacionEstructura"
+  );
+  useEffect(() => {
+    console.log("denominacionEstructuraTree", denominacionEstructuraTree);
+  }, [denominacionEstructuraTree]);
+
   const handleClick = (param?: string) => {
     param && setOpen((prevState: any) => ({ [param]: !prevState[param] }));
   };
@@ -167,12 +175,25 @@ export default function Nav({ openNav, onCloseNav }: any) {
         },
       }}
     >
-      {/* <Logo
-        sx={{ ml: 4, mt: 2, width: 50, height: 50 }}
-        onDoubleClick={themeActions.toggle}
-      /> */}
       {renderAccount}
       {selectedHome()}
+      <Box
+        sx={{
+          mb: 0.5,
+          mx: 2.5,
+          py: 2,
+          px: 2.5,
+          borderRadius: 1.5,
+          alignItems: "center",
+          bgcolor: (theme) => alpha(theme.palette.grey[500], 0.12),
+        }}
+      >
+        <Typography variant="body2" sx={{ color: "primary.main" }}>
+          {denominacionEstructuraTree?.length
+            ? `Consejo popular: ${denominacionEstructuraTree}`
+            : "Consejo popular no seleccionado"}
+        </Typography>
+      </Box>
       {drawerMenu()}
       <Box sx={{ flexGrow: 1 }} />
       {renderUpgrade}

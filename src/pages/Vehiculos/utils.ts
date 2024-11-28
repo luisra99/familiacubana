@@ -31,7 +31,7 @@ export const Vehiculo: IGenericControls[] = [
     type: "number",
     label: "Cantidad",
     name: "cantidad",
-    format: "other",
+    format: "units",
     negativeValues: false,
     gridValues: { xs: 12, sm: 4 },
     validations: {

@@ -47,18 +47,20 @@ function NoVinculado() {
   useLiveQuery(async () => {
     const data = await obtenerMiembros();
     const data_ocupacion = await datico.dat_miembroocupacion.toArray();
-    const filterdata = data?.filter((ele) => {
+
+    console.log("ocupaciopn", data_ocupacion);
+    const filterdata = data?.filter((persona) => {
       return data_ocupacion?.some((ocupacion: any) => {
-        console.log("ocupaciopn", ocupacion);
         return (
-          ele.idconcepto === parseInt(ocupacion.idmiembrohogar[0]) &&
-          (ocupacion?.idtipoocupacion?.includes("9350") ||
+          persona.idconcepto === parseInt(ocupacion.idmiembrohogar[0]) &&
+          (ocupacion?.idtipoocupacion?.includes(9350) ||
             ocupacion?.idtipoocupacion?.includes(9344) ||
-            ocupacion?.idtipoocupacion?.includes(9346))
+            ocupacion?.idtipoocupacion?.includes(9346) ||
+            ocupacion?.idtipoocupacion?.includes("9329"))
         );
       });
     });
-    if (!filterdata.length) siguiente();
+
     const discapacidad = await tieneDiscapacidad(data);
     setMiembros(filterdata);
     checkSetDiscapacidad(discapacidad);
@@ -146,7 +148,9 @@ function NoVinculado() {
             name="tesst"
             nextButton={{ text: "Siguiente", action: () => siguiente() }}
             prevButton={{ text: "Anterior", action: () => anterior() }}
-            // nextDisabledFunction={}
+            nextDisabledFunction={() =>
+              checkDiscapacidad.length != miembros.length
+            }
             controls={[
               {
                 type: "select",
@@ -176,7 +180,7 @@ function NoVinculado() {
                     denominacion: "No Apto o fuera de la edad laboral",
                   },
                 ],
-                //defaultValue: "9352",
+             
                 direction: "row",
                 labelPlacement: "end",
 
@@ -308,14 +312,14 @@ function NoVinculado() {
               idhogar
                 ? miembros.length
                   ? "Miembros adultos no vinculados al trabajo remunerado"
-                  : "No existen miembros sin ocupación que cumplan las condiciones..."
-                : "No hay un hogar seleccionado..."
+                  : "No existen miembros sin ocupación que cumplan las condiciones"
+                : "No hay un hogar seleccionado"
             }
             endpointPath="persona"
             showSpecificDescription={false}
-            nextDisabledFunction={() =>
-              miembros?.length !== checkDiscapacidad?.split?.(",")?.length
-            }
+            // nextDisabledFunction={() =>
+            //   miembros?.length !== checkDiscapacidad?.split?.(",")?.length
+            // }
             idForEdit={id}
             saveButton="Guardar"
             acceptDisabledFunction={(values) =>
@@ -572,7 +576,8 @@ function NoVinculado() {
         )
       ) : (
         <Typography variant="h6" m={2}>
-          No hay miembros agregados
+          No existen miembros en el hogar con las ocupaciones Auxiliares
+          familiares, Tareas del hogar y NTNE
         </Typography>
       )}
     </>

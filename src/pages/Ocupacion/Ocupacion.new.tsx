@@ -128,24 +128,26 @@ function Ocupacion() {
     }
     const submitMiembroOcupacion = async (values: any) => {
         if (values.editMode) {
-            await (datico as any)["dat_miembroocupacion"]
-                .where("idmiembrohogar")
-                .equals([values.idmiembrohogar])
-                .modify({
-                    idocupacion: values.idocupacion,
-                    idtipoocupacion:
-                        values.idocupacion == "9350" ? ["9350"] : values.idtipoocupacion,
-                    idmiembrohogar: [values.idmiembrohogar[0]],
-                    idcodigohogar: getHogar(),
+            await(datico as any)
+              ["dat_miembroocupacion"].where("idmiembrohogar")
+              .equals([values.idmiembrohogar])
+              .modify({
+                idocupacion: values.idocupacion,
+                idtipoocupacion:
+                  values.idocupacion == "9350"
+                    ? ["9350"]
+                    : values.idtipoocupacion,
+                idmiembrohogar: [values.idmiembrohogar[0]],
+                idcodigohogar: getHogar(),
+              })
+              .then(() =>
+                notificar({
+                  type: "success",
+                  title:
+                    "La(s) ocupación(es) del miembro han sido adicionada(s) satisfactoriamente",
+                  content: "",
                 })
-                .then(() =>
-                    notificar({
-                        type: "success",
-                        title:
-                            "La ocupaciones del miembro han sido modificadas correctamente",
-                        content: "",
-                    })
-                );
+              );
         } else {
             crear("dat_miembroocupacion", {
                 idocupacion: values.idocupacion,
@@ -156,7 +158,7 @@ function Ocupacion() {
             });
             notificar({
                 type: "success",
-                title: "La ocupaciones del miembro han sido adicionada correctamente",
+                title: "La(s) ocupación(es) del miembro han sido adicionada(s) satisfactoriamente",
                 content: "",
             });
         }

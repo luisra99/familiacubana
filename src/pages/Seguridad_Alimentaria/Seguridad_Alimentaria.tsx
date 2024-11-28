@@ -9,8 +9,12 @@ import GenericForm from "@/_pwa-framework/genforms/components/form-components/fo
 import Meta from "@/_pwa-framework/components/Meta";
 import { Typography } from "@mui/material";
 import { getHogar } from "@/app/hogarController/hogar.controller";
-import { obtener } from "@/app/user-interfaces/forms/models/controllers";
+import {
+  obtener,
+  obtenerDatosPorLlave,
+} from "@/app/user-interfaces/forms/models/controllers";
 import { useState } from "react";
+import { useEffect } from "react";
 
 function Seguridad_Alimentaria() {
   const [
@@ -21,11 +25,29 @@ function Seguridad_Alimentaria() {
     anterior,
     cereales,
     estrategias,
+    setListo,
+    listo,
   ] = useSeguridadAlimentaria();
   const hogar = getHogar();
 
   const [, setConfiguracionAlimentos] = useState({});
   const [, setConfiguracionEstrategias] = useState({});
+
+  const checkListo = async (id: string | number) => {
+    const datos: any = await obtenerDatosPorLlave(
+      "dat_hogarmobiliarioequipos",
+      "idhogarmobiliario",
+      id
+    );
+
+    setListo(!!datos?.length);
+  };
+
+  useEffect(() => {
+    if (hogar) {
+      checkListo(parseInt(hogar));
+    }
+  }, [hogar]);
 
   return (
     <>

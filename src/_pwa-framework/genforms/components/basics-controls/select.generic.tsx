@@ -48,12 +48,32 @@ export const BasicSelectFields = ({
   const value = (values as any)[name];
 
   useEffect(() => {
-    setFieldValue(name, initialValue ? initialValue : [], false);
+    setFieldValue(
+      name,
+      initialValue
+        ? multiple
+          ? Array.isArray(initialValue)
+            ? initialValue
+            : [initialValue]
+          : initialValue
+        : [],
+      false
+    );
   }, [initialValue]);
 
   useEffect(() => {
     if (hidden?.(values)) {
-      setFieldValue(name, initialValue ? initialValue : [], true);
+      setFieldValue(
+        name,
+        initialValue
+          ? multiple
+            ? Array.isArray(initialValue)
+              ? initialValue
+              : [initialValue]
+            : initialValue
+          : [],
+        true
+      );
     }
   }, []);
 

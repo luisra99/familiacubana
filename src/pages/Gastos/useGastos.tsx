@@ -16,7 +16,7 @@ import {
   Typography,
 } from "@mui/material";
 import { headControls, lastControls, mediumControls } from "./utils";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import GenericForm from "@/_pwa-framework/genforms/components/form-components/form.generic";
 import { IGenericControls } from "@/_pwa-framework/genforms/types/controls/controls.types";
@@ -38,10 +38,11 @@ function useGastos() {
   const [gastosFiltradosNo, setGastosFiltradosNo] = useState([]);
   const [gastoSeleccionado, setGastoSeleccionado] = useState(null);
   const [destinoGastos, setDestinoGastos] = useState<any>({});
+  const [listo, setListo] = useState<any>(false);
+  const [otrosPrioridad, setOtrosPrioridad] = useState<any>("");
   const [ordenDeLosGastosPrioridad, setOrdenDeLosGastosPrioridad] =
     useState<any>([]);
   const conceptosPredeterminados: number[] = [10149, 10158];
-  useEffect(() => {}, [ordenDeLosGastosPrioridad]);
 
   useLiveQuery(async () => {
     const gastos = await (datico as any)["nom_concepto"]
@@ -67,6 +68,7 @@ function useGastos() {
     );
     let gastosObject: any = {};
     let gastosPrioridad: any = [];
+    let cualOtros: string = "";
     gastosHogar.forEach((item) => {
       gastosObject[parseInt(item.iddestino)] = { monto: item.montocup };
       if (item.detalles) {
@@ -74,6 +76,9 @@ function useGastos() {
           ...gastosObject[parseInt(item.iddestino)],
           detalles: item.detalles,
         };
+      }
+      if (item.iddestino == "10161") {
+        cualOtros = item.detalles;
       }
       if (item.pesogasto) {
         gastosPrioridad[parseInt(item.pesogasto) - 1] = parseInt(
@@ -86,7 +91,7 @@ function useGastos() {
       idcodigohogar: id,
     });
     const proporcionGastosMedicamento = await obtener("dat_hogargastos", {
-      iddestino: "10158",
+      iddestino: "10149",
       idcodigohogar: id,
     });
     return datHogar[0].idtipogasto
@@ -98,6 +103,7 @@ function useGastos() {
             proporcionGastosMedicamento?.proporciongasto ?? [],
           destinoGastos: "",
           prioridad: gastosPrioridad,
+          cualOtros,
         }
       : {
           montocup: [],
@@ -105,6 +111,7 @@ function useGastos() {
           proporciongastomedicamento: [],
           destinoGastos: "",
           prioridad: "",
+          cualOtros,
         };
   };
   const getDestinoPorConcepto = async (id: any) => {
@@ -175,146 +182,176 @@ function useGastos() {
       return { idgastos: "", cual: "" };
     }
   };
-  const gastosPrioridad: IGenericControls[] = [
-    {
-      type: "component",
-      component: ({ setFieldValue }) =>
-        ordenDeLosGastosPrioridad && (
-          <Stack direction={"row"}>
-            <FormControl fullWidth>
-              <InputLabel>Destino de los gastos principales</InputLabel>
+  const gastosPrioridad = useCallback(
+    () => [
+      {
+        type: "component",
+        component: ({ setFieldValue }: any) =>
+          ordenDeLosGastosPrioridad && (
+            <Stack direction={"row"}>
+              <FormControl fullWidth>
+                <InputLabel>Destino de los gastos principales</InputLabel>
 
-              <Select
-                label={"Destino de los gastos principales"}
-                onChange={(event: any) =>
-                  setGastoSeleccionado(event.target.value)
-                }
-              >
-                {gastosFiltradosSi.map((gastos: any) => (
-                  <MenuItem value={gastos.idconcepto} key={gastos.idconcepto}>
-                    <InputLabel>{gastos.denominacion}</InputLabel>
-                  </MenuItem>
-                ))}
-                {/* {setFieldValue("prioridad", ordenDeLosGastosPrioridad)} */}
-              </Select>
-            </FormControl>
-            <IconButton
-              onClick={() => {
-                let _gastoSeleccionado: any = ordenDeLosGastosPrioridad;
-                let referenciaOrden: any = {};
-
-                if (Array.isArray(_gastoSeleccionado))
-                  _gastoSeleccionado.push(gastoSeleccionado);
-                else _gastoSeleccionado = [gastoSeleccionado];
-
-                _gastoSeleccionado.forEach(
-                  (idconcepto: string | number, index: number) => {
-                    referenciaOrden[idconcepto] = index;
+                <Select
+                  label={"Destino de los gastos principales"}
+                  onChange={(event: any) =>
+                    setGastoSeleccionado(event.target.value)
                   }
-                );
+                >
+                  {gastosFiltradosSi.map((gastos: any) => (
+                    <MenuItem value={gastos.idconcepto} key={gastos.idconcepto}>
+                      <InputLabel>{gastos.denominacion}</InputLabel>
+                    </MenuItem>
+                  ))}
+                  {/* {setFieldValue("prioridad", ordenDeLosGastosPrioridad)} */}
+                </Select>
+              </FormControl>
+              <IconButton
+                onClick={() => {
+                  let _gastoSeleccionado: any = ordenDeLosGastosPrioridad;
+                  let referenciaOrden: any = {};
 
-                let _gastosFiltrados = gastos.filter(
-                  (item: any) =>
-                    !_gastoSeleccionado.includes(item.idconcepto as never)
-                );
-                let _gastosFiltradosNo = gastos
-                  .filter((item: any) =>
-                    _gastoSeleccionado.includes(item.idconcepto as never)
-                  )
-                  .sort(
-                    (a: any, b: any) =>
-                      referenciaOrden[a.idconcepto] -
-                      referenciaOrden[b.idconcepto]
+                  if (Array.isArray(_gastoSeleccionado))
+                    _gastoSeleccionado.push(gastoSeleccionado);
+                  else _gastoSeleccionado = [gastoSeleccionado];
+
+                  _gastoSeleccionado.forEach(
+                    (idconcepto: string | number, index: number) => {
+                      referenciaOrden[idconcepto] = index;
+                    }
                   );
-                setFieldValue("prioridad", _gastoSeleccionado);
-                setGastosFiltradosSi(_gastosFiltrados);
-                setGastosFiltradosNo(_gastosFiltradosNo);
-                setOrdenDeLosGastosPrioridad([..._gastoSeleccionado]);
-              }}
-            >
-              <AddCircleRounded />
-            </IconButton>
-          </Stack>
-        ),
-      label: "",
-      name: "prioridad",
-      gridValues: { xs: 12, lg: 12, md: 12, sm: 12, xl: 12 },
-      hidden: (values: any) => values.montocup == "1" || values.montocup == "",
-    },
-    {
-      type: "component",
-      component: ({ setFieldValue }) =>
-        ordenDeLosGastosPrioridad && (
-          <TableView
-            values={gastosFiltradosNo.map((item: any, index: number) => {
-              return {
-                idconcepto: item.idconcepto,
-                denominacion: item.denominacion,
-                delete: (
-                  <IconButton
-                    onClick={() => {
-                      let _ordenDeLosGastosPrioridad =
-                        ordenDeLosGastosPrioridad;
-                      let indiceElemento = ordenDeLosGastosPrioridad.findIndex(
-                        (elemento: any) => elemento === item.idconcepto
-                      );
 
-                      // Verificar si el elemento fue encontrado
-                      if (indiceElemento !== -1) {
-                        // Eliminar el elemento usando splice
-                        _ordenDeLosGastosPrioridad
-                          .splice(indiceElemento, 1)
-                          .filter((item: any) => !item);
-                      }
+                  let _gastosFiltrados = gastos.filter(
+                    (item: any) =>
+                      !_gastoSeleccionado.includes(item.idconcepto as never)
+                  );
+                  let _gastosFiltradosNo = gastos
+                    .filter((item: any) =>
+                      _gastoSeleccionado.includes(item.idconcepto as never)
+                    )
+                    .sort(
+                      (a: any, b: any) =>
+                        referenciaOrden[a.idconcepto] -
+                        referenciaOrden[b.idconcepto]
+                    );
+                  setFieldValue("prioridad", _gastoSeleccionado);
+                  setGastosFiltradosSi(_gastosFiltrados);
+                  setGastosFiltradosNo(_gastosFiltradosNo);
+                  setOrdenDeLosGastosPrioridad([..._gastoSeleccionado]);
+                  setGastoSeleccionado(null);
+                }}
+              >
+                <AddCircleRounded />
+              </IconButton>
+            </Stack>
+          ),
+        label: "",
+        name: "prioridad",
+        gridValues: { xs: 12, lg: 12, md: 12, sm: 12, xl: 12 },
+        hidden: (values: any) =>
+          values.montocup == "1" || values.montocup == "",
+      },
+      {
+        type: "text",
+        label: "Otros gastos",
+        gridValues: { xs: 12 },
+        name: "cualOtros",
+        hidden: (values: any) =>
+          values.montocup == "1" || values.montocup == "",
+        disabled: (values: any) => {
+          return values?.cualOtros?.legth
+            ? false
+            : !(gastoSeleccionado == 10161);
+        },
+        onChange: (event: any) => {
+          setOtrosPrioridad(event.target.value);
+        },
+      },
+      {
+        type: "component",
+        component: ({ setFieldValue }: any) =>
+          ordenDeLosGastosPrioridad && (
+            <TableView
+              values={gastosFiltradosNo.map((item: any, index: number) => {
+                return {
+                  idconcepto: item.idconcepto,
+                  denominacion: item.denominacion,
+                  delete: (
+                    <IconButton
+                      onClick={() => {
+                        let _ordenDeLosGastosPrioridad =
+                          ordenDeLosGastosPrioridad;
+                        let indiceElemento =
+                          ordenDeLosGastosPrioridad.findIndex(
+                            (elemento: any) => elemento === item.idconcepto
+                          );
 
-                      let _gastosFiltrados = gastos.filter(
-                        (item: any) =>
-                          !_ordenDeLosGastosPrioridad.includes(
+                        // Verificar si el elemento fue encontrado
+                        if (indiceElemento !== -1) {
+                          // Eliminar el elemento usando splice
+                          _ordenDeLosGastosPrioridad
+                            .splice(indiceElemento, 1)
+                            .filter((item: any) => !item);
+                        }
+
+                        let _gastosFiltrados = gastos.filter(
+                          (item: any) =>
+                            !_ordenDeLosGastosPrioridad.includes(
+                              item.idconcepto as never
+                            )
+                        );
+                        let _gastosFiltradosNo = gastos.filter((item: any) =>
+                          _ordenDeLosGastosPrioridad.includes(
                             item.idconcepto as never
                           )
-                      );
-                      let _gastosFiltradosNo = gastos.filter((item: any) =>
-                        _ordenDeLosGastosPrioridad.includes(
-                          item.idconcepto as never
-                        )
-                      );
-                      setFieldValue("prioridad", _ordenDeLosGastosPrioridad);
+                        );
+                        setFieldValue("prioridad", _ordenDeLosGastosPrioridad);
 
-                      setGastosFiltradosSi(_gastosFiltrados);
-                      setGastosFiltradosNo(_gastosFiltradosNo);
-                      setOrdenDeLosGastosPrioridad([
-                        ..._ordenDeLosGastosPrioridad,
-                      ]);
-                    }}
-                  >
-                    <Delete />
-                  </IconButton>
-                ),
-                prioridad: index + 1,
-              };
-            })}
-            disabled={false}
-            headers={[
-              {
-                name: "prioridad",
-                label: "Prioridad",
-                align: "left",
-              },
-              { name: "denominacion", label: "Gasto" },
-              { name: "delete", label: "Eliminar", align: "left" },
-            ]}
-            idKey="idconcepto"
-            multiSelect={true}
-            name={""}
-            useCheckBox={false}
-          />
-        ),
-      label: "",
-      name: "",
-      gridValues: { xs: 12, lg: 12, md: 12, sm: 12, xl: 12 },
-      hidden: (values: any) => values.montocup == "1" || values.montocup == "",
-    },
-  ];
+                        setGastosFiltradosSi(_gastosFiltrados);
+                        setGastosFiltradosNo(_gastosFiltradosNo);
+                        setOrdenDeLosGastosPrioridad([
+                          ..._ordenDeLosGastosPrioridad,
+                        ]);
+                      }}
+                    >
+                      <Delete />
+                    </IconButton>
+                  ),
+                  prioridad: index + 1,
+                };
+              })}
+              disabled={false}
+              headers={[
+                {
+                  name: "prioridad",
+                  label: "Prioridad",
+                  align: "left",
+                },
+                { name: "denominacion", label: "Gasto" },
+                { name: "delete", label: "Eliminar", align: "left" },
+              ]}
+              idKey="idconcepto"
+              multiSelect={true}
+              name={""}
+              useCheckBox={false}
+            />
+          ),
+        label: "",
+        name: "",
+        gridValues: { xs: 12, lg: 12, md: 12, sm: 12, xl: 12 },
+        hidden: (values: any) =>
+          values.montocup == "1" || values.montocup == "",
+      },
+    ],
+    [
+      otrosPrioridad,
+      ordenDeLosGastosPrioridad,
+      gastosFiltradosSi,
+      gastoSeleccionado,
+      gastos,
+    ]
+  );
+
   const gastosMonto: IGenericControls[] = [
     {
       type: "component",
@@ -346,6 +383,7 @@ function useGastos() {
               },
               name: "idgastos",
               format: "units",
+              negativeValues: false,
               disabled: (values: any) => {
                 return values.cual;
               },
@@ -479,6 +517,8 @@ function useGastos() {
               }
               if (prioridadObject[concepto]) {
                 data.pesogasto = prioridadObject[concepto];
+                if (concepto == 10161 && otrosPrioridad.length)
+                  data.detalles = otrosPrioridad;
               }
               if (values.destinoGastos?.[`${concepto}`]?.detalles) {
                 data.detalles = values.destinoGastos[`${concepto}`].detalles;
@@ -582,8 +622,9 @@ function useGastos() {
               break;
           }
         });
-        
-        notificar({ title: "Gastos guardados" });
+
+        notificar({ title: "Los datos se han adicionado satisfactoriamente" });
+        setListo(true);
       }
     } catch (error: any) {
       notificar({ title: "Error guardando los gastos", type: "error" });
@@ -592,7 +633,7 @@ function useGastos() {
   return [
     [
       ...headControls,
-      ...gastosPrioridad,
+      ...gastosPrioridad(),
       ...mediumControls,
       ...gastosMonto,
       ...lastControls,
@@ -604,6 +645,8 @@ function useGastos() {
     hogar,
     siguiente,
     anterior,
+    setListo,
+    listo,
   ];
 }
 

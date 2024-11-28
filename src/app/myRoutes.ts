@@ -1,4 +1,4 @@
-import ACCESO_A_PROGRAMAS_DE_PROTECCION_SOCIAL_Y_CUIDADOS from "@/pages/ACCESO_A_PROGRAMAS_DE_PROTECCION_SOCIAL_Y_CUIDADOS";
+import AccesoProgramasProteccionSocialCuidados from "@/pages/AccesoProgramasProteccionSocialCuidados";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import Afectaciones from "@/pages/Afectaciones";
 import AssignmentIcon from "@mui/icons-material/Assignment";
@@ -29,13 +29,13 @@ import SafetyCheckIcon from "@mui/icons-material/SafetyCheck";
 import Seguridad_Alimentaria from "@/pages/Seguridad_Alimentaria";
 import ServiciosVivienda from "@/pages/ServiciosVivienda";
 import SettingsRoundedIcon from "@mui/icons-material/SettingsRounded";
+import SubirDatos from "@/pages/SubirDatos";
 import UsoServiciosSalud from "@/pages/UsoServiciosSalud";
 import Usuario from "@/pages/Usuario";
 import Vehiculos from "@/pages/Vehiculos";
 import WcIcon from "@mui/icons-material/Wc";
 import Welcome from "@/pages/Welcome";
 import WorkOutlineIcon from "@mui/icons-material/WorkOutline";
-import SubirDatos from "@/pages/SubirDatos";
 import ZonasVulnerables from "@/pages/ZonasVulnerables";
 
 const myRoutes: Routes = {
@@ -122,7 +122,7 @@ const myRoutes: Routes = {
     },
   },
   [Pages.AccesoProgramasDeProtección]: {
-    component: ACCESO_A_PROGRAMAS_DE_PROTECCION_SOCIAL_Y_CUIDADOS,
+    component: AccesoProgramasProteccionSocialCuidados,
     path: "/proteccion",
     title: "Acceso a programas de protección social y cuidados",
     icon: SafetyCheckIcon,

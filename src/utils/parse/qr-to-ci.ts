@@ -14,9 +14,7 @@ export const parseQrToCi = (values: any) => {
     });
   return {
     pnombre: nombre,
-    snombre: nombre,
     papellido: apellidos,
-    sapellido: apellidos,
     cidentidad,
   };
 };

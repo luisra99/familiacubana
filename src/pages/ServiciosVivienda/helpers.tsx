@@ -8,13 +8,13 @@ export const obtenerServiciosVivienda = async (
   // setIdMiemarginBottomroHogar: any
 ) => {
   const data_servicios = await datico.dat_seviciosvivienda
-    .where({ idcodigohogar: [id.toString()] })
+    .where({ idcodigohogar: id.toString() })
     .toArray();
 
   return data_servicios?.length
     ? { ...data_servicios[0], editMode: true }
     : {
-        idcodigohogar: [id],
+        idcodigohogar: id,
         iddesague: [], //
         idelectricidad: [], //
         idfrecsumagua: [], //

@@ -53,7 +53,7 @@ function Nomencladores() {
       <Meta title="Configuración" />
       <Box px={4} pb={2}>
         <Typography variant="h4" m={2}>
-          Configuarción de la carga inicial
+          Configuración de la carga inicial
         </Typography>
         <LoadingButton
           variant="contained"
@@ -63,11 +63,16 @@ function Nomencladores() {
           loadingPosition="end"
           onClick={async () => {
             setLoading(true);
-            await getCargaInicial(Object.keys(nomencladores))
-              .then((nomcladoresCargados) =>
-                setNomencladoresCargados(nomcladoresCargados)
-              )
+
+            await getCargaInicial(
+              Object.keys(nomencladores),
+              userData?.ESTRUCTURA?.idestructura
+            )
+              .then((nomcladoresCargados) => {
+                setNomencladoresCargados(nomcladoresCargados);
+              })
               .finally(() => setLoading(false));
+            console.log("Estructura", userData?.ESTRUCTURA?.idestructura);
           }}
           fullWidth
         >
@@ -183,8 +188,10 @@ const nomencladores = {
   10229: "Tipos de cocina",
   10226: " tipo de uso de servicio sanitario",
   10223: "ubicación de los servicios sanitario",
+  10420: "Proporción del gasto de los medicamentos",
   9507: "Afectaciones vivienda",
   9506: "Materiales predominantes",
-  9999999: "Zonas vulnerables",
+  10394: "Escala asistencia social",
+  999999999: "Zonas vulnerables",
   123456789: "Asentamientos",
 };

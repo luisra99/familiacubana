@@ -3,34 +3,42 @@ import { getHogar } from "@/app/hogarController/hogar.controller";
 import { obtenerDatosPorLlave } from "@/app/user-interfaces/forms/models/controllers";
 
 export const obtenerMiembroPorEncuesta = async (id: string) => {
-  const intId = typeof id === "string" ? parseInt(id) : id;
-  const datos_encuesta = await obtenerDatosPorLlave(
-    "dat_miembroencuesta",
-    "idmiembrohogar",
-    id
-  );
   const datos_hogar = await obtenerDatosPorLlave(
     "dat_hogar",
     "idcodigohogar",
     parseInt(getHogar() ?? "")
   );
 
+  if (id == "0") {
+    return {
+      problemasalud: datos_hogar[0]?.problemasalud,
+      atendido: [],
+      editMode: false,
+      idmiembrohogar: [],
+    };
+  }
+  const datos_encuesta = await obtenerDatosPorLlave(
+    "dat_miembroencuesta",
+    "idmiembrohogar",
+    id
+  );
+
+  console.log("raul", datos_hogar, datos_encuesta);
   return datos_hogar?.[0]?.problemasalud
     ? datos_encuesta[0]
       ? {
-          problemasalud: datos_hogar[0]?.problemasalud,
+          problemasalud: ["9832"],
           atendido: datos_encuesta[0].atendido,
-          
-          idmiembrohogar: [id.toString()],
+          idmiembrohogar: [datos_encuesta[0].idmiembrohogar],
         }
       : {
-          problemasalud: datos_hogar[0]?.problemasalud,
+          problemasalud: ["9832"],
           atendido: [],
           editMode: false,
-          idmiembrohogar: [id.toString()],
+          idmiembrohogar: [id],
         }
     : {
-        idmiembrohogar: [id.toString()],
+        idmiembrohogar: [id],
         atendido: [],
         problemasalud: ["9832"],
         editMode: false,
@@ -38,7 +46,7 @@ export const obtenerMiembroPorEncuesta = async (id: string) => {
 };
 
 export const obtenerMotivoNoAtencion = async (
-  id: number,
+  id: string,
   motivo: any,
   respuestaMotivos: any,
   setConfiguracionRespuestaMotivos: any
@@ -48,7 +56,7 @@ export const obtenerMotivoNoAtencion = async (
     .toArray();
   let datos;
   if (dat_motivos?.length) {
-    datos = { idrespuesta: dat_motivos[0].idrespuesta, editMode: true };
+    datos = { idrespuesta: [dat_motivos[0].idrespuesta], editMode: true };
     setConfiguracionRespuestaMotivos((prev: any) => {
       prev[motivo.idconcepto] = {
         ...prev[motivo.idconcepto],

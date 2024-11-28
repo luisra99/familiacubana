@@ -18,7 +18,9 @@ export async function exportAllTablesAsJson() {
 export const handleDownload = (profile: any) => {
   const element = document.createElement("a");
   exportAllTablesAsJson().then((data) => {
-    data.ESTRUCTURA = profile?.ESTRUCTURA?.idestructura;
+    const tabletUserReference = localStorage.getItem("offlineMode");
+    data.tabletUserReference = tabletUserReference;
+    data.idestructura = profile?.ESTRUCTURA?.idestructura;
     data.userName = profile?.PI?.idpi;
     const file = new Blob([JSON.stringify(data)], {
       type: "application/json",

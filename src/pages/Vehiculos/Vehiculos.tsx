@@ -20,11 +20,13 @@ import { useLiveQuery } from "dexie-react-hooks";
 import useModalState from "@/_pwa-framework/hooks/form/use-form-manager";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { useEffect } from "react";
 
 function Vehiculos() {
   const { modalActions } = useModalState();
   const confirm = useConfirm();
   const notificar = NotificationProvider();
+   const [listo, setListo] = useState<any>(false);
   const [id, setid] = useState<any>(null);
   const [vehiculos, setVehiculos] = useState<any>([]);
   const hogar = getHogar();
@@ -41,6 +43,35 @@ function Vehiculos() {
       return result;
     }
   });
+
+  // const checkListo = async (id: string|number) => {
+  //   const datos: any = await obtenerDatosPorLlave(
+  //     "dat_hogarmobiliarioequipos",
+  //     "idcodigohogar",
+  //     id
+  //   );
+  //   setListo(!!datos?.length);
+  // };
+
+  // useEffect(() => {
+  //   if (hogar) {
+  //     checkListo(hogar);
+  //   }
+  // }, [hogar]);
+  const checkListo = async (id: string | number) => {
+    const datos: any = await obtenerDatosPorLlave(
+      "dat_hogarmobiliarioequipos",
+     "idcodigohogar",
+      id
+    );
+    setListo(!!datos?.length);
+  };
+
+  useEffect(() => {
+    if (hogar) {
+      checkListo(parseInt(hogar));
+    }
+  }, [hogar]);
 
   const navegar = useNavigate();
   const siguiente = () => navegar("/estrategia/gastos");
@@ -135,9 +166,9 @@ function Vehiculos() {
                                     "El vehículo ha sido eliminado satisfactoriamente",
                                 });
                               });
+                              // setListo(true);
                             });
                           },
-                          
                         },
                       ]}
                     />
@@ -156,6 +187,7 @@ function Vehiculos() {
             setIdFunction={setid}
             nextButton={{ text: "Siguiente", action: siguiente }}
             prevButton={{ text: "Anterior", action: anterior }}
+            nextDisabledFunction={(values) => !listo}
             saveButton="Guardar"
             applyButton={false}
             hideButtons={true}
@@ -164,8 +196,8 @@ function Vehiculos() {
             name="1"
             controls={Vehiculo}
             title="Vehículo"
-            descriptionOnCreate="Adicionar Vehículo"
-            descriptionOnEdit="Modificar Vehículo"
+            descriptionOnCreate=""
+            descriptionOnEdit=""
             description=""
             endpointPath="persona"
             showSpecificDescription={true}
@@ -223,6 +255,7 @@ function Vehiculos() {
                         "El vehículo ha sido adicionado satisfactoriamente",
                     })
                   );
+                  setListo(true)
               }
             }}
             getByIdFunction={async (id) => {
@@ -252,20 +285,14 @@ function Vehiculos() {
             >
               Anterior
             </Button>
-            <Button onClick={siguiente} variant="contained">
+            <Button onClick={siguiente} variant="contained" disabled = {!listo}>
               Siguiente
             </Button>
           </Stack>
         </>
       ) : (
-        <Typography
-          variant="h5"
-          p={2}
-          flex={1}
-          flexDirection={"row"}
-          textAlign={"center"}
-        >
-           No existe un hogar seleccionado
+        <Typography variant="h6" p={2} flex={1} flexDirection={"row"}>
+          No existe un hogar seleccionado
         </Typography>
       )}
     </>

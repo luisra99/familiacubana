@@ -8,7 +8,6 @@ import MenuItem from "@mui/material/MenuItem";
 import Popover from "@mui/material/Popover";
 import { RouterLink } from "@/_pwa-framework/routes/components";
 import Typography from "@mui/material/Typography";
-import { account } from "@/_pwa-framework/_mock/account";
 import { alpha } from "@mui/material/styles";
 import { useSession } from "@/_pwa-framework/session/state";
 import { useState } from "react";
@@ -17,17 +16,17 @@ const MENU_OPTIONS = [
   {
     label: "Inicio",
     icon: "eva:home-fill",
-    path: "/",
+    path: "/datos-hogar",
   },
   {
-    label: "Mi Perfil",
+    label: "Perfil",
     icon: "eva:person-fill",
-    path: "/profile",
+    path: "/usuario",
   },
   {
     label: "Ajustes",
     icon: "eva:settings-2-fill",
-    path: "/ajustes",
+    path: "/Configuración",
   },
 ];
 
@@ -71,7 +70,7 @@ export default function AccountPopover() {
             border: (theme) => `solid 2px ${theme.palette.background.default}`,
           }}
         >
-          {account.displayName.charAt(0).toUpperCase()}
+          {state?.PI?.username.charAt(0).toUpperCase()}
         </Avatar>
       </IconButton>
 
@@ -92,10 +91,7 @@ export default function AccountPopover() {
       >
         <Box sx={{ my: 1.5, px: 2 }}>
           <Typography variant="subtitle2" noWrap>
-            {account.displayName}
-          </Typography>
-          <Typography variant="body2" sx={{ color: "text.secondary" }} noWrap>
-            {account.email}
+            {state?.PI?.username}
           </Typography>
         </Box>
 

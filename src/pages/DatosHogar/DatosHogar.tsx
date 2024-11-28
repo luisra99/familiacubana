@@ -1,5 +1,11 @@
-import { Button, Stack, Tooltip, Typography } from "@mui/material";
+import { Box, Button, Stack, Tooltip, Typography } from "@mui/material";
+import {
+  Grain,
+  Handyman,
+  PlaylistAddCheckCircleRounded,
+} from "@mui/icons-material";
 import { Link, useNavigate } from "react-router-dom";
+import HomeWorkIcon from "@mui/icons-material/HomeWork";
 import {
   asentamiento,
   cdr,
@@ -21,6 +27,7 @@ import {
   modificar,
   obtenerDatosPorLlave,
 } from "@/app/user-interfaces/forms/models/controllers";
+import { datico as db } from "@/app/user-interfaces/forms/models/model";
 import {
   setDireccionHogar,
   setHogar,
@@ -30,22 +37,29 @@ import {
 import { useCallback, useEffect, useState } from "react";
 
 import AddHomeIcon from "@mui/icons-material/AddHome";
+import { CustomTree } from "@/_pwa-framework/components/tree/tree.component";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import GenericForm from "@/_pwa-framework/genforms/components/form-components/form.generic";
 import { IGenericControls } from "@/_pwa-framework/genforms/types/controls/controls.types";
 import Meta from "@/_pwa-framework/components/Meta";
 import NotificationProvider from "@/_pwa-framework/sections/Notifications/provider";
-import { PlaylistAddCheckCircleRounded } from "@mui/icons-material";
 import TableView from "@/_pwa-framework/user-solicitudes/view";
-import { datico as db } from "@/app/user-interfaces/forms/models/model";
 import { useConfirm } from "material-ui-confirm";
+import { useLiveQuery } from "dexie-react-hooks";
 import { useLocalStorage } from "@uidotdev/usehooks";
 import useModalState from "@/_pwa-framework/hooks/form/use-form-manager";
 import { useRecoilState } from "recoil";
+import { crearArbolEstructura } from "../Welcome/utils/estructuras.service";
 
 function DatosHogar() {
   const [idhogar] = useLocalStorage<any>("hogarActual");
+  const [estructuras] = useLocalStorage<any>("estructuras");
+  const [estructuraSeleccionada] = useLocalStorage<any>(
+    "estructuraSeleccionada"
+  );
+  const [denominacionEstructuraTree, setDenominacionEstructura] =
+    useLocalStorage<any>("denominacionEstructura");
   const confirm = useConfirm();
   const navegar = useNavigate();
   const notificar = NotificationProvider();
@@ -62,6 +76,12 @@ function DatosHogar() {
   const [hogarActual, setHogarActualDireccion] = useRecoilState(
     atomHogarActualDireccion
   );
+  const denominacionEstructura = useLiveQuery(() => {
+    const data = db.nom_concepto
+      .where({ idconcepto: estructuraSeleccionada ?? 0 })
+      .toArray();
+    return data;
+  });
 
   const [, setHogarActualJefe] = useRecoilState(atomHogarActualJefe);
   const mainForm = useCallback(
@@ -76,16 +96,39 @@ function DatosHogar() {
             sx={{ width: "100%" }}
           >
             {conceptos.length ? (
-              <Button
-                onClick={() => {
-                  setTitleForm("Adicionar datos del hogar");
-                  modalActions.open("formularioHogar");
-                }}
-                variant="contained"
-                disabled={!conceptos.length}
+              <Box
+                display={"flex"}
+                justifyContent={"space-between"}
+                width={"100%"}
+                alignItems={"center"}
               >
-                Adicionar
-              </Button>
+                {estructuraSeleccionada?.length}
+                <Button
+                  onClick={() => {
+                    setTitleForm("Adicionar datos del hogar");
+                    modalActions.open("formularioHogar");
+                  }}
+                  variant="contained"
+                  disabled={!(conceptos.length && estructuraSeleccionada)}
+                >
+                  Adicionar
+                </Button>
+                <Box sx={{ flexGrow: 1 }} />
+                {
+                  <Typography variant="h6" sx={{ marginRight: 2 }}>
+                    Seleccionar Consejo popular
+                  </Typography>
+                }
+                <Button
+                  onClick={() => {
+                    modalActions.open("estructura");
+                  }}
+                  variant="contained"
+                  disabled={!conceptos.length}
+                >
+                  <HomeWorkIcon />
+                </Button>
+              </Box>
             ) : (
               <Typography>
                 No se ha realizado la carga inicial de los nomencladores.{" "}
@@ -155,7 +198,7 @@ function DatosHogar() {
                     notificar({
                       type: "success",
                       title:
-                        "Ha sido adicionado correctamente un nuevo hogar en la vivienda ",
+                        "Se ha adicionado un nuevo hogar a la vivienda satisfactoriamente ",
                       content: "",
                     });
                     loadHogares();
@@ -238,7 +281,7 @@ function DatosHogar() {
         hidden: () => !conceptos.length,
       },
     ],
-    [conceptos, hogares, idhogar]
+    [conceptos, hogares, idhogar, estructuraSeleccionada]
   );
   const siguiente = () => navegar("/nucleo-info");
 
@@ -278,9 +321,62 @@ function DatosHogar() {
     loadHogares().then(() => setSelected(idhogar ? [parseInt(idhogar)] : []));
   }, []);
 
+  const buscarDenominacionEstructura = (tree: any, id: number) => {
+    tree.forEach((element: any) => {
+      if (element.id.toString() == id) {
+        setDenominacionEstructura(element.denominacion);
+        return;
+      } else {
+        if (element.children) {
+          buscarDenominacionEstructura(element.children, id);
+        }
+      }
+    });
+  };
+
+  const submitEstrucutura = useCallback(
+    (values: any) => {
+      localStorage.setItem("estructuraSeleccionada", values.estructura);
+      buscarDenominacionEstructura(estructuras, values.estructura);
+    },
+    [estructuras]
+  );
+
   useEffect(() => {
     UpdateDatos(selected);
   }, [hogares]);
+  const [treeData, setTreeData] = useState([]);
+
+  const getByIdFunction = useCallback(
+    (id: any) => {
+      return {
+        estructura: id,
+      };
+    },
+    [denominacionEstructuraTree]
+  );
+
+  const controls = useCallback((): IGenericControls[] => {
+    return [
+      {
+        type: "component",
+        component: (props: any) => (
+          <CustomTree
+            data={crearArbolEstructura(estructuras ?? "{}")}
+            parentIcon={Handyman}
+            childrenIcon={Grain}
+            checkBox={true}
+            multiSelect={false}
+            defaultValues={props.formValue}
+            {...props}
+          />
+        ),
+        label: "estructura",
+        name: "estructura",
+        gridValues: { xs: 12, lg: 12, md: 12, sm: 12, xl: 12 },
+      },
+    ];
+  }, [estructuras]);
 
   const setSelectedFunction = (selected: any) => {
     setSelected(selected);
@@ -318,10 +414,18 @@ function DatosHogar() {
         type: "select",
         name: "idzonavulnerable",
         label: "Comunidad",
-        url: "9999999",
+        url: "999999999",
         gridValues: { xl: 4, lg: 4, md: 4, sm: 12, xs: 12 },
         hidden: (values: any) => values.zonavulnerable != "1",
-        validations: {required:{message: "Este campo es obligatorio", when:{name: "zonavulnerable", expression: (value) => value[0] == "1",}}}
+        validations: {
+          required: {
+            message: "Este campo es obligatorio",
+            when: {
+              name: "zonavulnerable",
+              expression: (value) => value[0] == "1",
+            },
+          },
+        },
       },
     ],
     [idzonavulnerable, checkdatos]
@@ -342,7 +446,7 @@ function DatosHogar() {
             title: "Alerta",
             confirmationText: "Si",
             cancellationText: "No",
-            description: `El hogar tiene varios hogares, esta seguro que desea continuar?`,
+            description: `El hogar tiene varios hogares, está seguro que desea continuar?`,
           }).catch(() => "Operación cancelada");
           return respuesta;
         }
@@ -354,10 +458,21 @@ function DatosHogar() {
     <>
       <Meta title="Datos del hogar" />
       <GenericForm
+        controls={controls()}
+        endpointPath=""
+        name="estructura"
+        modalType="fullWith"
+        applyButton={false}
+        idForEdit={estructuraSeleccionada}
+        getByIdFunction={getByIdFunction}
+        submitFunction={submitEstrucutura}
+        title="Seleccionar estructura"
+      />
+      <GenericForm
         controls={mainForm()}
         endpointPath=""
         name=""
-        title="Información general de la vivienda"
+        title={"Información general de la vivienda"}
         hideButtons={true}
       />
       <GenericForm
@@ -383,7 +498,7 @@ function DatosHogar() {
               "dat_unidaddealojamiento",
               "idunidaddealojamiento",
               idunidaddealojamiento,
-              values
+              { ...values, idestructura: estructuraSeleccionada }
             ).then((tx) => {
               loadHogares();
               notificar({
@@ -396,7 +511,7 @@ function DatosHogar() {
           } else {
             const idunidaddealojamiento = await crear(
               "dat_unidaddealojamiento",
-              values
+              { ...values, idestructura: estructuraSeleccionada }
             );
             const dat_hogar = {
               idunidaddealojamiento: idunidaddealojamiento,
@@ -450,6 +565,7 @@ function DatosHogar() {
             onClick={siguiente}
             variant="contained"
             disabled={!selected?.length}
+            sx={{ visibility: !selected?.length ? "hidden" : "unset" }}
           >
             Siguiente
           </Button>

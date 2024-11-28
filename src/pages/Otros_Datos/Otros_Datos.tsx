@@ -65,9 +65,9 @@ function Otros_Datos() {
     return {
       idmiembro: [id.toString()],
       idestrategia: estrategia?.[0]?.idestrategia ?? [],
-      apoyolaboresd: miembroHogar?.[0]?.apoyolaboresd ?? 0 === 0 ? false : true,
+      apoyolaboresd: miembroHogar?.[0]?.apoyolaboresd ? true : false,
       ayudaprobleconomico:
-        miembroHogar?.[0]?.ayudaprobleconomico ?? 0 === 0 ? false : true,
+        miembroHogar?.[0]?.ayudaprobleconomico ? true : false,
       idbeneficioprog: beneficios?.[0]?.idbeneficioprog ?? [],
       idsituacionsocial:
         situacionSocial?.[0]?.idsituacionsocial?.map((item: any) =>
@@ -126,315 +126,6 @@ function Otros_Datos() {
   const siguiente = () => navegar("/datos");
   const anterior = () => navegar("/estrategia/alimentos");
 
-  function getPage() {
-    if (idhogar) {
-      if (miembros.length) {
-        return (
-          <GenericForm
-            name="test"
-            controls={[
-              {
-                type: "select",
-                name: "idmiembro",
-                label: "Miembro del hogar",
-                gridValues: { xs: 6, lg: 6, md: 6, sm: 6, xl: 6 },
-                options: miembros,
-                checkValues: checkDatos,
-                validations: {
-                  required: { message: "Debe seleccionar un miembro" },
-                },
-                onChange: (e, refs) => {
-                  const { value } = e.target;
-                  setIdMiembroHogar(value);
-                },
-              },
-              {
-                type: "component",
-                component: () => (
-                  <Typography mt={3}>
-                    <b>
-                      Estrategias de solución de problemas que afectan al hogar
-                    </b>
-                  </Typography>
-                ),
-                label: "",
-                name: "",
-                hidden: (values: any) => values.idmiembro == "",
-                gridValues: { xs: 12, lg: 12, md: 12, sm: 12, xl: 12 },
-              },
-              {
-                type: "component",
-                component: () => <Divider sx={{ mt: 0, mb: 1 }} />,
-                label: "",
-                name: "",
-                hidden: (values: any) => values.idmiembro == "",
-                gridValues: { xs: 12, lg: 12, md: 12, sm: 12, xl: 12 },
-              },
-
-              {
-                type: "component",
-                component: () => (
-                  <Typography marginTop={2}>
-                    Marca la(s) estrategias que utiliza para darle solución de
-                    problemas que afectan al hogar
-                  </Typography>
-                ),
-                label: "",
-                name: "",
-                hidden: (values: any) => values.idmiembro == "",
-                gridValues: { xs: 12, lg: 12, md: 12, sm: 12, xl: 12 },
-              },
-              {
-                type: "component",
-                component: ({ name, setFieldValue, formValue }: any) => (
-                  <TableView
-                    values={estrategias}
-                    headers={[{ name: "denominacion", label: "Estrategias" }]}
-                    idKey="idconcepto"
-                    setFieldValue={setFieldValue}
-                    useCheckBox={true}
-                    multiSelect={true}
-                    defaultValues={estrategiasSelected}
-                    hideTableHead={true}
-                    name={name}
-                  />
-                ),
-                label: "",
-                name: "idestrategia",
-                hidden: (values: any) => values.idmiembro == 0,
-                gridValues: { xs: 12, lg: 12, md: 12, sm: 12, xl: 12 },
-              },
-              {
-                type: "component",
-                component: () => (
-                  <Typography>
-                    <b>Nota aclaratoria:</b> Se pregunta si en los últimos 6
-                    meses, se vió en la necesidad de hacer alguna de estas
-                    activiadades debido a que no había suficiente dinero para
-                    comprar alimentos o satisfacer otras necesidades básicas.
-                  </Typography>
-                ),
-                label: "",
-                name: "",
-                hidden: (values: any) => values.idmiembro == "",
-                gridValues: { xs: 12, lg: 12, md: 12, sm: 12, xl: 12 },
-              },
-              {
-                type: "component",
-                component: () => (
-                  <Typography mt={3}>
-                    <b>Redes de apoyo del hogar</b>
-                  </Typography>
-                ),
-                label: "",
-                name: "",
-                hidden: (values: any) => values.idmiembro == "",
-                gridValues: { xs: 12, lg: 12, md: 12, sm: 12, xl: 12 },
-              },
-              {
-                type: "component",
-                component: () => <Divider sx={{ mt: 0, mb: 1 }} />,
-                label: "",
-                name: "",
-                hidden: (values: any) => values.idmiembro == "",
-                gridValues: { xs: 12, lg: 12, md: 12, sm: 12, xl: 12 },
-              },
-              {
-                type: "component",
-                component: () => (
-                  <Typography>
-                    Tiene a quien pedir ayuda ( a un familiar y/o amigo fuera
-                    del hogar)
-                  </Typography>
-                ),
-                label: "",
-                name: "",
-                hidden: (values: any) => values.idmiembro == "",
-                gridValues: { xs: 12, lg: 12, md: 12, sm: 12, xl: 12 },
-              },
-              {
-                type: "check",
-                label:
-                  "Si alguien en el hogar requiere apoyo con labores domésticas y de cuidado, por enfermedades u otra razón",
-                name: "apoyolaboresd",
-                defaultValue: false,
-                hidden: (values: any) => values.idmiembro == "",
-                gridValues: { xs: 12, lg: 12, md: 12, sm: 12, xl: 12 },
-              },
-              {
-                type: "check",
-                label: "Ante un problema económico",
-                name: "ayudaprobleconomico",
-                defaultValue: false,
-                hidden: (values: any) => values.idmiembro == "",
-                gridValues: { xs: 12, lg: 12, md: 12, sm: 12, xl: 12 },
-              },
-              {
-                type: "component",
-                component: () => <Divider sx={{ mt: 0, mb: 1 }} />,
-                label: "",
-                name: "",
-                hidden: (values: any) => values.idmiembro == "",
-                gridValues: { xs: 12, lg: 12, md: 12, sm: 12, xl: 12 },
-              },
-              {
-                type: "multiselect",
-                name: "idbeneficioprog",
-                label: "Programas alimentarios",
-                multiple: "check",
-                url: "9610",
-                hidden: (values: any) => values.idmiembro == "",
-                gridValues: { xs: 12, lg: 12, md: 12, sm: 12, xl: 12 },
-              },
-              {
-                type: "component",
-                component: () => (
-                  <Typography>
-                    <b>Nota aclaratoria:</b>La información de la situación
-                    social no se pregunta, se completa a partir de registros
-                    oficiales precedentes, con apoyo del TS .
-                  </Typography>
-                ),
-                label: "",
-                name: "",
-                hidden: (values: any) => values.idmiembro == "",
-                gridValues: { xs: 12, lg: 12, md: 12, sm: 12, xl: 12 },
-              },
-              {
-                type: "multiselect",
-                name: "idsituacionsocial",
-                label: "Situación social",
-                url: "9593",
-                hidden: (values: any) => values.idmiembro == "",
-                multiple: "check",
-                gridValues: { xs: 12, lg: 12, md: 12, sm: 12, xl: 12 },
-              },
-              {
-                type: "multiselect",
-                name: "idorganismo",
-                label: "Organismo",
-                multiple: "check",
-                gridValues: { xs: 12, lg: 12, md: 12, sm: 12, xl: 12 },
-                url: "9598",
-                hidden: (values: any) =>
-                  values.idmiembro == 0 ||
-                  values.idsituacionsocial.findIndex(
-                    (element: any) => element == "9598"
-                  ) == -1,
-              },
-            ]}
-            title="Estrategias de solución de problemas, redes de apoyo y programas alimentarios. Situación social"
-            endpointPath="persona"
-            showSpecificDescription={false}
-            nextButton={{ text: "Siguiente", action: siguiente }}
-            prevButton={{ text: "Anterior", action: anterior }}
-            idForEdit={idmiembrohogar}
-            saveButton="Guardar"
-            setIdFunction={setIdMiembroHogar}
-            submitFunction={(values: any) => {
-              const {
-                idestrategia,
-                idmiembro,
-                ayudaprobleconomico,
-                apoyolaboresd,
-                idbeneficioprog,
-                idsituacionsocial,
-                idorganismo,
-              } = values;
-              ayudaprobleconomico == true
-                ? (values.ayudaprobleconomico = 1)
-                : (values.ayudaprobleconomico = 0),
-                apoyolaboresd == true
-                  ? (values.apoyolaboresd = 1)
-                  : (values.apoyolaboresd = 0),
-                CreateOrModify(
-                  "dat_miembroestrategias",
-                  {
-                    idmiembrohogar: idmiembro[0],
-                  },
-                  {
-                    idmiembrohogar: idmiembro[0],
-                    idestrategia,
-                  },
-                  "idmiembroestrategia"
-                );
-              modificar(
-                "dat_miembrohogar",
-                "idmiembrohogar",
-                parseInt(idmiembro[0]),
-                {
-                  ayudaprobleconomico: values.ayudaprobleconomico,
-                  apoyolaboresd: values.apoyolaboresd,
-                }
-              );
-              //dat_miebrobeneficioprogalim
-              CreateOrModify(
-                "dat_miebrobeneficioprogalim",
-                { idmiembrohogar: idmiembro[0] },
-                {
-                  idbeneficioprog,
-                  idmiembrohogar: idmiembro[0],
-                },
-                "idmiebrobeneficioprogalim"
-              );
-              CreateOrModify(
-                "dat_miembrosituacionsocial",
-                {
-                  idmiembrohogar: idmiembro[0],
-                },
-                {
-                  idsituacionsocial,
-                  idmiembrohogar: idmiembro[0],
-                },
-                "idiembrosituacionsocial"
-              ).then(() => {
-                if (idorganismo.length) {
-                  obtenerDatosPorLlave(
-                    "dat_miembrosituacionsocial",
-                    "idmiembrohogar",
-                    idmiembro[0]
-                  ).then((situacionSocial: any) => {
-                    CreateOrModify(
-                      "dat_situacionsocialorg",
-                      {
-                        idsituacionsocial:
-                          situacionSocial?.[0]?.idiembrosituacionsocial,
-                      },
-                      {
-                        idsituacionsocial:
-                          situacionSocial?.[0]?.idiembrosituacionsocial,
-                        idorganismo,
-                      },
-                      "idsituacionsocialorg"
-                    );
-                  });
-                }
-              });
-              notificar({
-                type: "success",
-                title: "Se ha añadido satisfactoriamente",
-                content: "",
-              });
-            }}
-            getByIdFunction={obtenerDatosMiembros}
-            applyButton={false}
-          />
-        );
-      } else {
-        return (
-          <Typography mx={2} my={2}>
-            <b>No existen miembros en el hogar seleccionado</b>
-          </Typography>
-        );
-      }
-    } else {
-      return (
-        <Typography mx={2} my={2}>
-          <b>No existe un hogar seleccionado</b>
-        </Typography>
-      );
-    }
-  }
   return (
     <>
       <Meta title="Controles" />
@@ -636,6 +327,14 @@ function Otros_Datos() {
             showSpecificDescription={false}
             nextButton={{ text: "Siguiente", action: siguiente }}
             prevButton={{ text: "Anterior", action: anterior }}
+            nextDisabledFunction={() => {
+              const miembrosCheck = checkDatos.includes(",")
+                ? checkDatos?.split?.(",")?.length
+                : checkDatos.length > 0
+                  ? 1
+                  : 0;
+              return miembros?.length !== miembrosCheck;
+            }}
             idForEdit={idmiembrohogar}
             saveButton="Guardar"
             setIdFunction={setIdMiembroHogar}
@@ -728,13 +427,13 @@ function Otros_Datos() {
             applyButton={false}
           />
         ) : (
-          <Typography mx={2} my={2}>
-            <b>No hay un miembro seleccionado...</b>
+          <Typography variant="h6" p={2}>
+            <b>No existen miembros en el hogar seleccionado</b>
           </Typography>
         )
       ) : (
-        <Typography mx={2} my={2}>
-          <b>No hay un hogar seleccionado...</b>
+        <Typography variant="h6" p={2}>
+          <b>No existe un hogar seleccionado</b>
         </Typography>
       )}
     </>

@@ -1,3 +1,4 @@
+// src / _pwa - framework / genforms / types / controls / controls.types.ts;
 import {
   IChecks,
   ICommonProps,
@@ -213,5 +214,7 @@ export type ICustomComponent = {
     formValue?: any;
     error?: any;
     setFieldValue?: any;
+    setFieldTouched?: any;
+    values?: any;
   }) => any;
 } & ICommonProps;

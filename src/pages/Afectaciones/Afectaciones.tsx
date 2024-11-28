@@ -21,6 +21,26 @@ function Afectaciones() {
 
   const navegar = useNavigate();
   const [treeData, setTreeData] = useState([]);
+  const [isSaved, setIsSaved] = useState(false);
+  const [listo, setListo] = useState<any>(false);
+  
+  const checkListo = async (id: string) => {
+    const datos: any = await obtenerDatosPorLlave(
+      "dat_afectacionmatvivienda",
+      "idcodigohogar",
+      id
+    );
+    setListo(!!datos?.length)
+  }
+
+  useEffect(() => {
+    console.log("efecto hogar",idHogar)
+    if (idHogar) {
+      checkListo(idHogar)
+    }
+  },[idHogar])
+
+
   useEffect(() => {
     cargarArbol();
   }, []);
@@ -128,6 +148,7 @@ function Afectaciones() {
               title:
                 "Las afectaciones de la vivienda se han guardado satisfactoriamente",
             });
+             setListo(true);
           }}
           getByIdFunction={async (id) => {
             const afectaciones = await obtenerDatosPorLlave(
@@ -149,10 +170,11 @@ function Afectaciones() {
           // }}
           prevButton={{ text: "Anterior", action: anterior }}
           nextButton={{ text: "Siguiente", action: siguiente }}
+          nextDisabledFunction={(values) => !listo}
           applyButton={false}
         />
       ) : (
-        <Typography mx={2} my={2}>
+        <Typography variant="h6" p={2}>
           <b>No existe un hogar seleccionado</b>
         </Typography>
       )}

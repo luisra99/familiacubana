@@ -34,12 +34,25 @@ export async function obtenerMiembros() {
     .toArray()
     .then((arr) =>
       arr.map((obj) => {
-        const denom = `${obj.pnombre} ${obj.snombre ?? ""} ${obj.papellido} ${
-          obj.sapellido
-        }`;
+        const denom = `${obj.pnombre} ${obj.papellido}`;
         return { ...obj, idconcepto: obj.idmiembrohogar, denominacion: denom };
       })
     );
+
+  return data;
+}
+export async function obtenerMiembrosPorHogar(idhogar: any) {
+  const data = await db.dat_miembrohogar
+    .where({ idcodigohogar: idhogar })
+    .toArray()
+    .then((arr) =>
+      arr.map((obj) => {
+        const denom = `${obj.pnombre} ${obj.papellido}`;
+        return { ...obj, idconcepto: obj.idmiembrohogar, denominacion: denom };
+      })
+    );
+  console.log("ponzo", data);
+
   return data;
 }
 export async function obtenerMiembrosMayoresDe18() {

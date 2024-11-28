@@ -13,16 +13,28 @@ import { getHogar } from "@/app/hogarController/hogar.controller";
 import { obtenerLocalesViviendas } from "./helpers";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { useEffect} from "react";
 
 function LocalesVivienda() {
   const idhogar = getHogar() ?? 0;
   const [id, setid] = useState<any>(idhogar ?? null);
   const [cant, setCant] = useState(0);
-
+const [listo, setListo] = useState<any>(false);
   const notificar = NotificationProvider();
   const navegar = useNavigate();
   const siguiente = () => navegar("/servicios-equipamientos/servicios");
   const anterior = () => navegar("/servicios-equipamientos/afectaciones");
+
+  const checkListo = async (id: string) => {
+    const datos: any = await obtenerLocalesViviendas(id);
+    setListo(!!datos?.length);
+  };
+
+  useEffect(() => {
+    if (id) {
+      checkListo(id);
+    }
+  }, [id]);
 
   function getPage() {
     if (idhogar) {
@@ -460,7 +472,7 @@ function LocalesVivienda() {
                 );
                 notificar({
                   type: "error",
-                  title: "Faltan cantidades por definir",
+                  title: "Faltan datos por especificar",
                   content: "",
                 });
               }
@@ -479,7 +491,7 @@ function LocalesVivienda() {
       );
     } else {
       return (
-        <Typography variant="h5" p={2}>
+        <Typography variant="h6" p={2}>
           {idhogar
             ? " No existen miembros en el hogar seleccionado"
             : "No existe un hogar seleccionado"}

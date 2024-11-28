@@ -11,7 +11,7 @@ export const obtenerGradoAutonomia = async (id: string) => {
     ? { ...datos[0], editMode: true }
     : {
         idmiembro: [id],
-        idautonomia: "",
+        idautonomia: [],
         idtiposayuda: "",
         idmiembrodiscapacidad: [],
         iddiscapacidad: "",

@@ -1,6 +1,6 @@
 import { Button, Stack, Typography } from "@mui/material";
 import {
-  abrevNomenclador,
+  calcularEdadByCi,
   cantidadhijos,
   cidentidad,
   datosGeneralesTitle,
@@ -17,10 +17,9 @@ import {
   papellido,
   pnombre,
   registroconsum,
-  sapellido,
   scanner,
-  snombre,
   titleEscolaridad,
+  unionNomenclador,
 } from "./utils";
 import {
   crear,
@@ -48,10 +47,10 @@ import { useLiveQuery } from "dexie-react-hooks";
 import useModalState from "@/_pwa-framework/hooks/form/use-form-manager";
 import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 function Miembros() {
-  const idhogar = getHogar() ?? 0;
+  const idhogar = getHogar() ?? null;
   // hooks
   const [id, setid] = useState<any>(null);
   const [escolaridad, setEscolaridad] = useState<any>([]);
@@ -75,216 +74,193 @@ function Miembros() {
   const [parentescoinit, setParentescoInit] = useState<any>([]);
   const [jefeNucleo, setJefeNucleo] = useState<boolean>(false);
   const [cantidadMiembros, setCantidadMiembros] = useState<boolean>(true);
-  const [titleForm, setTitleForm] = useState<any>("");
   const [, setHogarActualJefe] = useRecoilState(atomHogarActualJefe);
   // form
-  const disabledButton = () => {
+  const disabledButton = useCallback(() => {
     const personasFiltradas = miembros.filter(
       (item: any) => item.parentesco === "JN"
     );
     console.log("filtro", personasFiltradas);
     return !personasFiltradas.length;
-  };
-  const idnivelescolar: IGenericControls = {
-    type: "radio",
-    label: "¿Cuál es el último nivel vencido?",
-    name: "idnivelescolar",
-    radios: escolaridad?.escolaridad,
-    gridValues: { xl: 5, lg: 5, md: 5, sm: 12, xs: 12 },
-    onChangeCallback: (e, ref) => {
-      const { value } = e.target;
-      ref.setFieldValue("idnivelescolargrado", "", false);
-      ref.setFieldValue("idgradovencido", "", false);
-    },
-  };
-  const nivelescolarninguno: IGenericControls = {
-    type: "radio",
-    label: "¿Cuál es el grado más alto aprobado?",
-    name: "idnivelescolargrado",
-    radios: _nivelescolarninguno,
-    gridValues: { xl: 5, lg: 5, md: 5, sm: 12, xs: 12 },
-    hidden: (values: any) => values.idnivelescolar !== "9696",
-  };
-  const nivelescolarprimaria: IGenericControls = {
-    type: "radio",
-    label: "¿Cuál es el grado más alto aprobado?",
-    name: "idnivelescolargrado",
-    radios: _nivelescolarprimaria,
-    gridValues: { xl: 5, lg: 5, md: 5, sm: 12, xs: 12 },
-    hidden: (values: any) => values.idnivelescolar !== "9697",
-  };
-  const nivelescolarsecundaria: IGenericControls = {
-    type: "radio",
-    label: "¿Cuál es el grado más alto aprobado?",
-    name: "idnivelescolargrado",
-    radios: _nivelescolarsecundaria,
-    gridValues: { xl: 5, lg: 5, md: 5, sm: 12, xs: 12 },
-    hidden: (values: any) => values.idnivelescolar !== "9698",
-  };
-  const nivelescolarobrero: IGenericControls = {
-    type: "radio",
-    label: "¿Cuál es el grado más alto aprobado?",
-    name: "idnivelescolargrado",
-    radios: _nivelescolarobrero,
-    gridValues: { xl: 5, lg: 5, md: 5, sm: 12, xs: 12 },
-    hidden: (values: any) => values.idnivelescolar !== "9699",
-  };
-  const nivelescolarpreuniversitario: IGenericControls = {
-    type: "radio",
-    label: "¿Cuál es el grado más alto aprobado?",
-    name: "idnivelescolargrado",
-    radios: _nivelescolarpreuniversitario,
-    gridValues: { xl: 5, lg: 5, md: 5, sm: 12, xs: 12 },
-    hidden: (values: any) => values.idnivelescolar !== "9700",
-  };
-  const nivelescolarpedagogia: IGenericControls = {
-    type: "radio",
-    label: "¿Cuál es el grado más alto aprobado?",
-    name: "idnivelescolargrado",
-    radios: _nivelescolarpedagogia,
-    gridValues: { xl: 5, lg: 5, md: 5, sm: 12, xs: 12 },
-    hidden: (values: any) => values.idnivelescolar !== "9701",
-  };
-  const nivelescolartecnicomedio: IGenericControls = {
-    type: "radio",
-    label: "¿Cuál es el grado más alto aprobado?",
-    name: "idnivelescolargrado",
-    radios: _nivelescolartecnicomedio,
-    gridValues: { xl: 5, lg: 5, md: 5, sm: 12, xs: 12 },
-    hidden: (values: any) => values.idnivelescolar !== "9702",
-  };
-  const nivelescolartecnicosuperior: IGenericControls = {
-    type: "radio",
-    label: "¿Cuál es el grado más alto aprobado?",
-    name: "idnivelescolargrado",
-    radios: _nivelescolartecnicosuperior,
-    gridValues: { xl: 5, lg: 5, md: 5, sm: 12, xs: 12 },
-    hidden: (values: any) => values.idnivelescolar !== "9704",
-  };
-  const nivelescolaruniversitario: IGenericControls = {
-    type: "radio",
-    label: "¿Cuál es el grado más alto aprobado?",
-    name: "idnivelescolargrado",
-    radios: _nivelescolaruniversitario,
-    gridValues: { xl: 5, lg: 5, md: 5, sm: 12, xs: 12 },
-    hidden: (values: any) => values.idnivelescolar !== "9705",
-  };
-  const primaria: IGenericControls = {
-    type: "radio",
-    label: "Grado escolar",
-    name: "idgradovencido",
-    radios: escolaridad?.primaria,
-    hidden: (values: any) => values.idnivelescolar !== "9696",
-    gridValues: { xl: 2, lg: 2, md: 2, sm: 12, xs: 12 },
-  };
-  const secundaria: IGenericControls = {
-    type: "radio",
-    label: "Grado escolar",
-    name: "idgradovencido",
-    radios: escolaridad?.secundaria,
-    hidden: (values: any) => values.idnivelescolargrado !== "9698",
-    gridValues: { xl: 2, lg: 2, md: 2, sm: 12, xs: 12 },
-  };
-  const obrero: IGenericControls = {
-    type: "radio",
-    label: "Grado escolar",
-    name: "idgradovencido",
-    radios: escolaridad?.obrero,
-    hidden: (values: any) => values.idnivelescolargrado !== "9699",
-    gridValues: { xl: 2, lg: 2, md: 2, sm: 12, xs: 12 },
-  };
-  const preuniversitario: IGenericControls = {
-    type: "radio",
-    label: "Grado escolar",
-    name: "idgradovencido",
-    radios: escolaridad?.preuniversitario,
-    hidden: (values: any) => values.idnivelescolargrado !== "9700",
-    gridValues: { xl: 2, lg: 2, md: 2, sm: 12, xs: 12 },
-  };
-  const pedagogia: IGenericControls = {
-    type: "radio",
-    label: "Grado escolar",
-    name: "idgradovencido",
-    radios: escolaridad?.pedagogia,
-    hidden: (values: any) => values.idnivelescolargrado !== "9701",
-    gridValues: { xl: 2, lg: 2, md: 2, sm: 12, xs: 12 },
-  };
-  const tecnicomedio: IGenericControls = {
-    type: "radio",
-    label: "Grado escolar",
-    name: "idgradovencido",
-    radios: escolaridad?.tecnicomedio,
-    hidden: (values: any) => values.idnivelescolargrado !== "9702",
-    gridValues: { xl: 2, lg: 2, md: 2, sm: 12, xs: 12 },
-  };
-  const tecnicosuperior: IGenericControls = {
-    type: "radio",
-    label: "Grado escolar",
-    name: "idgradovencido",
-    radios: escolaridad?.tecnicosuperior,
-    hidden: (values: any) => values.idnivelescolargrado !== "9704",
-    gridValues: { xl: 2, lg: 2, md: 2, sm: 12, xs: 12 },
-  };
-  const universitario: IGenericControls = {
-    type: "radio",
-    label: "Grado escolar",
-    name: "idgradovencido",
-    radios: escolaridad?.universitario,
-    hidden: (values: any) => values.idnivelescolargrado !== "9705",
-    gridValues: { xl: 2, lg: 2, md: 2, sm: 12, xs: 12 },
-  };
-  const idparentesco: IGenericControls = {
-    type: "select",
-    label: "Parentesco",
-    gridValues: { xl: 4, lg: 4, md: 4, sm: 12, xs: 12 },
-    name: "idparentesco",
-    // url: "9269",
-    options: parentesco,
-    validations: {
-      required: { message: "Este campo es obligatorio" },
-    },
-  };
+  }, [miembros]);
 
-  const formulario: IGenericControls[] = [
-    datosGeneralesTitle,
-    pnombre,
-    snombre,
-    papellido,
-    sapellido,
-    cidentidad,
-    scanner,
-    idcolorpiel,
-    nota,
-    idparentesco,
-    idsexo,
-    idorientacionsex,
-    divider,
-    titleEscolaridad,
-    idnivelescolar,
-    nivelescolarprimaria,
-    nivelescolarsecundaria,
-    nivelescolarobrero,
-    nivelescolarpreuniversitario,
-    nivelescolarpedagogia,
-    nivelescolartecnicomedio,
-    nivelescolartecnicosuperior,
-    primaria,
-    secundaria,
-    obrero,
-    preuniversitario,
-    pedagogia,
-    tecnicomedio,
-    tecnicosuperior,
-    universitario,
-    divider,
-    otrosDatos,
-    datosmoviles,
-    registroconsum,
-    embarazada,
-    lactando,
-    madremenor19,
-    cantidadhijos,
-  ];
+  const formulario = useCallback(
+    (): IGenericControls[] => [
+      datosGeneralesTitle,
+      pnombre,
+      papellido,
+      cidentidad,
+      scanner,
+      idcolorpiel,
+      nota,
+      {
+        type: "select",
+        label: "Parentesco",
+        gridValues: { xl: 4, lg: 4, md: 4, sm: 12, xs: 12 },
+        name: "idparentesco",
+        options: parentesco,
+        validations: {
+          required: { message: "Este campo es obligatorio" },
+        },
+      },
+      idsexo,
+      idorientacionsex,
+      divider,
+      titleEscolaridad,
+      {
+        type: "radio",
+        label: "¿Cuál es el último nivel vencido?",
+        name: "idnivelescolar",
+        radios: escolaridad?.escolaridad,
+        gridValues: { xl: 5, lg: 5, md: 5, sm: 12, xs: 12 },
+        onChangeCallback: (e, ref) => {
+          const { value } = e.target;
+          ref.setFieldValue("idnivelescolargrado", "", false);
+          ref.setFieldValue("idgradovencido", "", false);
+        },
+      },
+      {
+        type: "radio",
+        label: "¿Cuál es el grado más alto aprobado?",
+        name: "idnivelescolargrado",
+        radios: _nivelescolarprimaria,
+        gridValues: { xl: 5, lg: 5, md: 5, sm: 12, xs: 12 },
+        hidden: (values: any) => values.idnivelescolar !== "9697",
+      },
+      {
+        type: "radio",
+        label: "¿Cuál es el grado más alto aprobado?",
+        name: "idnivelescolargrado",
+        radios: _nivelescolarsecundaria,
+        gridValues: { xl: 5, lg: 5, md: 5, sm: 12, xs: 12 },
+        hidden: (values: any) => values.idnivelescolar !== "9698",
+      },
+      {
+        type: "radio",
+        label: "¿Cuál es el grado más alto aprobado?",
+        name: "idnivelescolargrado",
+        radios: _nivelescolarobrero,
+        gridValues: { xl: 5, lg: 5, md: 5, sm: 12, xs: 12 },
+        hidden: (values: any) => values.idnivelescolar !== "9699",
+      },
+      {
+        type: "radio",
+        label: "¿Cuál es el grado más alto aprobado?",
+        name: "idnivelescolargrado",
+        radios: _nivelescolarpreuniversitario,
+        gridValues: { xl: 5, lg: 5, md: 5, sm: 12, xs: 12 },
+        hidden: (values: any) => values.idnivelescolar !== "9700",
+      },
+      {
+        type: "radio",
+        label: "¿Cuál es el grado más alto aprobado?",
+        name: "idnivelescolargrado",
+        radios: _nivelescolarpedagogia,
+        gridValues: { xl: 5, lg: 5, md: 5, sm: 12, xs: 12 },
+        hidden: (values: any) => values.idnivelescolar !== "9701",
+      },
+      {
+        type: "radio",
+        label: "¿Cuál es el grado más alto aprobado?",
+        name: "idnivelescolargrado",
+        radios: _nivelescolartecnicomedio,
+        gridValues: { xl: 5, lg: 5, md: 5, sm: 12, xs: 12 },
+        hidden: (values: any) => values.idnivelescolar !== "9702",
+      },
+      {
+        type: "radio",
+        label: "¿Cuál es el grado más alto aprobado?",
+        name: "idnivelescolargrado",
+        radios: _nivelescolartecnicosuperior,
+        gridValues: { xl: 5, lg: 5, md: 5, sm: 12, xs: 12 },
+        hidden: (values: any) => values.idnivelescolar !== "9704",
+      },
+      {
+        type: "radio",
+        label: "Grado escolar",
+        name: "idgradovencido",
+        radios: escolaridad?.primaria,
+        hidden: (values: any) => values.idnivelescolar !== "9696",
+        gridValues: { xl: 2, lg: 2, md: 2, sm: 12, xs: 12 },
+      },
+      {
+        type: "radio",
+        label: "Grado escolar",
+        name: "idgradovencido",
+        radios: escolaridad?.secundaria,
+        hidden: (values: any) => values.idnivelescolargrado !== "9698",
+        gridValues: { xl: 2, lg: 2, md: 2, sm: 12, xs: 12 },
+      },
+      {
+        type: "radio",
+        label: "Grado escolar",
+        name: "idgradovencido",
+        radios: escolaridad?.obrero,
+        hidden: (values: any) => values.idnivelescolargrado !== "9699",
+        gridValues: { xl: 2, lg: 2, md: 2, sm: 12, xs: 12 },
+      },
+      {
+        type: "radio",
+        label: "Grado escolar",
+        name: "idgradovencido",
+        radios: escolaridad?.preuniversitario,
+        hidden: (values: any) => values.idnivelescolargrado !== "9700",
+        gridValues: { xl: 2, lg: 2, md: 2, sm: 12, xs: 12 },
+      },
+      {
+        type: "radio",
+        label: "Grado escolar",
+        name: "idgradovencido",
+        radios: escolaridad?.pedagogia,
+        hidden: (values: any) => values.idnivelescolargrado !== "9701",
+        gridValues: { xl: 2, lg: 2, md: 2, sm: 12, xs: 12 },
+      },
+      {
+        type: "radio",
+        label: "Grado escolar",
+        name: "idgradovencido",
+        radios: escolaridad?.tecnicomedio,
+        hidden: (values: any) => values.idnivelescolargrado !== "9702",
+        gridValues: { xl: 2, lg: 2, md: 2, sm: 12, xs: 12 },
+      },
+      {
+        type: "radio",
+        label: "Grado escolar",
+        name: "idgradovencido",
+        radios: escolaridad?.tecnicosuperior,
+        hidden: (values: any) => values.idnivelescolargrado !== "9704",
+        gridValues: { xl: 2, lg: 2, md: 2, sm: 12, xs: 12 },
+      },
+      {
+        type: "radio",
+        label: "Grado escolar",
+        name: "idgradovencido",
+        radios: escolaridad?.universitario,
+        hidden: (values: any) => values.idnivelescolargrado !== "9705",
+        gridValues: { xl: 2, lg: 2, md: 2, sm: 12, xs: 12 },
+      },
+      divider,
+      otrosDatos,
+      datosmoviles,
+      registroconsum,
+      embarazada,
+      lactando,
+      madremenor19,
+      cantidadhijos,
+    ],
+    [
+      escolaridad,
+      _nivelescolarprimaria,
+      _nivelescolarsecundaria,
+      _nivelescolarobrero,
+      _nivelescolarpreuniversitario,
+      _nivelescolarpedagogia,
+      _nivelescolartecnicomedio,
+      _nivelescolartecnicosuperior,
+      parentesco,
+    ]
+  );
+
   // utils
   const { modalActions } = useModalState();
   const navegar = useNavigate();
@@ -292,20 +268,7 @@ function Miembros() {
   const anterior = () => navegar("/datos-hogar");
   const notificar = NotificationProvider();
   const confirm = useConfirm();
-
   // data
-
-  function getAbreviatura(idconcepto?: number, grado?: string) {
-    if (typeof idconcepto === "undefined") {
-      return "";
-    } else {
-      if (grado) {
-        return `${abrevNomenclador[idconcepto.toString()]} (${grado})`;
-      } else {
-        return abrevNomenclador[idconcepto.toString()];
-      }
-    }
-  }
   async function validarEstadoHogar() {
     const id = parseInt(String(idhogar));
     const hogarActual = await db.dat_hogar.where({ idcodigohogar: id }).first();
@@ -318,44 +281,248 @@ function Miembros() {
         .modify({ idestado: idestado });
     }
   }
-  async function unionNomenclador(arr: any) {
-    const join = await Promise.all(
-      arr.map(async (obj: any) => {
-        // ;
-        const colorpiel = await db.nom_concepto.get(
-          parseInt(obj?.idcolorpiel[0] ?? 0)
-        );
-        const nivelescolar = await db.nom_concepto.get(
-          parseInt(obj.idnivelescolar ? obj.idnivelescolar : 0)
-        );
-        const gradoscolar = await db.nom_concepto.get(
-          parseInt(obj.idnivelescolargrado ? obj.idnivelescolargrado : 0)
-        );
-        const gradovencido = await db.nom_concepto.get(
-          parseInt(obj.idgradovencido ? obj.idgradovencido : 0)
-        );
-        const parentesco = await db.nom_concepto.get(
-          parseInt(obj?.idparentesco[0] ?? 0)
-        );
-        const sexo = await db.nom_concepto.get(parseInt(obj?.idsexo[0] ?? 0));
-        return {
-          ...obj,
-          colorpiel: getAbreviatura(colorpiel?.idconcepto),
-          nivelescolar: getAbreviatura(nivelescolar?.idconcepto),
-          gradoscolar: getAbreviatura(
-            gradoscolar?.idconcepto,
-            gradovencido?.denominacion
-          ),
-          parentesco:
-            parentesco?.idconcepto == 9270
-              ? parentesco?.denominacion
-              : getAbreviatura(parentesco?.idconcepto),
-          sexo: getAbreviatura(sexo?.idconcepto),
+  const submitFunction = useCallback(
+    async (values: any) => {
+      if (id) {
+        const _values = {
+          ...values,
+          idcodigohogar: idhogar,
+          edad: calcularEdadByCi(values.cidentidad),
         };
-      })
-    );
-    return join;
-  }
+        modificar("dat_miembrohogar", "idmiembrohogar", id, _values).then(
+          async () => {
+            const miembros: any = await db.dat_miembrohogar
+              .where({ idcodigohogar: idhogar })
+              .toArray()
+              .then((arr) =>
+                arr.map((obj) => {
+                  const nombreyapellidos = `${obj.pnombre} ${obj.papellido} `;
+                  return {
+                    ...obj,
+                    nombreyapellidos: nombreyapellidos,
+                    jefehogar: "",
+                  };
+                })
+              );
+            const indexJefeHogar = miembros.findIndex((obj: any) => {
+              return obj?.idparentesco[0] == "9270";
+            });
+            if (indexJefeHogar != -1) {
+              const filter = parentesco.filter(
+                (item: any) => item.idconcepto !== 9270
+              );
+              setParentesco(filter);
+            }
+            notificar({
+              type: "success",
+              title:
+                "Los miembro del hogar ha sido modificado satisfactoriamente",
+              content: "",
+            });
+            // validarEstadoHogar();
+          }
+        );
+      } else {
+        // ;
+        const _values = {
+          ...values,
+          idcodigohogar: idhogar,
+          edad: calcularEdadByCi(values.cidentidad),
+        };
+        crear("dat_miembrohogar", _values).then(async () => {
+          const miembros: any = await db.dat_miembrohogar
+            .where({ idcodigohogar: idhogar })
+            .toArray()
+            .then((arr) =>
+              arr.map((obj) => {
+                const nombreyapellidos = `${obj.pnombre} ${obj.papellido} `;
+                return {
+                  ...obj,
+                  nombreyapellidos: nombreyapellidos,
+                  jefehogar: "",
+                };
+              })
+            );
+          const indexJefeHogar = miembros.findIndex((obj: any) => {
+            return obj?.idparentesco[0] == "9270";
+          });
+          if (indexJefeHogar != -1) {
+            const filter = parentesco.filter(
+              (item: any) => item.idconcepto !== 9270
+            );
+            setParentesco(filter);
+          }
+          notificar({
+            type: "success",
+            title: "El miembro del hogar ha sido adicionado satisfactoriamente",
+          });
+          validarEstadoHogar();
+        });
+      }
+    },
+    [jefeNucleo, parentesco, idhogar, id]
+  );
+  const FormularioMeimbro = useCallback(
+    () => (
+      <GenericForm
+        name="formularioMiembro"
+        controls={formulario()}
+        endpointPath="miembro"
+        showSpecificDescription={true}
+        idForEdit={id}
+        setIdFunction={setid}
+        modalType="fullWith"
+        createTitle="Adicionar miembro del hogar"
+        editTitle="Modificar miembro del hogar"
+        submitFunction={submitFunction}
+        notifyValidation={async (values: any) => {
+          const error = await obtener("dat_miembrohogar", {
+            cidentidad: values.cidentidad,
+          });
+          if (error && !values.editMode)
+            return "Ya existe una persona registrada con este carnet de identidad";
+          const edad = calcularEdadByCi(values.cidentidad);
+          console.log(edad, values);
+          if (
+            edad > 6 &&
+            (!values.idnivelescolar || values.idnivelescolar.length < 1)
+          )
+            return "El campo Datos de Escolaridad es obligatorio para mayores de 6 años";
+        }}
+        getByIdFunction={async (id) => {
+          const arr = await obtenerDatosPorLlave(
+            "dat_miembrohogar",
+            "idmiembrohogar",
+            id
+          );
+          const obj = { ...arr[0], editMode: true };
+          return obj;
+        }}
+      />
+    ),
+    [formulario, id, submitFunction]
+  );
+  const mainControls = useCallback(
+    (): IGenericControls[] => [
+      {
+        type: "component",
+        component: () => (
+          <Stack
+            direction="row"
+            display={"inline-list-item"}
+            justifyContent="flex-start"
+            sx={{ width: "100%" }}
+          >
+            <Button
+              onClick={() => {
+                if (jefeNucleo) {
+                  const filter = parentesco.filter(
+                    (item: any) => item.idconcepto !== 9270
+                  );
+                  setParentesco(filter);
+                }
+                modalActions.open("formularioMiembro");
+              }}
+              variant="contained"
+            >
+              Adicionar
+            </Button>
+          </Stack>
+        ),
+        label: "",
+        name: "",
+        gridValues: { xs: 12, lg: 12, md: 12, sm: 12, xl: 12 },
+      },
+      {
+        type: "component",
+        component: () => (
+          <TableView
+            values={miembros}
+            headers={[
+              // { name: "cidentidad", label: "Ci" },
+              { name: "nombreyapellidos", label: "Nombre y apellidos" },
+              // { name: "jefehogar", label: "Jefe de hogar" },
+              {
+                name: "parentesco",
+                label: "Parentesco",
+                align: "center",
+              },
+              {
+                name: "colorpiel",
+                label: "Color de la piel",
+                align: "center",
+              },
+              {
+                name: "nivelescolar",
+                label: "Nivel Escolar",
+                align: "center",
+              },
+              // { name: "gradoscolar", label: "Grado Aprob" },
+              { name: "edad", label: "Edad", align: "center" },
+              { name: "sexo", label: "Sexo", align: "center" },
+              {
+                name: "registroconsumidor",
+                label: "Reg. Consumidor",
+                align: "center",
+              },
+            ]}
+            idKey="idmiembrohogar"
+            multiSelect={true}
+            rowActions={[
+              {
+                label: "Modificar",
+                action: async (values: any) => {
+                  setid(values.idmiembrohogar);
+                  if (jefeNucleo && values.idparentesco[0] !== "9270") {
+                    const filter = parentesco.filter(
+                      (item: any) => item.idconcepto !== 9270
+                    );
+                    setParentesco(filter);
+                  } else {
+                    setParentesco(parentescoinit);
+                  }
+                  modalActions.open("formularioMiembro");
+                },
+                icon: EditIcon,
+              },
+              {
+                label: "Eliminar",
+                action: (values: any) => {
+                  confirm({
+                    title: "Eliminar",
+                    confirmationText: "Aceptar",
+                    cancellationText: "Cancelar",
+                    description: `¿Está seguro que desea eliminar el miembro del hogar seleccionado?`,
+                  }).then(() => {
+                    descartarMiembro(values.idmiembrohogar);
+                    eliminar(
+                      "dat_miembrohogar",
+                      "idmiembrohogar",
+                      values.idmiembrohogar
+                    ).then(() => {
+                      notificar({
+                        type: "success",
+                        title:
+                          "El miembro del hogar ha sido eliminado satisfactoriamente",
+                      });
+                      // validarEstadoHogar();
+                    });
+                  });
+                },
+                icon: DeleteIcon,
+              },
+            ]}
+            useCheckBox={false}
+          />
+        ),
+        label: "",
+        name: "",
+        gridValues: { xs: 12, lg: 12, md: 12, sm: 12, xl: 12 },
+      },
+    ],
+    [jefeNucleo, parentesco, parentescoinit, miembros]
+  );
+
   useLiveQuery(async () => {
     // // nomencladores
     async function nomenclador(idpadre: string) {
@@ -420,9 +587,7 @@ function Miembros() {
       .toArray()
       .then((arr) =>
         arr.map((obj) => {
-          const nombreyapellidos = `${obj.pnombre} ${obj.snombre ?? ""} ${
-            obj.papellido
-          } ${obj.sapellido}`;
+          const nombreyapellidos = `${obj.pnombre} ${obj.papellido} `;
           return {
             ...obj,
             nombreyapellidos: nombreyapellidos,
@@ -447,9 +612,7 @@ function Miembros() {
     setParentesco(parentesco);
     setParentescoInit(parentesco);
     const jefehogar = jefeHogar
-      ? `${jefeHogar.pnombre} ${jefeHogar.snombre ?? ""} ${
-          jefeHogar.papellido
-        } ${jefeHogar.sapellido}`
+      ? `${jefeHogar.pnombre} ${jefeHogar.papellido}`
       : "";
     setJefeHogar(jefehogar);
     setHogarActualJefe(jefehogar);
@@ -497,228 +660,27 @@ function Miembros() {
     );
   });
 
-  function getFormularioTable() {
-    if (idhogar) {
-      return (
+  return (
+    <>
+      <Meta title="Miembros del hogar" />
+
+      {idhogar ? (
         <GenericForm
           title="Información general de los miembros del hogar"
           name="formularioTable"
           endpointPath=""
-          controls={[
-            {
-              type: "component",
-              component: () => (
-                <Stack
-                  direction="row"
-                  display={"inline-list-item"}
-                  justifyContent="flex-start"
-                  sx={{ width: "100%" }}
-                >
-                  <Button
-                    onClick={() => {
-                      setTitleForm("Adicionar miembro del hogar");
-                      if (jefeNucleo) {
-                        const filter = parentesco.filter(
-                          (item: any) => item.idconcepto !== 9270
-                        );
-                        setParentesco(filter);
-                      }
-                      modalActions.open("formularioMiembro");
-                    }}
-                    variant="contained"
-                  >
-                    Adicionar
-                  </Button>
-                </Stack>
-              ),
-              label: "",
-              name: "",
-              gridValues: { xs: 12, lg: 12, md: 12, sm: 12, xl: 12 },
-            },
-            {
-              type: "component",
-              component: () => (
-                <TableView
-                  values={miembros}
-                  headers={[
-                    // { name: "cidentidad", label: "Ci" },
-                    { name: "nombreyapellidos", label: "Nombre y apellidos" },
-                    // { name: "jefehogar", label: "Jefe de hogar" },
-                    {
-                      name: "parentesco",
-                      label: "Parentesco",
-                      align: "center",
-                    },
-                    {
-                      name: "colorpiel",
-                      label: "Color de la piel",
-                      align: "center",
-                    },
-                    {
-                      name: "nivelescolar",
-                      label: "Nivel Escolar",
-                      align: "center",
-                    },
-                    // { name: "gradoscolar", label: "Grado Aprob" },
-                    { name: "edad", label: "Edad", align: "center" },
-                    { name: "sexo", label: "Sexo", align: "center" },
-                    {
-                      name: "registroconsumidor",
-                      label: "Reg. Consumidor",
-                      align: "center",
-                    },
-                  ]}
-                  idKey="idmiembrohogar"
-                  multiSelect={true}
-                  rowActions={[
-                    {
-                      label: "Modificar",
-                      action: async (values: any) => {
-                        setid(values.idmiembrohogar);
-                        setTitleForm("Modificar miembro del hogar");
-                        if (jefeNucleo && values.idparentesco[0] !== "9270") {
-                          const filter = parentesco.filter(
-                            (item: any) => item.idconcepto !== 9270
-                          );
-                          setParentesco(filter);
-                        } else {
-                          setParentesco(parentescoinit);
-                        }
-                        modalActions.open("formularioMiembro");
-                      },
-                      icon: EditIcon,
-                    },
-                    {
-                      label: "Eliminar",
-                      action: (values: any) => {
-                        confirm({
-                          title: "Eliminar",
-                          confirmationText: "Aceptar",
-                          cancellationText: "Cancelar",
-                          description: `¿Está seguro que desea eliminar el miembro del hogar seleccionado?`,
-                        }).then(() => {
-                          descartarMiembro(values.idmiembrohogar);
-                          eliminar(
-                            "dat_miembrohogar",
-                            "idmiembrohogar",
-                            values.idmiembrohogar
-                          ).then(() => {
-                            notificar({
-                              type: "success",
-                              title:
-                                "El miembro del hogar ha sido eliminado satisfactoriamente",
-                            });
-                            // validarEstadoHogar();
-                          });
-                        });
-                      },
-                      icon: DeleteIcon,
-                    },
-                  ]}
-                  useCheckBox={false}
-                />
-              ),
-              label: "",
-              name: "",
-              gridValues: { xs: 12, lg: 12, md: 12, sm: 12, xl: 12 },
-            },
-          ]}
+          controls={mainControls()}
           hideButtons={true}
         />
-      );
-    } else {
-      return (
-        <Typography mx={2} my={2}>
+      ) : (
+        <Typography variant="h6" p={2}>
           <b>No existe un hogar seleccionado</b>
         </Typography>
-      );
-    }
-  }
+      )}
 
-  function getFormularioMiembro() {
-    return (
-      <GenericForm
-        name="formularioMiembro"
-        controls={formulario}
-        title={titleForm}
-        endpointPath="miembro"
-        showSpecificDescription={true}
-        idForEdit={id}
-        setIdFunction={setid}
-        modalType="fullWith"
-        // descriptionOnCreate="Adicionar"
-        // descriptionOnEdit="Modificar"
-        submitFunction={(values: any) => {
-          if (id) {
-            const _values = {
-              ...values,
-              idcodigohogar: idhogar,
-              edad: calcularEdadByCi(values.cidentidad),
-            };
-            modificar("dat_miembrohogar", "idmiembrohogar", id, _values).then(
-              () => {
-                notificar({
-                  type: "success",
-                  title:
-                    "Los miembro del hogar ha sido modificado satisfactoriamente",
-                  content: "",
-                });
-                // validarEstadoHogar();
-              }
-            );
-          } else {
-            // ;
-            const _values = {
-              ...values,
-              idcodigohogar: idhogar,
-              edad: calcularEdadByCi(values.cidentidad),
-            };
-            crear("dat_miembrohogar", _values).then(() => {
-              notificar({
-                type: "success",
-                title:
-                  "El miembro del hogar ha sido adicionado satisfactoriamente",
-              });
-              validarEstadoHogar();
-            });
-          }
-        }}
-        notifyValidation={async (values: any) => {
-          const error = await obtener("dat_miembrohogar", {
-            cidentidad: values.cidentidad,
-          });
-          if (error && !values.editMode)
-            return "Ya existe una persona registrada con este carnet de identidad";
-          const edad = calcularEdadByCi(values.cidentidad);
-          console.log(edad, values);
-          if (
-            edad > 6 &&
-            (!values.idnivelescolar || values.idnivelescolar.length < 1)
-          )
-            return "El campo Datos de Escolaridad es obligatorio para mayores de 6 años";
-          // if (condicion) {
-          //   lo q pasa si se cumple
-          // }
-          // else {
-          //   lo q pasa sino se cumple
-          // }
-        }}
-        getByIdFunction={async (id) => {
-          const arr = await obtenerDatosPorLlave(
-            "dat_miembrohogar",
-            "idmiembrohogar",
-            id
-          );
-          const obj = { ...arr[0], editMode: true };
-          return obj;
-        }}
-      />
-    );
-  }
+      <FormularioMeimbro />
 
-  function getToolBar() {
-    if (idhogar) {
-      return (
+      {idhogar && (
         <Stack
           direction="row"
           mx={"auto"}
@@ -743,52 +705,9 @@ function Miembros() {
             Siguiente
           </Button>
         </Stack>
-      );
-    }
-  }
-
-  return (
-    <>
-      <Meta title="Miembros del hogar" />
-
-      {getFormularioTable()}
-
-      {getFormularioMiembro()}
-
-      {getToolBar()}
+      )}
     </>
   );
 }
 
 export default Miembros;
-export function calcularEdadByCi(ci: string) {
-  if (ci?.length === 11) {
-    let fechaNacStr = ci.substring(0, 6);
-    // convertir la cadena de fecha en un objeto Date
-    let año = parseInt(fechaNacStr.substring(0, 2)) + 1900;
-    let mes = parseInt(fechaNacStr.substring(2, 4)) - 1;
-    let día = parseInt(fechaNacStr.substring(4, 6));
-    let fechaNac = new Date(año, mes, día);
-    let hoy = new Date();
-    // calcular la diferencia en años
-    let edad = hoy.getFullYear() - fechaNac.getFullYear();
-    // ajustar la edad si aún no ha llegado el cumpleaños del año actual
-    if (
-      hoy.getMonth() < fechaNac.getMonth() ||
-      (hoy.getMonth() === fechaNac.getMonth() &&
-        hoy.getDate() < fechaNac.getDate())
-    ) {
-      edad--;
-    }
-    // siglo XIX  9
-    // siglo XX 0-5
-    // siglo XXI 6-8
-    const siglo = parseInt(ci.at(6) ?? "10");
-    if (edad >= 100 && siglo >= 6 && siglo <= 8) {
-      edad -= 100;
-    }
-    return edad;
-  } else {
-    return 0;
-  }
-}

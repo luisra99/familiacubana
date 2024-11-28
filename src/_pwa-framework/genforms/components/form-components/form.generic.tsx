@@ -226,23 +226,6 @@ const GenericForm = (props: IGForm) => {
                       {action.label}
                     </Button>
                   ))}
-                  {nextButton && (
-                    <Button
-                      onClick={() => {
-                        nextButton?.submitOnAction &&
-                          formButtonAction().finally(
-                            () => nextButton?.action(values)
-                          );
-                        !nextButton?.submitOnAction &&
-                          nextButton?.action(values);
-                      }}
-                      disabled={nextDisabledFunction?.(values)}
-                      color="primary"
-                      variant="contained"
-                    >
-                      {nextButton?.text}
-                    </Button>
-                  )}
                   {!editMode && (applyButton === undefined || applyButton) && (
                     <Button
                       onClick={formButtonAction}
@@ -270,7 +253,24 @@ const GenericForm = (props: IGForm) => {
                     id="acceptButton"
                   >
                     Aceptar
-                  </Button>
+                  </Button>{" "}
+                  {nextButton && (
+                    <Button
+                      onClick={() => {
+                        nextButton?.submitOnAction &&
+                          formButtonAction().finally(
+                            () => nextButton?.action(values)
+                          );
+                        !nextButton?.submitOnAction &&
+                          nextButton?.action(values);
+                      }}
+                      disabled={nextDisabledFunction?.(values)}
+                      color="primary"
+                      variant="contained"
+                    >
+                      {nextButton?.text}
+                    </Button>
+                  )}
                 </DialogActions>
               )}
             </>

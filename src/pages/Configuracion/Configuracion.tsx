@@ -45,22 +45,6 @@ function Configuracion() {
           Importar
         </Button>
       </Grid>
-      <Grid item xs={5}>
-        <Typography variant="h6" mx={4}>
-          Zonas vulnerables
-        </Typography>{" "}
-      </Grid>
-      <Grid item xs={3}>
-        <Button
-          component={Link}
-          to="/zonas-vulnerables"
-          variant="contained"
-          color="primary"
-          fullWidth
-        >
-          Gestionar
-        </Button>
-      </Grid>
     </Grid>
   );
 }

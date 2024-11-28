@@ -330,6 +330,7 @@ export class dat_miembroenfcronicas {
 export class dat_viasacceso {
   constructor(
     public idviacceso: number,
+    public idmiembrohogar: string,
     public idtipoviaacceso: Array<any>,
     public idmiembroenfcronica?: number
   ) {}
@@ -342,6 +343,7 @@ export class dat_miembrofuentesingresos {
     public montomensual: number,
     public esotrafuente: string,
     public idmoneda: number,
+    public idescala: number,
     public idfuente: number,
     public idcodigohogar?: number,
     public idmiembrohogar?: number
@@ -471,9 +473,9 @@ export class dat_quiencuida {
   constructor(
     public idquiencuida: number,
     public idnvinculacionmiembro: number,
+    public idmiembrohogar: string,
     public idparentesco?: number,
     public cantidad?: string,
-    public idmiembrohogar?: string,
     public idcodigohogar?: string
   ) {}
 }
@@ -483,6 +485,7 @@ export class dat_quiencuida {
 export class dat_estadonoacceso {
   constructor(
     public idcausanoacceso: number,
+    public idmiembrohogar: string,
     public idcausa: number,
     public conocequeexiste: boolean,
     public entramites: boolean,
@@ -497,6 +500,7 @@ export class dat_causadesvnnaj {
     public idcausadesvnnaj: number,
     public idcausadesv: number,
     public otrascausas: string,
+    public idmiembrohogar: any,
     public idsituacnnaj?: number
   ) {}
 }
@@ -505,6 +509,7 @@ export class dat_causadesvnnaj {
 export class dat_nnasitdelictiva {
   constructor(
     public idnnasitdelictiva: number,
+    public idcodigohogar: number,
     public idtiposituacion: number,
     public idsituacnnaj?: number
   ) {}
@@ -623,9 +628,9 @@ export class FamiliaCubana extends Dexie {
       dat_miembroenfcronicas:
         "++idmiembroenfcronica, idenfermedad, accede, idtipoenfermedad, idcodigohogar, idmiembrohogar",
       dat_viasacceso:
-        "++idviacceso, idtipoviaacceso, idcodigohogar, idmiembroenfcronica",
+        "++idviacceso, idtipoviaacceso, idcodigohogar, idmiembrohogar, idmiembroenfcronica",
       dat_miembrofuentesingresos:
-        "++idmiembrofuentesingresos, montomensual, esotrafuente, idmoneda, idfuente, idcodigohogar, idmiembrohogar",
+        "++idmiembrofuentesingresos, montomensual, esotrafuente, idmoneda, idescala, idfuente, idcodigohogar, idmiembrohogar",
       dat_miembroocupacion:
         "++idmiembroocupacion, idocupacion, idtipoocupacion, idcodigohogar, idmiembrohogar",
       dat_polprogsoc:
@@ -647,7 +652,7 @@ export class FamiliaCubana extends Dexie {
       dat_remuneraciones:
         "++idremuneraciones,idnvinculacionmiembro,remuneracion,idgeneral,idcodigohogar",
       dat_quiencuida:
-        "++idquiencuida,idnvinculacionmiembro,idparentesco,idcodigohogar,idgeneral,cantidad",
+        "++idquiencuida,idnvinculacionmiembro,idmiembrohogar,idparentesco,idcodigohogar,idgeneral,cantidad",
       nom_tipoconcepto:
         "++idtipoconcepto, denominacion, descripcion, fhasta, idtipo",
       dat_atributo: "++idatributo, denomicacion, tipo, idtipoconcepto",
@@ -659,14 +664,15 @@ export class FamiliaCubana extends Dexie {
         "++idrelacion, fechafin, idestructura, idconceptorelacionado, idconceptopadre, idconceptopadrerel, idtipoconcepto",
       dat_manejosdesechos: "++idmanejodesechos, idtipomanejos, idcodigohogar",
       dat_estadonoacceso:
-        " ++idcausanoacceso,idcausa,idpolprogsoc,idgeneral,conocequeexiste,entramites,ayudaparaacceder",
+        " ++idcausanoacceso,idcausa,idpolprogsoc,idgeneral,conocequeexiste,entramites,idmiembrohogar,ayudaparaacceder",
       dat_miembroenfbajaprev:
         "++idmiembroenfbajaprev, idenfermedad, idmiembrohogar, idcodigohogar",
       dat_ubicacionsanitaria:
         "++idubicacionsanitario,idlocalesvivienda,idtiposanitario,idubicacion,idcodigohogar,idgeneral",
       dat_causadesvnnaj:
-        " ++idcausadesvnnaj,idcausadesv,otrascausas,idsituacnnaj",
-      dat_nnasitdelictiva: "++idnnasitdelictiva,idtiposituacion,idsituacnnaj",
+        " ++idcausadesvnnaj,idcausadesv,otrascausas,idsituacnnaj,idmiembrohogar",
+      dat_nnasitdelictiva:
+        "++idnnasitdelictiva,idtiposituacion,idsituacnnaj, idcodigohogar,idmiembrohogar",
     });
   }
 }

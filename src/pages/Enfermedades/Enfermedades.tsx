@@ -1,6 +1,7 @@
 import { Button, Divider, Stack, Typography } from "@mui/material";
 import {
   crear,
+  CreateOrModify,
   eliminar,
   modificar,
   obtenerDatosPorLlave,
@@ -311,22 +312,17 @@ function Enfermedades() {
   ]);
   const enfermedadesGetByIdFunction = useCallback(
     async (idEnfermedad: string) => {
-      const enfermedadesMiembro = await datico.dat_miembroenfcronicas
+      const enfermedadesMiembro: any = await datico.dat_miembroenfcronicas
         .where({
           idmiembroenfcronica: idEnfermedad,
           idmiembrohogar: idMiembro,
         })
         .first();
-      const viasAccesoMedicamento = await datico.dat_viasacceso
-        .where({
-          idmiembroenfcronica: enfermedadesMiembro?.idmiembroenfcronica,
-        })
-        .toArray();
 
       return {
         idtipoenfermedad: enfermedadesMiembro?.idtipoenfermedad ?? [],
         accede: enfermedadesMiembro?.accede ?? [],
-        idtipoviaacceso: viasAccesoMedicamento?.[0]?.idtipoviaacceso ?? [],
+        idtipoviaacceso: enfermedadesMiembro?.idtipoviaacceso ?? [],
         editMode: !!enfermedadesMiembro?.idtipoenfermedad,
       };
     },
@@ -334,52 +330,36 @@ function Enfermedades() {
   );
   const enfermedadesSubmitFunction = useCallback(
     async (values: any) => {
-      let edit = values.editMode;
-      delete values.editMode;
-      if (!edit) {
-        crear("dat_miembroenfcronicas", {
-          idtipoenfermedad: values.idtipoenfermedad,
-          accede: values.accede,
+      await CreateOrModify(
+        "dat_miembroenfcronicas",
+        {
           idmiembrohogar: idMiembro,
-        }).then((idenfermedades: any) => {
-          crear("dat_viasacceso", {
-            idtipoviaacceso: values.idtipoviaacceso,
-            idmiembroenfcronica: idenfermedades,
-          });
-          LoadDatos(idMiembro);
-          notificar({
-            type: "success",
-            title:
-              "La enfermedad crónica ha sido adicionada satisfactoriamente",
-            content: "",
-          });
-        });
-      } else {
-        modificar(
-          "dat_miembroenfcronicas",
-          "idmiembroenfcronica",
-          values.idtipoenfermedad,
-          {
-            ...values,
-          }
-        ).then(() => {
-          modificar(
-            "dat_viasacceso",
-            "idmiembroenfcronica",
-            values.idtipoenfermedad,
-            {
-              ...values,
-            }
-          );
-          LoadDatos(idMiembro);
-          notificar({
-            type: "success",
-            title:
-              "Se han adicionado los datos de enfermedades al miembro satisfactoriamente",
-            content: "",
-          });
-        });
-      }
+          idtipoenfermedad: values.idtipoenfermedad,
+        },
+        { ...values, idmiembrohogar: idMiembro },
+        "idmiembroenfcronica"
+      );
+      const registro = await datico.dat_miembroenfcronicas
+        .where({
+          idmiembrohogar: idMiembro,
+          idtipoenfermedad: values.idtipoenfermedad,
+        })
+        .toArray();
+      const { idmiembroenfcronica } = registro?.[0] ?? {
+        idmiembroenfcronica: "",
+      };
+      await CreateOrModify(
+        "dat_viasacceso",
+        { idmiembroenfcronica },
+        { idtipoviaacceso: values.idtipoviaacceso, idmiembrohogar: idMiembro },
+        "idviacceso"
+      );
+      LoadDatos(idMiembro);
+      notificar({
+        type: "success",
+        title: "La enfermedad crónica ha sido guardada satisfactoriamente",
+        content: "",
+      });
     },
     [idMiembro]
   );
@@ -400,6 +380,14 @@ function Enfermedades() {
             applyButton={false}
             nextButton={{ text: "Siguiente", action: siguiente }}
             prevButton={{ text: "Anterior", action: anterior }}
+            nextDisabledFunction={() => {
+              const miembrosCheck = miembrosCheckEnfermedad.includes(",")
+                ? miembrosCheckEnfermedad?.split?.(",")?.length
+                : miembrosCheckEnfermedad.length > 0
+                  ? 1
+                  : 0;
+              return miembros?.length !== miembrosCheck;
+            }}
             getByIdFunction={getByIdFunctionMiembro}
             submitFunction={async (values: any) => {
               const enfer_bajaprev = await datico.dat_miembroenfbajaprev
@@ -463,7 +451,7 @@ function Enfermedades() {
                       values.idmiembro[0],
                       {
                         idcodigohogar: getHogar(),
-                        idenfermedad: values.idenfermedad[0],
+                        idenfermedad: values.idenfermedad,
                       }
                     ).then(() => {
                       existe_enfcronicas.length &&
@@ -475,7 +463,7 @@ function Enfermedades() {
                     })
                   : crear("dat_miembroenfbajaprev", {
                       idmiembrohogar: values.idmiembro[0],
-                      idenfermedad: values.idenfermedad[0],
+                      idenfermedad: values.idenfermedad,
                     }).then(() => {
                       existe_enfcronicas.length &&
                         eliminar(
@@ -522,12 +510,12 @@ function Enfermedades() {
             }}
           />
         ) : (
-          <Typography mx={2} my={2}>
+          <Typography variant="h6" p={2}>
             <b>No existen miembros en el hogar seleccionado</b>
           </Typography>
         )
       ) : (
-        <Typography mx={2} my={2}>
+        <Typography variant="h6" p={2}>
           <b>No existe un hogar seleccionado</b>
         </Typography>
       )}

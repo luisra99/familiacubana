@@ -16,9 +16,9 @@ export async function unionUnidadAlojamiento(arr: any) {
         return obj?.idparentesco[0] == "9270";
       });
       const jefehogar = jefeHogar ? (
-        `${jefeHogar.pnombre} ${jefeHogar.snombre ?? ""} ${
+        `${jefeHogar.pnombre} ${
           jefeHogar.papellido
-        } ${jefeHogar.sapellido}`
+        }`
       ) : (
         <span style={{ color: "red" }}>Pendiente a definir...</span>
       );
@@ -115,11 +115,10 @@ export const tipovivienda: IGenericControls = {
 };
 
 export const asentamiento: IGenericControls = {
-  type: "select",
+  type: "text",
   name: "idasentamiento",
   label: "Asentamiento",
   gridValues: { xl: 4, lg: 4, md: 4, sm: 12, xs: 12 },
-  url: "123456789",
 };
 
 export const planturquino: IGenericControls = {

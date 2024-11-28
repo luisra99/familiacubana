@@ -41,6 +41,7 @@ function Ingresos() {
   const siguiente = () => navegar("/ocupacion/principal");
   const anterior = () => navegar("/nucleo-info");
   const { modalActions } = useModalState();
+
   // init
   async function tieneIngresos(arr: any) {
     const result = await Promise.all(
@@ -80,6 +81,17 @@ function Ingresos() {
         const fuente = await db.nom_concepto.get(
           parseInt(obj?.idfuente[0] ?? 0)
         );
+        console.log("cuantias", obj);
+        let cuantia;
+        if (obj.idescala?.length) {
+          const cuantias = await db.nom_concepto
+            .where({ idconcepto: Number(obj.idescala[0]) })
+            .first();
+          cuantia = cuantias?.denominacion;
+        console.log("cuantias", cuantias);
+          
+        }
+
         const fuentestr =
           fuente?.idconcepto == 9326 ? (
             <p style={{ textAlign: "left", width: "max-content" }}>
@@ -91,13 +103,14 @@ function Ingresos() {
           ) : (
             fuente?.denominacion
           );
+        
         return {
           ...obj,
           moneda: moneda?.denominacion,
           fuente: fuentestr,
           montomensual: (
             <b style={{ textAlign: "left", width: "max-content" }}>
-              ${obj.montomensual * 1}
+              ${(obj.montomensual ?? cuantia??0) * 1}
             </b>
           ),
         };
@@ -131,6 +144,11 @@ function Ingresos() {
         required: { message: "Este campo es obligatorio" },
       },
       // url: "9318",
+      onChange: (event, ref) => {
+        event.target.value == "9323"
+          ? ref.setFieldValue("idmoneda", ["9310"], true)
+          : ref.setFieldValue("idmoneda", [], false);
+      },
     },
     {
       type: "text",
@@ -161,20 +179,57 @@ function Ingresos() {
       validations: {
         required: { message: "Este campo es obligatorio" },
       },
+      disabled: (values) => values.idfuente == "9323",
       disabledOnEdit: true,
+    },
+    {
+      type: "select",
+      label: "Cuantias",
+      name: "idescala",
+      gridValues: { xl: 4, lg: 4, md: 6, xs: 12, sm: 12 },
+      url: "10394",
+      validations: {
+        required: {
+          message: "Este campo es obligatorio",
+          when: {
+            name: "idfuente",
+            expression: (value) =>
+              JSON.stringify(value) === JSON.stringify(["9323"]),
+          },
+        },
+      },
+      // disabledOnEdit: true,
+      hidden: (values: any) => values.idfuente[0] != "9323",
     },
     {
       type: "number" /**es lo generico */,
       label: "Monto",
       name: "montomensual",
       decimalScale: 2,
+      disabledOnEdit: true,
       format: "finance",
       negativeValues: false,
       gridValues: { xl: 4, lg: 4, md: 6, xs: 12, sm: 12 },
       validations: {
-        required: { message: "Este campo es obligatorio" },
-        moreThan: { value: 0, message: "El monto debe de ser mayor que 0" },
+        required: {
+          message: "Este campo es obligatorio",
+          when: {
+            name: "idfuente",
+            expression: (value) =>
+              JSON.stringify(value) !== JSON.stringify(["9323"]),
+          },
+        },
+        moreThan: {
+          value: 0,
+          message: "El monto debe de ser mayor que 0",
+          when: {
+            name: "idfuente",
+            expression: (value) =>
+              JSON.stringify(value) !== JSON.stringify(["9323"]),
+          },
+        },
       },
+      hidden: (values: any) => values.idfuente[0] == "9323",
     },
   ];
 
@@ -332,14 +387,14 @@ function Ingresos() {
         );
       } else {
         return (
-          <Typography mx={2} my={2}>
+          <Typography variant="h6" p={2}>
             <b>No existen miembros en el hogar seleccionado </b>
           </Typography>
         );
       }
     } else {
       return (
-        <Typography mx={2} my={2}>
+        <Typography variant="h6" p={2}>
           <b>No existe un hogar seleccionado</b>
         </Typography>
       );
@@ -355,8 +410,6 @@ function Ingresos() {
         description=""
         endpointPath=""
         showSpecificDescription={true}
-        // descriptionOnEdit="Modificar"
-        // descriptionOnCreate="Adicionar"
         idForEdit={id}
         setIdFunction={setid}
         modalType="fullWith"
@@ -437,7 +490,12 @@ function Ingresos() {
           >
             Anterior
           </Button>
-          <Button onClick={siguiente} variant="contained">
+
+          <Button
+            onClick={siguiente}
+            variant="contained"
+            disabled={miembros?.length !== ingresos?.length}
+          >
             Siguiente
           </Button>
         </Stack>

@@ -2,6 +2,7 @@ import { FamiliaCubana, datico } from "./model";
 
 import { getHogar } from "@/app/hogarController/hogar.controller";
 import { mode } from "@/_pwa-framework/config";
+import { obtenerMiembrosPorHogar } from "./controllers.miembrohogar";
 
 export async function obtenerDatosPorLlave(
   tabla: keyof FamiliaCubana,
@@ -68,9 +69,10 @@ export async function eliminar(
   idKey: string,
   id: any
 ): Promise<any> {
+  console.log("Eliminando", tabla, idKey, id);
   try {
     const tx = await datico.transaction("rw", tabla, async () => {
-      return await (datico as any)[tabla].where(idKey).equals(id).delete();
+      return await (datico as any)[tabla].where({ [idKey]: id }).delete();
     });
     await tx.complete;
     console.info("Eliminado correctamente", tabla);
@@ -83,7 +85,7 @@ export async function eliminar(
 export async function modificar(
   tabla: keyof FamiliaCubana,
   idKey: string,
-  id: string | number,
+  id: any,
   values: any
 ): Promise<any> {
   try {
@@ -108,6 +110,7 @@ export async function CreateOrModify(
   try {
     const tx = await datico.transaction("rw", tabla, async () => {
       const data = await (datico as any)[tabla].where(params).first();
+      console.log("Luis", data);
       if (data) {
         return await (datico as any)[tabla]
           .where(idKey)
@@ -432,72 +435,116 @@ export async function vistaIngresos(): Promise<[]> {
 }
 
 export async function descartarHogares(idhogar: any) {
+  const miembros = await obtenerMiembrosPorHogar(idhogar);
+  miembros.forEach(async ({ idconcepto }: any) => {
+    await descartarMiembro(idconcepto);
+    eliminar("dat_miembrohogar", "idmiembrohogar", idconcepto);
+  });
   console.log("Descartar hogares", idhogar);
-  eliminar("dat_afectacionmatvivienda", "idcodigohogar", idhogar.toString());
-  eliminar("dat_caracterizacion", "idcodigohogar", idhogar.toString());
-  eliminar("dat_estadoconstvivienda", "idcodigohogar", idhogar.toString());
+  eliminar("dat_unidaddealojamiento", "idunidaddealojamiento", idhogar);
   eliminar("dat_hogar", "idcodigohogar", idhogar);
+  eliminar("dat_miembrohogar", "idcodigohogar", idhogar.toString());
+  eliminar("dat_estadoconstvivienda", "idcodigohogar", idhogar.toString());
+  eliminar("dat_afectacionmatvivienda", "idcodigohogar", idhogar.toString());
+  eliminar("dat_ubicacionlocales", "idcodigohogar", idhogar.toString());
+  eliminar("dat_ubicacionsanitaria", "idcodigohogar", idhogar.toString());
+  eliminar("dat_localesvivienda", "idcodigohogar", idhogar.toString());
+  eliminar("dat_seviciosvivienda", "idcodigohogar", idhogar.toString());
+  eliminar("dat_hogarmobiliarioequipos", "idcodigohogar", idhogar);
+  eliminar("dat_hogarmobiliarioequipos", "idcodigohogar", idhogar.toString());
   eliminar(
     "dat_hogardiversidadalimentaria",
     "idcodigohogar",
     idhogar.toString()
   );
-  eliminar("dat_hogarestrategias", "idcodigohogar", idhogar.toString());
   eliminar("dat_hogargastos", "idcodigohogar", idhogar.toString());
-  eliminar("dat_hogarmobiliarioequipos", "idcodigohogar", idhogar.toString());
-  eliminar("dat_localesvivienda", "idcodigohogar", idhogar.toString());
-  eliminar("dat_manejosdesechos", "idcodigohogar", idhogar);
-  eliminar("dat_miebrobeneficioprogalim", "idmiembrohogar", idhogar);
-  eliminar("dat_miembroaditamentos", "idmiembrohogar", idhogar);
-  eliminar("dat_miembrobeneficios", "idmiembrohogar", idhogar);
-  eliminar("dat_miembrodiscapacidad", "idcodigohogar", idhogar);
-  eliminar("dat_miembroencuesta", "idcodigohogar", idhogar);
-  eliminar("dat_miembroenfbajaprev", "idcodigohogar", idhogar);
-  eliminar("dat_miembroenfcronicas", "idcodigohogar", idhogar);
-  eliminar("dat_miembroestrategias", "idcodigohogar", idhogar);
-  eliminar("dat_miembrofuentesingresos", "idcodigohogar", idhogar);
-  eliminar("dat_miembrogradoautonomia", "idcodigohogar", idhogar);
-  eliminar("dat_miembrohogar", "idcodigohogar", idhogar);
-  eliminar("dat_miembroocupacion", "idcodigohogar", idhogar);
-  eliminar("dat_miembropogramas", "idcodigohogar", idhogar);
-  eliminar("dat_miembrosituacionsocial", "idcodigohogar", idhogar);
-  eliminar("dat_motivonoatencion", "idcodigohogar", idhogar);
-  eliminar("dat_nnaocupacion", "idcodigohogar", idhogar);
-  eliminar("dat_nvinculacionmiembro", "idcodigohogar", idhogar);
-  eliminar("dat_polprogsoc", "idmiembrohogar", idhogar);
-  eliminar("dat_quiencuida", "idcodigohogar", idhogar);
-  eliminar("dat_remuneraciones", "idcodigohogar", idhogar);
-  eliminar("dat_seviciosvivienda", "idcodigohogar", [idhogar.toString()]);
-  eliminar("dat_situacnnaj", "idcodigohogar", idhogar);
-  eliminar("dat_ubicacionlocales", "idcodigohogar", idhogar.toString());
-  eliminar("dat_ubicacionsanitaria", "idcodigohogar", idhogar.toString());
-  eliminar("dat_unidaddealojamiento", "idunidaddealojamiento", idhogar);
-  //eliminar("dat_estadonoacceso","idhogar",idhogar)
-  //eliminar("dat_detallesconcepto","idhogar",idhogar)
-  //eliminar("dat_causadesvnnaj","idhogar",idhogar)
-  //eliminar("dat_estructura","idhogar",idhogar)
-  //eliminar("dat_matrizrelacional","idhogar",idhogar)
-  //eliminar("dat_nnasitdelictiva","idhogar",idhogar)
-  //eliminar("dat_rolconcepto","idhogar",idhogar)
-  //eliminar("dat_situacionsocialorg","idhogar",idhogar)
-  //eliminar("dat_tiposayuda","idhogar",idhogar)
-  //eliminar("dat_viasacceso","idhogar",idhogar)
-  //eliminar("dat_zonavulnerable","idhogar",idhogar)
+  eliminar("dat_hogarestrategias", "idcodigohogar", idhogar.toString());
+  eliminar("dat_caracterizacion", "idcodigohogar", idhogar.toString());
+
+  // eliminar("dat_manejosdesechos", "idcodigohogar", idhogar);
+  // eliminar("dat_miebrobeneficioprogalim", "idcodigohogar", idhogar);
+  // eliminar("dat_miembrobeneficios", "idcodigohogar", idhogar);
+  // eliminar("dat_miembrodiscapacidad", "idcodigohogar", idhogar);
+  // eliminar("dat_miembroencuesta", "idcodigohogar", idhogar);
+  // eliminar("dat_miembroenfbajaprev", "idcodigohogar", idhogar);
+  // eliminar("dat_miembroestrategias", "idcodigohogar", idhogar);
+  // eliminar("dat_miembrofuentesingresos", "idcodigohogar", idhogar.toString());
+  // eliminar("dat_miembroocupacion", "idcodigohogar", idhogar.toString());
+  // eliminar("dat_miembropogramas", "idcodigohogar", idhogar);
+  // eliminar("dat_miembrosituacionsocial", "idcodigohogar", idhogar);
+  // eliminar("dat_motivonoatencion", "idcodigohogar", idhogar);
+  // eliminar("dat_nvinculacionmiembro", "idcodigohogar", idhogar);
+  // eliminar("dat_remuneraciones", "idcodigohogar", idhogar);
+  // eliminar("dat_situacnnaj", "idcodigohogar", idhogar);
+
+  // eliminar("dat_atributo", "idmiembrohogar", idMiembro.toString());
+  // eliminar("dat_polprogsoc", "idcodigohogar", idhogar);
+  // eliminar("dat_estadonoacceso","idhogar",idhogar)
+  // //eliminar("dat_detallesconcepto","idhogar",idhogar)
+  // //eliminar("dat_estructura","idhogar",idhogar)
+  // //eliminar("dat_matrizrelacional","idhogar",idhogar)
+  // //eliminar("dat_nnasitdelictiva","idhogar",idhogar)
+  // //eliminar("dat_rolconcepto","idhogar",idhogar)
+  // //eliminar("dat_situacionsocialorg","idhogar",idhogar)
+  // //eliminar("dat_tiposayuda","idhogar",idhogar)
+  // //eliminar("dat_viasacceso","idhogar",idhogar)
+  // //eliminar("dat_zonavulnerable","idhogar",idhogar)
 }
+
 export async function descartarMiembro(idMiembro: any) {
   console.log("Descartar miembro", idMiembro);
-  eliminar("dat_miembroaditamentos", "idmiembrohogar", idMiembro);
-  eliminar("dat_miembrobeneficios", "idmiembrohogar", idMiembro.toString());
-  eliminar("dat_miembrogradoautonomia", "idmiembrohogar", idMiembro.toString());
-  eliminar("dat_miembroencuesta", "idmiembrohogar", idMiembro.toString());
-  eliminar("dat_miembroenfbajaprev", "idmiembrohogar", idMiembro.toString());
-  eliminar("dat_miembroenfcronicas", "idmiembrohogar", idMiembro.toString());
-  eliminar("dat_miembroestrategias", "idmiembrohogar", idMiembro.toString());
-  eliminar("dat_miembrofuentesingresos", "idmiembrohogar", idMiembro.toString());
-  eliminar("dat_miembrohogar", "idmiembrohogar", idMiembro);
+
+  eliminar(
+    "dat_miembrofuentesingresos",
+    "idmiembrohogar",
+    idMiembro.toString()
+  );
   eliminar("dat_miembroocupacion", "idmiembrohogar", [idMiembro.toString()]);
-  eliminar("dat_miembrosituacionsocial", "idmiembrohogar", idMiembro.toString());
+  eliminar("dat_remuneraciones", "idmiembrohogar", idMiembro.toString());
+  eliminar("dat_quiencuida", "idmiembrohogar", idMiembro.toString());
+  eliminar("dat_nvinculacionmiembro", "idmiembrohogar", idMiembro.toString());
+  eliminar("dat_nnaocupacion", "idmiembrohogar", [idMiembro.toString()]);
+  eliminar("dat_situacnnaj", "idmiembrohogar", [idMiembro.toString()]);
+  eliminar("dat_miembroaditamentos", "idmiembrohogar", idMiembro);
+  eliminar("dat_miembrogradoautonomia", "idmiembrohogar", idMiembro.toString());
+  eliminar("dat_miembroenfcronicas", "idmiembrohogar", idMiembro.toString());
+  eliminar("dat_miembrobeneficios", "idmiembrohogar", idMiembro.toString());
+  eliminar("dat_miembroenfbajaprev", "idmiembrohogar", idMiembro.toString());
+  eliminar("dat_viasacceso", "idmiembrohogar", idMiembro.toString());
+  eliminar("dat_motivonoatencion", "idmiembrohogar", idMiembro.toString());
+  eliminar("dat_hogar", "idmiembrohogar", idMiembro.toString());
+  eliminar("dat_miembroencuesta", "idmiembrohogar", idMiembro.toString());
+  eliminar("dat_estadonoacceso", "idmiembrohogar", idMiembro.toString());
+  eliminar("dat_polprogsoc", "idmiembrohogar", idMiembro.toString());
+  eliminar("dat_situacionsocialorg", "idmiembrohogar", idMiembro.toString());
+  eliminar(
+    "dat_miembrosituacionsocial",
+    "idmiembrohogar",
+    idMiembro.toString()
+  );
+  eliminar(
+    "dat_miebrobeneficioprogalim",
+    "idmiembrohogar",
+    idMiembro.toString()
+  );
+  eliminar("dat_miembrohogar", "idmiembrohogar", idMiembro);
+  eliminar("dat_miembroestrategias", "idmiembrohogar", idMiembro.toString());
+
+  eliminar("dat_causadesvnnaj", "idmiembrohogar", [idMiembro.toString()]);
+  console.log("[idMiembro.toString()]", [idMiembro.toString()]);
+  eliminar("dat_nnasitdelictiva", "idmiembrohogar", [idMiembro.toString()]);
+  // eliminar("dat_caracterizacion", "idmiembrohogar", [idMiembro.toString()]);
+  // eliminar("dat_unidaddealojamiento", "idmiembrohogar", idMiembro.toString());
+  //eliminar("dat_matrizrelacional", "idmiembrohogar", idMiembro.toString());
+  //eliminar("dat_rolconcepto", "idmiembrohogar", idMiembro.toString());
+  // eliminar("dat_tiposayuda", "idmiembrohogar", idMiembro.toString());
+  // eliminar("dat_zonavulnerable", "idmiembrohogar", idMiembro.toString());
+  // eliminar("dat_detallesconcepto", "idmiembrohogar", idMiembro.toString());
+  // eliminar("dat_afectacionmatvivienda", "idmiembrohogar", idMiembro.toString());
+  // eliminar("dat_estadoconstvivienda", "idmiembrohogar", idMiembro.toString());
+  // eliminar("dat_atributo", "idmiembrohogar", idMiembro.toString());
   // eliminar("dat_miembrodiscapacidad", "idmiembro", idMiembro);
   // eliminar("dat_miembrodiscapacidad", "idmiembrohogar", idMiembro);
-  // eliminar("dat_miembropogramas", "idmiembrohogar", idMiembro);  ver este cual es 
+  // eliminar("dat_miembropogramas", "idmiembrohogar", idMiembro);  ver este cual es
+  //eliminar("dat_estructura", "idmiembrohogar", idMiembro.toString());
 }
