@@ -1,4 +1,5 @@
 import axios from "axios";
+import { mode } from "@/_pwa-framework/config";
 import { nomencladoresMock } from "./mockNomencladores";
 import { setToLocalStorage } from "../utils/almacenarOffline";
 import { cargarEstructuras } from "../utils/estructuras.service";
@@ -14,7 +15,7 @@ export const getCargaInicial = async (
       { idconcepto: "990802", denominacion: "Finca Silvia" },
       { idconcepto: "990803", denominacion: "Pueblo Nuevo" },
     ];
-    if (false) {
+    if (!mode) {
       const { data } = await axios.get(
         `${
           import.meta.env.ENV_SERVER_URL

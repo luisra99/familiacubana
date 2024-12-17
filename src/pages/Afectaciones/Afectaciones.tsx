@@ -110,6 +110,7 @@ function Afectaciones() {
                   parentIcon={Handyman}
                   childrenIcon={Grain}
                   multiSelect={true}
+                  setFieldValue={props.setFieldValue}
                   defaultValues={props.formValue}
                   {...props}
                 />
@@ -125,6 +126,9 @@ function Afectaciones() {
           showSpecificDescription={false}
           idForEdit={idHogar}
           saveButton="Guardar"
+          acceptDisabledFunction={(values) => {
+            return !(values.afectaciones.length > 0);
+          }}
           submitFunction={async (values: any) => {
             await deleteRowsIfExist(
               "dat_afectacionmatvivienda",
@@ -148,7 +152,7 @@ function Afectaciones() {
               title:
                 "Las afectaciones de la vivienda se han guardado satisfactoriamente",
             });
-             setListo(true);
+            setListo(true);
           }}
           getByIdFunction={async (id) => {
             const afectaciones = await obtenerDatosPorLlave(
@@ -170,7 +174,7 @@ function Afectaciones() {
           // }}
           prevButton={{ text: "Anterior", action: anterior }}
           nextButton={{ text: "Siguiente", action: siguiente }}
-          nextDisabledFunction={(values) => !listo}
+          // nextDisabledFunction={(values) => !listo}
           applyButton={false}
         />
       ) : (

@@ -101,8 +101,8 @@ function AccesoProgramasProteccionSocialCuidados() {
         : { accede: dat_beneficios[0].accede, editMode: true }
       : {
           idmiembrohogar: [id.toString()],
-          idbeneficio: "",
-          accede: "",
+          idbeneficio: [],
+          accede: [],
           conocequeexiste: "",
           entramites: false,
           ayudaparaacceder: false,
@@ -209,6 +209,118 @@ function AccesoProgramasProteccionSocialCuidados() {
         });
     }
   };
+  const accesosFlields = useCallback(
+    () =>
+      beneficios?.map((beneficio: any) => (
+        <GenericForm
+          name="beneficios"
+          applyButton={false}
+          sx={{ py: 1, px: 0 }}
+          controls={[
+            {
+              type: "component",
+              component: () => (
+                <Typography sx={{ mt: 2 }}>{beneficio.denominacion}</Typography>
+              ),
+              label: "",
+              name: "",
+              gridValues: { xs: 6, lg: 4, md: 6, sm: 6, xl: 3 },
+            },
+            {
+              type: "select",
+              name: "accede",
+              label: "Acceso a beneficios",
+
+              gridValues: { xs: 6, lg: 2, md: 6, sm: 6, xl: 3 },
+              onChange: (event, values) => {
+                //#region Raul
+                //Se actualiza una variable con la configuración de los alimentos
+                setConfiguracionBeneficios((prev: any) => {
+                  prev[beneficio.idconcepto] = {
+                    ...prev[beneficio.idconcepto],
+                    idbeneficio: beneficio.idconcepto,
+                    accede: event.target.value,
+                  };
+                  return prev;
+                });
+                //#endregion
+              },
+              options: [
+                { idconcepto: "1", denominacion: "Si" },
+                { idconcepto: "2", denominacion: "No" },
+                {
+                  idconcepto: "3",
+                  denominacion: "No accede pero los necesita",
+                },
+              ],
+              validations: {
+                required: {
+                  message: "Este campo es obligatorio",
+                },
+              },
+            },
+            {
+              type: "check",
+              label: "Conoce que existe",
+              name: "conocequeexiste",
+              gridValues: { xl: 2, lg: 2, md: 4, sm: 4, xs: 4 },
+              onChange: (e) => {
+                setConfiguracionCausasNoAcceso((prev: any) => {
+                  prev[beneficio.idconcepto] = {
+                    ...prev[beneficio.idconcepto],
+                    idbeneficio: beneficio.idconcepto,
+                    conocequeexiste: e.target.checked,
+                  };
+                  return prev;
+                });
+              },
+              hidden: (values: any) => values.accede != "3",
+            },
+            {
+              type: "check",
+              label: "En trámites para obtenerlos",
+              name: "entramites",
+              gridValues: { xl: 2, lg: 2, md: 4, sm: 4, xs: 4 },
+              onChange: (e) => {
+                setConfiguracionCausasNoAcceso((prev: any) => {
+                  prev[beneficio.idconcepto] = {
+                    ...prev[beneficio.idconcepto],
+                    idbeneficio: beneficio.idconcepto,
+                    entramites: e.target.checked,
+                  };
+                  return prev;
+                });
+              },
+              hidden: (values: any) => values.accede != "3",
+            },
+            {
+              type: "check",
+              label: "Necesitan ayuda para acceder",
+              name: "ayudaparaacceder",
+              gridValues: { xl: 2, lg: 2, md: 4, sm: 4, xs: 4 },
+              onChange: (e) => {
+                setConfiguracionCausasNoAcceso((prev: any) => {
+                  prev[beneficio.idconcepto] = {
+                    ...prev[beneficio.idconcepto],
+                    idbeneficio: beneficio.idconcepto,
+                    ayudaparaacceder: e.target.checked,
+                  };
+                  return prev;
+                });
+              },
+              hidden: (values: any) => values.accede != "3",
+            },
+          ]}
+          endpointPath="/"
+          hideButtons={true}
+          idForEdit={id}
+          setIdFunction={setid}
+          getByIdFunction={async (id) =>
+            await obtenerBeneficiosXmiembro(id, beneficio)
+          }
+        />
+      ))
+  ,[id]);
   const controls = useCallback(
     (): IGenericControls[] => [
       {
@@ -243,126 +355,14 @@ function AccesoProgramasProteccionSocialCuidados() {
 
       {
         type: "component",
-        component: () =>
-          id &&
-          beneficios?.map((beneficio: any) => (
-            <GenericForm
-              name="beneficios"
-              applyButton={false}
-              sx={{ py: 1, px: 0 }}
-              controls={[
-                {
-                  type: "component",
-                  component: () => (
-                    <Typography sx={{ mt: 2 }}>
-                      {beneficio.denominacion}
-                    </Typography>
-                  ),
-                  label: "",
-                  name: "",
-                  gridValues: { xs: 6, lg: 4, md: 6, sm: 6, xl: 3 },
-                },
-                {
-                  type: "select",
-                  name: "accede",
-                  label: "Acceso a beneficios",
-
-                  gridValues: { xs: 6, lg: 2, md: 6, sm: 6, xl: 3 },
-                  onChange: (event, values) => {
-                    //#region Raul
-                    //Se actualiza una variable con la configuración de los alimentos
-                    setConfiguracionBeneficios((prev: any) => {
-                      prev[beneficio.idconcepto] = {
-                        ...prev[beneficio.idconcepto],
-                        idbeneficio: beneficio.idconcepto,
-                        accede: event.target.value,
-                      };
-                      return prev;
-                    });
-                    //#endregion
-                  },
-                  options: [
-                    { idconcepto: "1", denominacion: "Si" },
-                    { idconcepto: "2", denominacion: "No" },
-                    {
-                      idconcepto: "3",
-                      denominacion: "No accede pero los necesita",
-                    },
-                  ],
-                  validations: {
-                    required: {
-                      message: "Este campo es obligatorio",
-                    },
-                  },
-                },
-                {
-                  type: "check",
-                  label: "Conoce que existe",
-                  name: "conocequeexiste",
-                  gridValues: { xl: 2, lg: 2, md: 4, sm: 4, xs: 4 },
-                  onChange: (e) => {
-                    setConfiguracionCausasNoAcceso((prev: any) => {
-                      prev[beneficio.idconcepto] = {
-                        ...prev[beneficio.idconcepto],
-                        idbeneficio: beneficio.idconcepto,
-                        conocequeexiste: e.target.checked,
-                      };
-                      return prev;
-                    });
-                  },
-                  hidden: (values: any) => values.accede != "3",
-                },
-                {
-                  type: "check",
-                  label: "En trámites para obtenerlos",
-                  name: "entramites",
-                  gridValues: { xl: 2, lg: 2, md: 4, sm: 4, xs: 4 },
-                  onChange: (e) => {
-                    setConfiguracionCausasNoAcceso((prev: any) => {
-                      prev[beneficio.idconcepto] = {
-                        ...prev[beneficio.idconcepto],
-                        idbeneficio: beneficio.idconcepto,
-                        entramites: e.target.checked,
-                      };
-                      return prev;
-                    });
-                  },
-                  hidden: (values: any) => values.accede != "3",
-                },
-                {
-                  type: "check",
-                  label: "Necesitan ayuda para acceder",
-                  name: "ayudaparaacceder",
-                  gridValues: { xl: 2, lg: 2, md: 4, sm: 4, xs: 4 },
-                  onChange: (e) => {
-                    setConfiguracionCausasNoAcceso((prev: any) => {
-                      prev[beneficio.idconcepto] = {
-                        ...prev[beneficio.idconcepto],
-                        idbeneficio: beneficio.idconcepto,
-                        ayudaparaacceder: e.target.checked,
-                      };
-                      return prev;
-                    });
-                  },
-                  hidden: (values: any) => values.accede != "3",
-                },
-              ]}
-              endpointPath="/"
-              hideButtons={true}
-              idForEdit={id}
-              setIdFunction={setid}
-              getByIdFunction={async (id) =>
-                await obtenerBeneficiosXmiembro(id, beneficio)
-              }
-            />
-          )),
+        component: () => accesosFlields(),
         gridValues: { lg: 12, md: 12, sm: 12, xl: 12, xs: 12 },
         name: "",
         label: "",
         hidden: (values: any) => values.idmiembrohogar == "",
       },
     ],
-    [id, miembros, checked]
+    [id, miembros, checked, accesosFlields]
   );
 
   return (

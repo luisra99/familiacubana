@@ -37,6 +37,7 @@ import WcIcon from "@mui/icons-material/Wc";
 import Welcome from "@/pages/Welcome";
 import WorkOutlineIcon from "@mui/icons-material/WorkOutline";
 import ZonasVulnerables from "@/pages/ZonasVulnerables";
+import AyudaGuia from "@/pages/Ayuda";
 
 const myRoutes: Routes = {
   [Pages.Welcome]: {
@@ -172,7 +173,7 @@ const myRoutes: Routes = {
       [Pages.Vehiculos]: {
         component: Vehiculos,
         path: "/vehiculos",
-        title: "Vehículos y equipos de que dispone el hogar",
+        title: "Vehículos de que dispone el hogar",
         icon: MapsHomeWorkIcon,
       },
     },
@@ -219,6 +220,9 @@ const myRoutes: Routes = {
     component: ZonasVulnerables,
     path: "/zonas-vulnerables",
     icon: SettingsRoundedIcon,
+  }, [Pages.Ayuda]: {
+    component: AyudaGuia,
+    path: "/ayuda",
   },
 };
 

@@ -17,6 +17,23 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
+export async function tieneDatos(arr: any) {
+  const result = await Promise.all(
+    arr.map(async (obj: any) => {
+      const uso = await datico.dat_miembroestrategias
+        .where({ idmiembrohogar: obj.idconcepto.toString() })
+        .count();
+      if (uso > 0) {
+        return obj.idconcepto;
+      } else {
+        return 0;
+      }
+    })
+  );
+  const _result = result.filter((item) => item != 0);
+  return _result.toString();
+}
+
 function Otros_Datos() {
   const idhogar = getHogar() ?? 0;
   const notificar = NotificationProvider();
@@ -29,7 +46,6 @@ function Otros_Datos() {
   useEffect(() => {
     obtenerDatosNom().then((estrategias) => setEstrategias(estrategias));
   }, []);
-  useEffect(() => {}, [idmiembrohogar]);
 
   async function obtenerDatosMiembros(id: string) {
     const estrategia = await obtenerDatosPorLlave(
@@ -65,9 +81,14 @@ function Otros_Datos() {
     return {
       idmiembro: [id.toString()],
       idestrategia: estrategia?.[0]?.idestrategia ?? [],
-      apoyolaboresd: miembroHogar?.[0]?.apoyolaboresd ? true : false,
+      apoyolaboresd:
+        typeof miembroHogar?.[0]?.apoyolaboresd === "boolean"
+          ? miembroHogar?.[0]?.apoyolaboresd
+          : false,
       ayudaprobleconomico:
-        miembroHogar?.[0]?.ayudaprobleconomico ? true : false,
+        typeof miembroHogar?.[0]?.ayudaprobleconomico === "boolean"
+          ? miembroHogar?.[0]?.ayudaprobleconomico
+          : false,
       idbeneficioprog: beneficios?.[0]?.idbeneficioprog ?? [],
       idsituacionsocial:
         situacionSocial?.[0]?.idsituacionsocial?.map((item: any) =>
@@ -81,38 +102,12 @@ function Otros_Datos() {
     };
   }
 
-  async function tieneDatos(arr: any) {
-    const result = await Promise.all(
-      arr.map(async (obj: any) => {
-        const uso = await datico.dat_miembroestrategias
-          .where({ idmiembrohogar: obj.idconcepto.toString() })
-          .count();
-        if (uso > 0) {
-          return obj.idconcepto;
-        } else {
-          return 0;
-        }
-      })
-    );
-    const _result = result.filter((item) => item != 0);
-    return _result.toString();
-  }
-
   useLiveQuery(async () => {
     const data = await obtenerMiembros();
     setMiembros(data);
     const usito = await tieneDatos(data);
     checkSetDatos(usito);
   });
-
-  //Eviel
-  async function obtenerDatos(idmiembro: any) {
-    const data = await datico.dat_miembroaditamentos
-      .where({ idmiembrohogar: idmiembro.toString() })
-      .toArray();
-    // const result = await unionNomenclador(data);
-    return data;
-  }
 
   async function obtenerDatosNom() {
     const prueba = await (datico as any)["nom_concepto"]
@@ -348,30 +343,25 @@ function Otros_Datos() {
                 idsituacionsocial,
                 idorganismo,
               } = values;
-              ayudaprobleconomico == true
-                ? (values.ayudaprobleconomico = 1)
-                : (values.ayudaprobleconomico = 0),
-                apoyolaboresd == true
-                  ? (values.apoyolaboresd = 1)
-                  : (values.apoyolaboresd = 0),
-                CreateOrModify(
-                  "dat_miembroestrategias",
-                  {
-                    idmiembrohogar: idmiembro[0],
-                  },
-                  {
-                    idmiembrohogar: idmiembro[0],
-                    idestrategia,
-                  },
-                  "idmiembroestrategia"
-                );
+
+              CreateOrModify(
+                "dat_miembroestrategias",
+                {
+                  idmiembrohogar: idmiembro[0],
+                },
+                {
+                  idmiembrohogar: idmiembro[0],
+                  idestrategia,
+                },
+                "idmiembroestrategia"
+              );
               modificar(
                 "dat_miembrohogar",
                 "idmiembrohogar",
                 parseInt(idmiembro[0]),
                 {
-                  ayudaprobleconomico: values.ayudaprobleconomico,
-                  apoyolaboresd: values.apoyolaboresd,
+                  ayudaprobleconomico,
+                  apoyolaboresd,
                 }
               );
               //dat_miebrobeneficioprogalim

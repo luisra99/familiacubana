@@ -489,8 +489,7 @@ function AutonomiayNecesidadesEspeciales() {
         </Typography>
       )}
 
-      {id && <AditamentosForm/>
-      }
+      {id && <AditamentosForm />}
     </>
   );
 }

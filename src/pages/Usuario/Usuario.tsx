@@ -12,12 +12,13 @@ import { useEffect, useState } from "react";
 import Meta from "@/_pwa-framework/components/Meta";
 import { Stack } from "@mui/system";
 import { useSession } from "@/_pwa-framework/session/state";
+import NotificationProvider from "@/_pwa-framework/sections/Notifications/provider";
 
 function Usuario() {
   const [userData] = useSession();
   const [showPassword, setShowPassword] = useState(false);
   const [password, setPassword] = useState("");
-
+const notificar = NotificationProvider();
   const [nomencladoresCargados, setNomencladoresCargados] = useState<string[]>(
     []
   );
@@ -82,6 +83,7 @@ function Usuario() {
               localStorage.setItem("offlineMode", code);
               localStorage.setItem("userData", JSON.stringify(userData));
               localStorage.setItem("offlineSession", "true");
+              notificar({title:"Contraseña guardada"})
             }}
             disabled={!password}
           >

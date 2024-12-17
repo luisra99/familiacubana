@@ -32,5 +32,5 @@ export enum Pages {
   Nomencladores,
   ComunidadesVulnerables,
   SubirDatos,
-  ZonasVulnerables,
+  ZonasVulnerables, Ayuda
 }

@@ -146,6 +146,13 @@ function Ocupacion() {
       .toArray();
     return data;
   }
+  useEffect(() => {
+    if (id) {
+      setOcupaciones([]); 
+      onChangeMiembro();
+    }
+  }, [id]);
+
   async function onChangeMiembro() {
     const datos = await obtenerDatos(id);
     if (datos.length) {

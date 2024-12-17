@@ -12,7 +12,7 @@ import { obtenerDatosPorLlave } from "@/app/user-interfaces/forms/models/control
 function Gastos() {
   const hogar = getHogar();
   const [miembros, setMiembros] = useState<any>([]);
-   
+
   useLiveQuery(async () => {
     const miembros: any = await datico.dat_miembrohogar
       .where({ idcodigohogar: hogar })
@@ -31,23 +31,22 @@ function Gastos() {
     setListo,
     listo,
   ] = useGastos();
-  
-   const checkListo = async (id: string | number) => {
-     const datos: any = await obtenerDatosPorLlave(
-       "dat_hogardiversidadalimentaria",
-       "idhogardiversidadalimentaria",
-       id
-     );
-   
-     setListo(!!datos?.length);
-   };
 
-   useEffect(() => {
+  const checkListo = async (id: string | number) => {
+    const datos: any = await obtenerDatosPorLlave(
+      "dat_hogargastos",
+      "idcodigohogar",
+      id
+    );
 
-     if (hogar) {
-       checkListo(parseInt(hogar));
-     }
-   }, [hogar]);
+    setListo(!!datos?.length);
+  };
+
+  useEffect(() => {
+    if (hogar) {
+      checkListo(parseInt(hogar));
+    }
+  }, [hogar]);
 
   return (
     <>

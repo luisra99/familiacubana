@@ -284,7 +284,6 @@ export const seEncunetra: IGenericControls = {
 export const entrevistafecha: IGenericControls = {
   type: "date",
   gridValues: { xs: 4, lg: 3, md: 3, sm: 2, xl: 3 },
-  validations: { required: { message: "Este campo es obligatorio" } },
   label: "Fecha",
   name: "fechaentrev",
 };
@@ -292,8 +291,6 @@ export const horainicial: IGenericControls = {
   type: "time",
   label: "Hora inicial",
   gridValues: { xs: 4, lg: 3, md: 3, sm: 2, xl: 3 },
-  validations: { required: { message: "Este campo es obligatorio" } },
-
   name: "hinicio",
 };
 
@@ -301,8 +298,6 @@ export const horafinal: IGenericControls = {
   type: "time",
   label: "Hora fin",
   gridValues: { xs: 4, lg: 3, md: 3, sm: 2, xl: 3 },
-  validations: { required: { message: "Este campo es obligatorio" } },
-
   name: "hfin",
 };
 
@@ -905,14 +900,14 @@ export const ayudaFamiliarAmigo: IGenericControls = {
   type: "check",
   label:
     "Si alguien en el hogar requiere apoyo con labores domésticas y de cuidado, por enfermedades u otra razón",
-  name: "idtiposayuda",
+  name: "idtiposayudafamiliar",
   hidden: (values: any) => values.idmiembro == "",
   gridValues: { xs: 12, lg: 12, md: 12, sm: 12, xl: 12 },
 };
 export const ayudaFamiliarAmigo2: IGenericControls = {
   type: "check",
   label: "Ante un problema económico",
-  name: "idtiposayuda",
+  name: "idtiposayudaeconomica",
   hidden: (values: any) => values.idmiembro == "",
   gridValues: { xs: 12, lg: 12, md: 12, sm: 12, xl: 12 },
 };

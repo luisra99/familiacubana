@@ -26,13 +26,13 @@ function Vehiculos() {
   const { modalActions } = useModalState();
   const confirm = useConfirm();
   const notificar = NotificationProvider();
-   const [listo, setListo] = useState<any>(false);
+  const [listo, setListo] = useState<any>(false);
   const [id, setid] = useState<any>(null);
   const [vehiculos, setVehiculos] = useState<any>([]);
   const hogar = getHogar();
   useLiveQuery(async () => {
     if (hogar) {
-      const prueba = await (datico as any)["dat_hogarmobiliarioequipos"]
+      const prueba = await (datico as any)["dat_hogarmobiliariovehiculos"]
         .where({
           tipoMobiliario: 2,
           idcodigohogar: parseInt(hogar),
@@ -44,24 +44,10 @@ function Vehiculos() {
     }
   });
 
-  // const checkListo = async (id: string|number) => {
-  //   const datos: any = await obtenerDatosPorLlave(
-  //     "dat_hogarmobiliarioequipos",
-  //     "idcodigohogar",
-  //     id
-  //   );
-  //   setListo(!!datos?.length);
-  // };
-
-  // useEffect(() => {
-  //   if (hogar) {
-  //     checkListo(hogar);
-  //   }
-  // }, [hogar]);
   const checkListo = async (id: string | number) => {
     const datos: any = await obtenerDatosPorLlave(
-      "dat_hogarmobiliarioequipos",
-     "idcodigohogar",
+      "dat_hogarmobiliariovehiculos",
+      "idcodigohogar",
       id
     );
     setListo(!!datos?.length);
@@ -139,7 +125,7 @@ function Vehiculos() {
                         {
                           label: "Modificar",
                           action: (values: any) => {
-                            setid(values.idhogarmobiliario);
+                            setid(values.idhogarmobiliariovehiculo);
 
                             modalActions.open("1");
                           },
@@ -156,9 +142,9 @@ function Vehiculos() {
                               description: `¿Está seguro que desea eliminar el vehículo seleccionado?`,
                             }).then(() => {
                               eliminar(
-                                "dat_hogarmobiliarioequipos",
-                                "idhogarmobiliario",
-                                values.idhogarmobiliario
+                                "dat_hogarmobiliariovehiculos",
+                                "idhogarmobiliariovehiculo",
+                                values.idhogarmobiliariovehiculo
                               ).then(() => {
                                 notificar({
                                   type: "success",
@@ -195,9 +181,8 @@ function Vehiculos() {
           <GenericForm
             name="1"
             controls={Vehiculo}
-            title="Vehículo"
-            descriptionOnCreate=""
-            descriptionOnEdit=""
+            editTitle="Modificar vehículo"
+            createTitle="Adicionar vehículo"
             description=""
             endpointPath="persona"
             showSpecificDescription={true}
@@ -206,7 +191,7 @@ function Vehiculos() {
             setIdFunction={setid}
             notifyValidation={async (values) => {
               const existe = await obtenerDatosPorLlave(
-                "dat_hogarmobiliarioequipos",
+                "dat_hogarmobiliariovehiculos",
                 "idcodigohogar",
                 parseInt(hogar)
               ).then((item: any[]) => {
@@ -214,8 +199,8 @@ function Vehiculos() {
                   return (
                     JSON.stringify(row.estado) ===
                       JSON.stringify(values.estado) &&
-                    JSON.stringify(row.idmobiliarioequipo) ===
-                      JSON.stringify(values.idmobiliarioequipo)
+                    JSON.stringify(row.idmobiliariovehiculo) ===
+                      JSON.stringify(values.idmobiliariovehiculo)
                   );
                 });
               });
@@ -228,8 +213,8 @@ function Vehiculos() {
               if (id && hogar) {
                 delete values.editMode;
                 modificar(
-                  "dat_hogarmobiliarioequipos",
-                  "idhogarmobiliario",
+                  "dat_hogarmobiliariovehiculos",
+                  "idhogarmobiliariovehiculo",
                   id,
                   {
                     ...values,
@@ -244,7 +229,7 @@ function Vehiculos() {
               } else {
                 delete values.editMode;
                 hogar &&
-                  crear("dat_hogarmobiliarioequipos", {
+                  crear("dat_hogarmobiliariovehiculos", {
                     ...values,
                     tipoMobiliario: 2,
                     idcodigohogar: parseInt(hogar),
@@ -255,13 +240,13 @@ function Vehiculos() {
                         "El vehículo ha sido adicionado satisfactoriamente",
                     })
                   );
-                  setListo(true)
+                setListo(true);
               }
             }}
             getByIdFunction={async (id) => {
               const data = await obtenerDatosPorLlave(
-                "dat_hogarmobiliarioequipos",
-                "idhogarmobiliario",
+                "dat_hogarmobiliariovehiculos",
+                "idhogarmobiliariovehiculo",
                 parseInt(id)
               );
               data[0].editMode = true;
@@ -285,7 +270,7 @@ function Vehiculos() {
             >
               Anterior
             </Button>
-            <Button onClick={siguiente} variant="contained" disabled = {!listo}>
+            <Button onClick={siguiente} variant="contained">
               Siguiente
             </Button>
           </Stack>

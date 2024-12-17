@@ -5,7 +5,7 @@ export const Vehiculo: IGenericControls[] = [
   {
     type: "select",
     label: "Vehículo",
-    name: "idmobiliarioequipo",
+    name: "idmobiliariovehiculo",
     url: "9784",
     gridValues: { xs: 12, sm: 4 },
     validations: {
@@ -46,7 +46,7 @@ export async function unionNomenclador(arr: any) {
     arr.map(async (obj: any) => {
       //  ;
       const mobiliario = await datico.nom_concepto.get(
-        parseInt(obj?.idmobiliarioequipo ?? 0)
+        parseInt(obj?.idmobiliariovehiculo ?? 0)
       );
 
       return {

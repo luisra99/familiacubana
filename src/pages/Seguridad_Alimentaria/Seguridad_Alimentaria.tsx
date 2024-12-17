@@ -35,7 +35,7 @@ function Seguridad_Alimentaria() {
 
   const checkListo = async (id: string | number) => {
     const datos: any = await obtenerDatosPorLlave(
-      "dat_hogarmobiliarioequipos",
+      "dat_hogardiversidadalimentaria",
       "idhogarmobiliario",
       id
     );

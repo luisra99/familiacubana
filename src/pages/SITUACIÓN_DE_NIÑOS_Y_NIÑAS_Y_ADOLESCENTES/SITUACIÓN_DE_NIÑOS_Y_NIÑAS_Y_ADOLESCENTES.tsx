@@ -433,7 +433,8 @@ function SITUACIÓN_DE_NIÑOS_Y_NIÑAS_Y_ADOLESCENTES() {
                       ).then(() => {
                         notificar({
                           type: "success",
-                          title: "Eliminado correctamente",
+                          title:
+                            "La ocupación de niños, niñas y adolescentes ha sido eliminado satisfactoriamente",
                           content: "",
                         });
                         onChangeMiembro(idmiembrohogar);

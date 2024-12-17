@@ -194,7 +194,7 @@ export async function vistaMobiliarioBasicoEquipo() {
               .toArray();
             bandsWithDetails.push({
               direccion: home.direccion,
-              idhogarmobiliario: casa.idhogarmobiliario,
+              idhogarmobiliarioequipo: casa.idhogarmobiliarioequipo,
               cantidad: casa.cantidad,
               idmobiliarioequipo: casa.idmobiliarioequipo,
               estado: casa.estado,

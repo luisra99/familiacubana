@@ -84,6 +84,20 @@ function DatosDeEntrevista() {
           prevButton={{ text: "Anterior", action: anterior }}
           nextButton={{ text: "Finalizar caracterización", action: siguiente }}
           applyButton={false}
+          notifyValidation={(values) => {
+            if (!values.idmiembrohogar.length) {
+              return "Debe seleccionar un miembro"
+            }
+            if (!values.fechaentrev.length) {
+              return "Debe seleccionar una fecha";
+            }
+            if (!values.hinicio.length) {
+              return "Debe seleccionar la hora de inicio";
+            }
+            if (!values.hfin.length) {
+              return "Debe seleccionar la hora de fin";
+            }
+          }}
           submitFunction={(values: any) => {
             if (values.editMode) {
               delete values.editMode;

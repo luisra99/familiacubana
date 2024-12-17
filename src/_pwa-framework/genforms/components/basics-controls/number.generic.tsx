@@ -96,7 +96,7 @@ export const BasicNumberFields = ({
         sx={sx}
         value={value ?? ""}
         helperText={error}
-        error={error}
+        // error={error}
         onChange={handleChange}
         {...fieldProps}
         variant="outlined"

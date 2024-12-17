@@ -13,13 +13,13 @@ import { getHogar } from "@/app/hogarController/hogar.controller";
 import { obtenerLocalesViviendas } from "./helpers";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { useEffect} from "react";
+import { useEffect } from "react";
 
 function LocalesVivienda() {
   const idhogar = getHogar() ?? 0;
   const [id, setid] = useState<any>(idhogar ?? null);
   const [cant, setCant] = useState(0);
-const [listo, setListo] = useState<any>(false);
+  const [listo, setListo] = useState<any>(false);
   const notificar = NotificationProvider();
   const navegar = useNavigate();
   const siguiente = () => navegar("/servicios-equipamientos/servicios");
@@ -265,15 +265,15 @@ const [listo, setListo] = useState<any>(false);
               url: "10223",
               gridValues: { xs: 12, sm: 6 },
               hidden: (values: any) => values.tienesanitario !== "1",
-              validations: {
-                required: {
-                  message: "Este campo es obligatorio",
-                  when: {
-                    name: "tienesanitario",
-                    expression: (value) => value === "1",
-                  },
-                },
-              },
+              // validations: {
+              //   required: {
+              //     message: "Este campo es obligatorio",
+              //     when: {
+              //       name: "tienesanitario",
+              //       expression: (value) => value === "1",
+              //     },
+              //   },
+              // },
             },
             {
               type: "multiselect",
@@ -283,29 +283,38 @@ const [listo, setListo] = useState<any>(false);
               url: "10223",
               gridValues: { xs: 12, sm: 6 },
               hidden: (values: any) => values.tienesanitario !== "1",
-              validations: {
-                required: {
-                  message: "Este campo es obligatorio",
-                  when: {
-                    name: "tienesanitario",
-                    expression: (value) => value === "1",
-                  },
-                },
-              },
+              // validations: {
+              //   required: {
+              //     message: "Este campo es obligatorio",
+              //     when: {
+              //       name: "tienesanitario",
+              //       expression: (value) => value === "1",
+              //     },
+              //   },
+              // },
             },
           ]}
           title="Locales de la vivienda"
           description=""
           nextButton={{ text: "Siguiente", action: siguiente }}
           prevButton={{ text: "Anterior", action: anterior }}
+          nextDisabledFunction={(values) => !listo}
           endpointPath="persona"
           showSpecificDescription={false}
           idForEdit={id}
           saveButton="Guardar"
           getByIdFunction={async () => {
             const dato = await obtenerLocalesViviendas(id);
-
             return dato;
+          }}
+          notifyValidation={(values) => {
+            if (
+              values.idtipousoservicio?.[0] !== "10228" &&
+              Number(values.cantidad) <
+                (values.inodoro?.length ?? 0) + (values.letrina?.length ?? 0)
+            ) {
+              return "Los servicios sanitarios seleccionados sobrepasan la cantidad declarada";
+            }
           }}
           submitFunction={async (values: any) => {
             const existelocalesvivienda = await obtenerDatosPorLlave(
@@ -329,7 +338,8 @@ const [listo, setListo] = useState<any>(false);
             const cocina =
               (values.tipousococina == "10230" &&
                 !!values.cantidadcocina?.length) ||
-              (values.tipousococina == "10231" && !values.cantidadcocina?.length );
+              (values.tipousococina == "10231" &&
+                !values.cantidadcocina?.length);
             const sanitario =
               (values.tienesanitario == "1" &&
                 values.idtipousoservicio?.[0] == "10227" &&
@@ -485,6 +495,7 @@ const [listo, setListo] = useState<any>(false);
                 // "Le falta por definir el uso de la cocina o el servicio sanitario",
               });
             }
+              setListo(true);
           }}
           applyButton={false}
         />

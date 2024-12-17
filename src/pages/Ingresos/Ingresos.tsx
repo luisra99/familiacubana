@@ -22,6 +22,23 @@ import { useLiveQuery } from "dexie-react-hooks";
 import useModalState from "@/_pwa-framework/hooks/form/use-form-manager";
 import { useNavigate } from "react-router-dom";
 
+export async function tieneIngresos(arr: any) {
+  const result = await Promise.all(
+    arr.map(async (obj: any) => {
+      const ingresos = await db.dat_miembrofuentesingresos
+        .where({ idmiembrohogar: obj.idconcepto.toString() })
+        .count();
+
+      if (ingresos > 0) {
+        return obj.idconcepto.toString();
+      } else {
+        return 0;
+      }
+    })
+  );
+  return result.filter((item) => item != 0);
+}
+
 function Ingresos() {
   const idhogar = getHogar() ?? 0;
   // hooks
@@ -43,26 +60,12 @@ function Ingresos() {
   const { modalActions } = useModalState();
 
   // init
-  async function tieneIngresos(arr: any) {
-    const result = await Promise.all(
-      arr.map(async (obj: any) => {
-        const ingresos = await db.dat_miembrofuentesingresos
-          .where({ idmiembrohogar: obj.idconcepto.toString() })
-          .count();
-
-        if (ingresos > 0) {
-          return obj.idconcepto.toString();
-        } else {
-          return 0;
-        }
-      })
-    );
-    return result.filter((item) => item != 0);
-  }
+ 
   useLiveQuery(async () => {
     const data = await obtenerMiembros();
-    setMiembros(data);
-    const ingresos = await tieneIngresos(data);
+      const miembros = data.filter((item) => item.edad > 15);
+    setMiembros(miembros);
+    const ingresos = await tieneIngresos(miembros);
     setIngresos(ingresos);
     const fuentes = await db.nom_concepto
       .where("idpadre")
@@ -145,7 +148,9 @@ function Ingresos() {
       },
       // url: "9318",
       onChange: (event, ref) => {
-        event.target.value == "9323"
+        event.target.value == "9323" ||
+        event.target.value == "10572" ||
+        event.target.value == "10573"
           ? ref.setFieldValue("idmoneda", ["9310"], true)
           : ref.setFieldValue("idmoneda", [], false);
       },
@@ -179,7 +184,10 @@ function Ingresos() {
       validations: {
         required: { message: "Este campo es obligatorio" },
       },
-      disabled: (values) => values.idfuente == "9323",
+      disabled: (values) =>
+        values.idfuente == "9323" ||
+        values.idfuente == "10572" ||
+        values.idfuente == "10573",
       disabledOnEdit: true,
     },
     {

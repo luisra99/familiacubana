@@ -5,7 +5,7 @@ import {
   modificar,
   obtenerDatosPorLlave,
 } from "@/app/user-interfaces/forms/models/controllers";
-import { obtenerMiembroPorEncuesta, obtenerMotivoNoAtencion } from "./helpers";
+import { obtenerMiembroPorEncuesta, obtenerMotivoNoAtencion, tieneUso } from "./helpers";
 import { useCallback, useEffect, useState } from "react";
 
 import GenericForm from "@/_pwa-framework/genforms/components/form-components/form.generic";
@@ -78,22 +78,7 @@ function UsoServiciosSalud() {
     });
   }, []);
 
-  async function tieneUso(arr: any) {
-    const result = await Promise.all(
-      arr.map(async (obj: any) => {
-        const uso = await datico.dat_miembroencuesta
-          .where({ idmiembrohogar: obj.idconcepto.toString() })
-          .count();
-        if (uso > 0) {
-          return obj.idconcepto;
-        } else {
-          return 0;
-        }
-      })
-    );
-    const _result = result.filter((item) => item != 0);
-    return _result.toString();
-  }
+ 
 
   const submitUsoServiciosSalud = async (values: any) => {
     const hogar = getHogar();
@@ -449,7 +434,8 @@ function UsoServiciosSalud() {
                                 ...prev[motivo.idconcepto],
 
                                 idmotivo: motivo.idconcepto,
-                                idrespuesta: `${e.target.value}`,
+                                idrespuesta: null,
+                                otro: `${e.target.value}`,
                               };
                               return prev;
                             });
@@ -582,5 +568,6 @@ function UsoServiciosSalud() {
     </>
   );
 }
+
 
 export default UsoServiciosSalud;

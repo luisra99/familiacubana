@@ -2,13 +2,29 @@ import { datico } from "@/app/user-interfaces/forms/models/model";
 import { getHogar } from "@/app/hogarController/hogar.controller";
 import { obtenerDatosPorLlave } from "@/app/user-interfaces/forms/models/controllers";
 
+export async function tieneUso(arr: any) {
+  const result = await Promise.all(
+    arr.map(async (obj: any) => {
+      const uso = await datico.dat_miembroencuesta
+        .where({ idmiembrohogar: obj.idconcepto.toString() })
+        .count();
+      if (uso > 0) {
+        return obj.idconcepto;
+      } else {
+        return 0;
+      }
+    })
+  );
+  const _result = result.filter((item) => item != 0);
+  return _result.toString();
+}
 export const obtenerMiembroPorEncuesta = async (id: string) => {
   const datos_hogar = await obtenerDatosPorLlave(
     "dat_hogar",
     "idcodigohogar",
     parseInt(getHogar() ?? "")
   );
-
+  console.log("datos_hogar", datos_hogar);
   if (id == "0") {
     return {
       problemasalud: datos_hogar[0]?.problemasalud,
@@ -22,9 +38,7 @@ export const obtenerMiembroPorEncuesta = async (id: string) => {
     "idmiembrohogar",
     id
   );
-
-  console.log("raul", datos_hogar, datos_encuesta);
-  return datos_hogar?.[0]?.problemasalud
+  return datos_hogar?.[0]?.problemasalud?.[0] === "9832"
     ? datos_encuesta[0]
       ? {
           problemasalud: ["9832"],

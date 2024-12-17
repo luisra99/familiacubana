@@ -189,7 +189,7 @@ export class dat_estadoconstvivienda {
 // Datos Hogar Mobiliarios Equipos
 export class dat_hogarmobiliarioequipos {
   constructor(
-    public idhogarmobiliario: number,
+    public idhogarmobiliarioequipo: number,
     public cantidad: number,
     public idmobiliarioequipo: number,
     public estado: number,
@@ -198,6 +198,17 @@ export class dat_hogarmobiliarioequipos {
   ) {}
 }
 
+// Datos Hogar Mobiliarios Vehiculos
+export class dat_hogarmobiliariovehiculos {
+  constructor(
+    public idhogarmobiliariovehiculo: number,
+    public cantidad: number,
+    public idmobiliariovehiculo: number,
+    public estado: number,
+    public tipoMobiliario: number,
+    public idcodigohogar: number
+  ) {}
+}
 // Datos Hogar Gastos
 export class dat_hogargastos {
   constructor(
@@ -538,6 +549,7 @@ export class FamiliaCubana extends Dexie {
   dat_hogarestrategias!: Table<dat_hogarestrategias>;
   dat_hogargastos!: Table<dat_hogargastos>;
   dat_hogarmobiliarioequipos!: Table<dat_hogarmobiliarioequipos>;
+  dat_hogarmobiliariovehiculos!: Table<dat_hogarmobiliariovehiculos>;
   dat_localesvivienda!: Table<dat_localesvivienda>;
   dat_manejosdesechos!: Table<dat_manejosdesechos>;
   dat_matrizrelacional!: Table<dat_matrizrelacional>;
@@ -606,7 +618,9 @@ export class FamiliaCubana extends Dexie {
       dat_estadoconstvivienda:
         "++idestadoconstvivienda, idestadoconst, idcodigohogar",
       dat_hogarmobiliarioequipos:
-        "++idhogarmobiliario, cantidad, idmobiliarioequipo, estado, tipoMobiliario, idcodigohogar",
+        "++idhogarmobiliarioequipo, cantidad, idmobiliarioequipo, estado, tipoMobiliario, idcodigohogar",
+      dat_hogarmobiliariovehiculos:
+        "++idhogarmobiliariovehiculo, cantidad, idmobiliariovehiculo, estado, tipoMobiliario, idcodigohogar",
       dat_hogargastos:
         "++idhogargasto, iddestino, montocup, pesogasto, proporciongastoalimentacion, proporciongastomedicamento, idcodigohogar",
       dat_miembroencuesta:

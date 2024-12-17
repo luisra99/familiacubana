@@ -26,14 +26,11 @@ function Materiales() {
   const anterior = async () => {
     const data = await obtenerMiembros();
     const miembros = data.filter((item) => item.edad <= 18);
-    console.log("menores", miembros)
+    console.log("menores", miembros);
 
     if (miembros?.length) navegar("/adolecentes");
     else navegar("/proteccion");
   };
-
-
-
 
   const [listo, setListo] = useState<any>(false);
 
@@ -42,7 +39,7 @@ function Materiales() {
 
   const checkListo = async (id: string) => {
     const datos: any = await obtenerDatosPorLlave(
-      "dat_afectacionmatvivienda",
+      "dat_estadoconstvivienda",
       "idcodigohogar",
       id
     );
@@ -55,7 +52,6 @@ function Materiales() {
       checkListo(idHogar);
     }
   }, [idHogar]);
-
 
   useEffect(() => {
     cargarArbol();

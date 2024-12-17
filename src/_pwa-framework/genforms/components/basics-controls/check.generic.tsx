@@ -6,7 +6,7 @@ import { useFormikContext } from "formik";
 export const BasicCheckFields = ({
   id,
   gridSx,
-  initialValue,
+  defaultValue,
   gridValues,
   name,
   label,
@@ -34,8 +34,8 @@ export const BasicCheckFields = ({
   }, []);
 
   useEffect(() => {
-    setFieldValue(name, initialValue ?? false, false);
-  }, [initialValue]);
+    setFieldValue(name, defaultValue ?? false, false);
+  }, [defaultValue]);
 
   useEffect(() => {
     setStyle((style: any) => {
