@@ -103,7 +103,7 @@ export default function BasicSpeedDial() {
         const personasFiltradas = miembrosParentezcoNomenclado.filter(
           (item: any) => item.parentesco === "JN"
         );
-        const nucleoInfo = !!personasFiltradas.length;
+        const nucleoInfo = !!personasFiltradas?.length;
         //#endregion
 
         //#region Ingresos - Todos los mayores de 15 años tienen ingresos
@@ -117,16 +117,23 @@ export default function BasicSpeedDial() {
         );
         const ingresos =
           miembrosMayoresDeQuince?.length ==
-          miembrosMayoresDeQuinceConIngresos?.length;
+            miembrosMayoresDeQuinceConIngresos?.length &&
+          miembrosMayoresDeQuince.length > 0;
         //#endregion
 
         //#region Ocupación - Todos los mimebros
         const miembrosMayoresDeQuinceConOcupacion = await tieneOcupacion(
           miembrosMayoresDeQuince
         );
+        console.log(
+          "Ocupacion",
+          miembrosMayoresDeQuinceConOcupacion,
+          miembrosMayoresDeQuince
+        );
         const ocupacion =
           miembrosMayoresDeQuinceConOcupacion.length ==
-          miembrosMayoresDeQuince.length;
+            miembrosMayoresDeQuince.length &&
+          miembrosMayoresDeQuince.length > 0;
         //#endregion
 
         //#region Autonomia - Todos los mimebros tinen datos en autonomia
@@ -137,7 +144,10 @@ export default function BasicSpeedDial() {
             : miembrosConDiscapacidad.length > 0
               ? 1
               : 0;
-        const autonomia = miembros?.length == cantidadDeMiembrosConDiscapacidad;
+        console.log("Autonomia", miembros, cantidadDeMiembrosConDiscapacidad);
+        const autonomia =
+          miembros?.length == cantidadDeMiembrosConDiscapacidad &&
+          miembros.length > 0;
         //#endregion
 
         //#region Enfermedades - Todos los mimebros tinen datos en enfermedades
@@ -151,7 +161,10 @@ export default function BasicSpeedDial() {
             : miembrosConEnfermedadesCronicasNormalizado.length > 0
               ? 1
               : 0;
-        const enfermedades = miembros?.length == miembrosConEnfermedadesLength;
+        console.log("Ocupacion", miembros, miembrosConEnfermedadesLength);
+        const enfermedades =
+          miembros?.length == miembrosConEnfermedadesLength &&
+          miembros?.length > 0;
         //#endregion
 
         //#region UsoServiciosSalud - Todos los mimebros tinen datos en Uso de servicios
@@ -183,9 +196,15 @@ export default function BasicSpeedDial() {
           "idcodigohogar",
           parseInt(getHogar() ?? "")
         );
+        console.log(
+          "UsoServiciosSalud",
+          problemasDeSaludEnElHogar,
+          miembrosConEnfermedadesLength
+        );
 
         const usoServiciosSalud =
           !!problemasDeSaludEnElHogar?.[0]?.problemasalud?.length;
+
         //#endregion
 
         //#region Acceso a programas - Todos los mimebros tinen datos en Acceso a programas
@@ -210,7 +229,9 @@ export default function BasicSpeedDial() {
         };
 
         const accedenAProgramas = await obtenerAccesoAProgramas(allMiembros);
-        const accesoAProgramas = miembros?.length == accedenAProgramas;
+        const accesoAProgramas =
+          miembros?.length == accedenAProgramas && miembros?.length > 0;
+        console.log("accesoAProgramas", miembros, accedenAProgramas);
         //#endregion
         //#region Materiales Predominantes
         const estadoConstruccion: any = await obtenerDatosPorLlave(
@@ -219,16 +240,21 @@ export default function BasicSpeedDial() {
           idHogar
         );
         const materialesPredomiantes = !!estadoConstruccion?.length;
+        console.log("materialesPredomiantes", estadoConstruccion);
         //#endregion
 
         //#region Locales de la vivienda
         const localesInfo: any = await obtenerLocalesViviendas(idHogar);
         const localesDeLaVivienda = !!localesInfo?.cantudormir;
+        console.log("localesDeLaVivienda", localesInfo);
+
         //#endregion
 
         //#region Servicios de la vivienda
         const servicios: any = await obtenerServiciosVivienda(idHogar);
         const serviciosVivienda = !!servicios?.iddesague?.length;
+        console.log("serviciosVivienda", servicios);
+
         //#endregion
 
         //#region Mobiliario de la vivienda
@@ -238,6 +264,8 @@ export default function BasicSpeedDial() {
           idHogar
         );
         const mobiliarioBasico = !!mobiliario?.length;
+        console.log("mobiliarioBasico", mobiliario);
+
         //#endregion
 
         //#region Seguridad Alimentaria de la vivienda
@@ -247,6 +275,8 @@ export default function BasicSpeedDial() {
           idHogar
         );
         const seguridadAlimentaria = !!alimentos?.length;
+        console.log("alimentos", alimentos);
+
         //#endregion
 
         //#region SituacionSocial Alimentaria de la vivienda
@@ -256,7 +286,11 @@ export default function BasicSpeedDial() {
           : datosSituacionSocial.length > 0
             ? 1
             : 0;
-        const situacionSocial = allMiembros?.length == checkSituacionSocial;
+        const situacionSocial =
+          allMiembros?.length == checkSituacionSocial &&
+          allMiembros?.length > 0;
+        console.log("allMiembros", checkSituacionSocial);
+
         //#endregion
 
         //#region GastosHogar
@@ -266,6 +300,8 @@ export default function BasicSpeedDial() {
           idHogar
         );
         const gastosHogar = !!gastos?.length;
+        console.log("gastosHogar", gastos);
+
         //#endregion
 
         //#region GastosHogar
@@ -275,6 +311,8 @@ export default function BasicSpeedDial() {
           idHogar
         );
         const datosEntrevista = !!entrevista?.length;
+        console.log("datosEntrevista", entrevista);
+
         //#endregion
         const _estadoDeLaCaracterizacion = {
           nucleoInfo,
@@ -301,7 +339,11 @@ export default function BasicSpeedDial() {
       console.log("error estadoDeLaCaracterizacion", error);
     }
   };
-  useLiveQuery(checkCaracterizacion);
+
+  useLiveQuery(() => {
+    checkCaracterizacion();
+  });
+
   const estadoEntrevistaControls = useCallback(
     (): IGenericControls[] =>
       [
@@ -375,6 +417,7 @@ export default function BasicSpeedDial() {
       }),
     [estadoDeLaCaracterizacion]
   );
+
   useEffect(() => {
     checkCaracterizacion();
   }, [idhogar]);

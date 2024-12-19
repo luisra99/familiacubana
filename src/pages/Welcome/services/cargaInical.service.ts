@@ -43,5 +43,9 @@ export const getCargaInicial = async (
     }
   } catch (error: any) {
     return setToLocalStorage({});
+  } finally {
+    window.open("/documentos/Bases_D2_ICS_H.pdf");
+    window.open("/documentos/Bases_D3_Guia_ICS_H.pdf");
+    window.open("/documentos/Manual APK(16-12-24).pdf");
   }
 };

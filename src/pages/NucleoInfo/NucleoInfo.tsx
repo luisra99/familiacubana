@@ -121,7 +121,8 @@ function Miembros() {
       },
       {
         type: "radio",
-        label: "¿Cuál es el grado más alto aprobado?",
+        label:
+          "Si tiene un grado superior al nivel vencido marcar nivel y grado",
         name: "idnivelescolargrado",
         radios: _nivelescolarprimaria,
         gridValues: { xl: 5, lg: 5, md: 5, sm: 12, xs: 12 },
@@ -129,7 +130,8 @@ function Miembros() {
       },
       {
         type: "radio",
-        label: "¿Cuál es el grado más alto aprobado?",
+        label:
+          "Si tiene un grado superior al nivel vencido marcar nivel y grado",
         name: "idnivelescolargrado",
         radios: _nivelescolarsecundaria,
         gridValues: { xl: 5, lg: 5, md: 5, sm: 12, xs: 12 },
@@ -137,7 +139,8 @@ function Miembros() {
       },
       {
         type: "radio",
-        label: "¿Cuál es el grado más alto aprobado?",
+        label:
+          "Si tiene un grado superior al nivel vencido marcar nivel y grado",
         name: "idnivelescolargrado",
         radios: _nivelescolarobrero,
         gridValues: { xl: 5, lg: 5, md: 5, sm: 12, xs: 12 },
@@ -145,7 +148,8 @@ function Miembros() {
       },
       {
         type: "radio",
-        label: "¿Cuál es el grado más alto aprobado?",
+        label:
+          "Si tiene un grado superior al nivel vencido marcar nivel y grado",
         name: "idnivelescolargrado",
         radios: _nivelescolarpreuniversitario,
         gridValues: { xl: 5, lg: 5, md: 5, sm: 12, xs: 12 },
@@ -153,7 +157,8 @@ function Miembros() {
       },
       {
         type: "radio",
-        label: "¿Cuál es el grado más alto aprobado?",
+        label:
+          "Si tiene un grado superior al nivel vencido marcar nivel y grado",
         name: "idnivelescolargrado",
         radios: _nivelescolarpedagogia,
         gridValues: { xl: 5, lg: 5, md: 5, sm: 12, xs: 12 },
@@ -161,7 +166,8 @@ function Miembros() {
       },
       {
         type: "radio",
-        label: "¿Cuál es el grado más alto aprobado?",
+        label:
+          "Si tiene un grado superior al nivel vencido marcar nivel y grado",
         name: "idnivelescolargrado",
         radios: _nivelescolartecnicomedio,
         gridValues: { xl: 5, lg: 5, md: 5, sm: 12, xs: 12 },
@@ -169,7 +175,8 @@ function Miembros() {
       },
       {
         type: "radio",
-        label: "¿Cuál es el grado más alto aprobado?",
+        label:
+          "Si tiene un grado superior al nivel vencido marcar nivel y grado",
         name: "idnivelescolargrado",
         radios: _nivelescolartecnicosuperior,
         gridValues: { xl: 5, lg: 5, md: 5, sm: 12, xs: 12 },
